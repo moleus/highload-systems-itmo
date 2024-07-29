@@ -24,4 +24,4 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         arguments: detekt 
-        gradle-versison: 7.3
+        gradle-version: 7.3
