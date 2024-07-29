@@ -37,9 +37,9 @@ console-reports:
     - 'ProjectStatisticsReport'
     - 'ComplexityReport'
     - 'NotificationReport'
-  #   - 'FindingsReport'
+    - 'FindingsReport'
     - 'FileBasedFindingsReport'
-    - 'LiteFindingsReport'
+  #  - 'LiteFindingsReport'
 
 output-reports:
   active: true
