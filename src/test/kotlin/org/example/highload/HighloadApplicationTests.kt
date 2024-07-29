@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import
 @Import(TestcontainersConfiguration::class)
 @SpringBootTest
 class HighloadApplicationTests {
+  
+  @Suppress("EmptyFunctionBlock") @Test fun contextLoads() {}
 
-  @Test fun contextLoads() {}
 }
