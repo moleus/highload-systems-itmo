@@ -8,7 +8,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.24"
 }
 
-group = "org.example"
+group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
 
 java {
