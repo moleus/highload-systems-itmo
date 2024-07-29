@@ -1,4 +1,4 @@
-package org.example.highload
+package itmo.highload
 
 import org.springframework.boot.fromApplication
 import org.springframework.boot.with

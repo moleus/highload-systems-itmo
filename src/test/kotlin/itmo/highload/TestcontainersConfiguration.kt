@@ -1,4 +1,4 @@
-package org.example.highload
+package itmo.highload
 
 import org.springframework.boot.test.context.TestConfiguration
 
