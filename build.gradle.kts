@@ -3,6 +3,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.6"
 	id("com.ncorti.ktfmt.gradle") version "0.19.0"
 	id("io.gitlab.arturbosch.detekt") version("1.23.6")
+	id("org.sonarqube") version "5.1.0.4882"
 	kotlin("plugin.jpa") version "1.9.24"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
@@ -68,5 +69,12 @@ configurations.matching { it.name == "detekt" }.all {
 		if (requested.group == "org.jetbrains.kotlin") {
 			useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
 		}
+	}
+}
+
+sonar {
+	properties {
+		property("sonar.projectKey", "highload")
+		property("sonar.projectName", "highload")
 	}
 }
