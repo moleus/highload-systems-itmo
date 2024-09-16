@@ -25,7 +25,10 @@ class JwtProvider(@Value("\${jwt.secret.access}") jwtAccessSecret: String?,
 
     fun generateAccessToken(user: UserDetails): String {
         val now = LocalDateTime.now()
-        val accessExpirationInstant = now.plusMinutes(jwtAccessExpirationMinutes.toLong()).atZone(ZoneId.systemDefault()).toInstant()
+        val accessExpirationInstant = now
+                .plusMinutes(jwtAccessExpirationMinutes.toLong())
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
         val accessExpiration = Date.from(accessExpirationInstant)
         return Jwts.builder()
                 .setSubject(user.username)
@@ -36,7 +39,10 @@ class JwtProvider(@Value("\${jwt.secret.access}") jwtAccessSecret: String?,
 
     fun generateRefreshToken(user: UserDetails): String {
         val now = LocalDateTime.now()
-        val refreshExpirationInstant = now.plusDays(jwtRefreshExpirationDays.toLong()).atZone(ZoneId.systemDefault()).toInstant()
+        val refreshExpirationInstant = now
+                .plusDays(jwtRefreshExpirationDays.toLong())
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
         val refreshExpiration = Date.from(refreshExpirationInstant)
         return Jwts.builder()
                 .setSubject(user.username)

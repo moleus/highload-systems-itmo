@@ -1,7 +1,10 @@
 package itmo.highload.controller.request
 
 import itmo.highload.model.enum.UserRole
-import jakarta.validation.constraints.*
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 
 data class RegisterRequest(@NotBlank(message = "Login can't be blank")
                            @Size(min = 4, max = 50)
