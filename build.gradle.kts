@@ -1,8 +1,11 @@
+import java.util.*
+
 plugins {
 	id("org.springframework.boot") version "3.3.2"
 	id("io.spring.dependency-management") version "1.1.6"
 	id("com.ncorti.ktfmt.gradle") version "0.19.0"
 	id("io.gitlab.arturbosch.detekt") version("1.23.6")
+    id("com.google.cloud.tools.jib") version "3.4.2"
 	kotlin("plugin.jpa") version "1.9.24"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
@@ -10,12 +13,7 @@ plugins {
 
 group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
-
-java {
-	toolchain {
-		languageVersion.set(JavaLanguageVersion.of(17))
-	}
-}
+var jdk_version = 21
 
 configurations {
 	compileOnly {
@@ -69,4 +67,25 @@ configurations.matching { it.name == "detekt" }.all {
 			useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
 		}
 	}
+}
+
+// gradle detect host architecture
+var hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault())
+if (hostArchitecture == "aarch64") {
+    hostArchitecture = "arm64"
+}
+jib {
+
+    from {
+        image = "openjdk:${jdk_version}-jdk-slim"
+        platforms {
+            platform {
+                architecture = hostArchitecture
+                os = "linux"
+            }
+        }
+    }
+    to {
+        image = "moleus/highload-systems-itmo:dev"
+    }
 }
