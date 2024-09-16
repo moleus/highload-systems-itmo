@@ -7,8 +7,13 @@
 gradle jibDockerBuild && docker-compose up
 ```
 
+### Run only DB
+```sh
+docker-compose up db
+```
+
 ## CI pipeline
 
 ### Tests
 
-Github Actions setup postgresql service and 
+Github Actions setup postgresql service and run tests
