@@ -27,7 +27,9 @@ class WebSecurityConfig {
         http
                 .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
                 .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
-                .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+                .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
+                    management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                }
                 .authorizeHttpRequests {requests: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
                     requests
                             .requestMatchers("/", "/bundle.js", "/index.html", "/api/auth/**", "/error").permitAll()
