@@ -29,7 +29,7 @@ class AuthService(val jwtProvider: JwtProvider,
             }
             throw AuthException("Wrong password")
         } catch (e: UsernameNotFoundException) {
-            throw AuthException("User not found")
+            throw AuthException("User not found", e)
         }
     }
 
