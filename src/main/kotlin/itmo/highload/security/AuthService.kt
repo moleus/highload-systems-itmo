@@ -1,5 +1,6 @@
 package itmo.highload.security
 
+import io.jsonwebtoken.JwtException
 import itmo.highload.controller.request.RegisterRequest
 import itmo.highload.controller.response.JwtResponse
 import itmo.highload.model.User
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service
 
 @Service
 @RequiredArgsConstructor
-class AuthService(val jwtProvider: JwtProvider,
-                  val userService: UserService,
-                  val encoder: PasswordEncoder) {
+class AuthService(
+    val jwtProvider: JwtProvider,
+    val userService: UserService,
+    val encoder: PasswordEncoder
+) {
 
     @Throws(AuthException::class)
     fun login(login: String, password: String): JwtResponse {
@@ -39,25 +42,31 @@ class AuthService(val jwtProvider: JwtProvider,
 
     @Throws(AuthException::class)
     fun getNewAccessToken(refreshToken: String): JwtResponse {
-        if (jwtProvider.validateRefreshToken(refreshToken)) {
+        try {
+            jwtProvider.validateRefreshToken(refreshToken)
             val username: String = jwtProvider.getRefreshClaims(refreshToken).subject
             val dbUser: User = userService.getByLogin(username)
             val newAccessToken: String = jwtProvider.generateAccessToken(dbUser)
             return JwtResponse(newAccessToken, null, dbUser.role)
+
+        } catch (e: JwtException) {
+            throw AuthException("Invalid refresh JWT token", e)
         }
-        throw AuthException("Invalid refresh JWT token")
     }
 
     @Throws(AuthException::class)
     fun refresh(refreshToken: String): JwtResponse {
-        if (jwtProvider.validateRefreshToken(refreshToken)) {
+        try {
+            jwtProvider.validateRefreshToken(refreshToken)
             val username: String = jwtProvider.getRefreshClaims(refreshToken).subject
             val dbUser: User = userService.getByLogin(username)
             val newAccessToken: String = jwtProvider.generateAccessToken(dbUser)
             val newRefreshToken: String = jwtProvider.generateRefreshToken(dbUser)
             return JwtResponse(newAccessToken, newRefreshToken, dbUser.role)
+
+        } catch (e: JwtException) {
+            throw AuthException("Invalid refresh JWT token", e)
         }
-        throw AuthException("Invalid refresh JWT token")
     }
 
     fun checkIfUserExists(login: String): Boolean {

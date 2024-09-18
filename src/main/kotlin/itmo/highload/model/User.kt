@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "app_user")
-data class User (
+data class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

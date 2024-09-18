@@ -1,3 +1,4 @@
+@file:Suppress("MaximumLineLength")
 package itmo.highload.security
 
 import itmo.highload.security.jwt.JwtFilter
@@ -25,23 +26,23 @@ class WebSecurityConfig {
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity, jwtFilter: JwtFilter?): SecurityFilterChain {
         http
-                .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
-                .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
-                .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
-                    management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                }
-                .authorizeHttpRequests {requests: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
-                    requests
-                            .requestMatchers("/", "/bundle.js", "/index.html", "/api/auth/**", "/error").permitAll()
-                            .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
-                            .anyRequest().authenticated()
-                }
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
+            .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
+            .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
+                management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .authorizeHttpRequests { requests: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
+                requests
+                    .requestMatchers("/", "/bundle.js", "/index.html", "/api/auth/**", "/error").permitAll()
+                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
+                    .anyRequest().authenticated()
+            }
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(12)
+        return BCryptPasswordEncoder()
     }
 }

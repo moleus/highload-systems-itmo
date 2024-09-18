@@ -10,7 +10,7 @@ import java.util.*
 
 @Service
 @RequiredArgsConstructor
-class UserService (val userRepository: UserRepository) {
+class UserService(val userRepository: UserRepository) {
 
     @Throws(UsernameNotFoundException::class)
     fun getByLogin(login: String): User {
@@ -19,10 +19,10 @@ class UserService (val userRepository: UserRepository) {
     }
 
     fun addUser(request: RegisterRequest): User {
-        val user= User(
-                login = request.login,
-                password = request.password,
-                role = request.role
+        val user = User(
+            login = request.login,
+            password = request.password,
+            role = request.role
         )
 
         return userRepository.save(user)
