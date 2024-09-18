@@ -8,6 +8,7 @@ on:
 
 env:
   JDK_VERSION: 17
+  GRADLE_VERSION: 8.10.1
   PGHOST: postgres
   PGPORT: 5432
   PGPASSWORD: postgres
@@ -28,8 +29,8 @@ jobs:
     - name: Run detekt
       uses: gradle/gradle-build-action@v3
       with:
-        arguments: detekt 
-        gradle-version: 7.6.4
+        arguments: detekt --config detekt.yml
+        gradle-version: ${{ env.GRADLE_VERSION }}
   ci:
     services:
         postgres:
