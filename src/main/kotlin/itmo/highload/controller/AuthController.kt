@@ -1,13 +1,13 @@
 package itmo.highload.controller
 
+import itmo.highload.controller.request.JwtRefreshRequest
 import itmo.highload.controller.request.LoginRequest
 import itmo.highload.controller.request.RegisterRequest
-import itmo.highload.controller.request.JwtRefreshRequest
 import itmo.highload.controller.response.JwtResponse
 import itmo.highload.model.User
 import itmo.highload.security.AuthService
-import jakarta.validation.Valid
 import jakarta.security.auth.message.AuthException
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

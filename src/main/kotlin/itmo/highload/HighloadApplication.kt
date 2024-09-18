@@ -8,5 +8,5 @@ import org.springframework.boot.runApplication
 
 @Suppress("SpreadOperator")
 fun main(args: Array<String>) {
-  runApplication<HighloadApplication>(*args)
+    runApplication<HighloadApplication>(*args)
 }

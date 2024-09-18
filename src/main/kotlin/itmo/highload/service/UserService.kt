@@ -5,12 +5,17 @@ import itmo.highload.controller.request.RegisterRequest
 import itmo.highload.model.User
 import lombok.RequiredArgsConstructor
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.util.*
 
 @Service
 @RequiredArgsConstructor
-class UserService(val userRepository: UserRepository) {
+class UserService(
+    private val userRepository: UserRepository,
+    private val encoder: PasswordEncoder
+) {
 
     @Throws(UsernameNotFoundException::class)
     fun getByLogin(login: String): User {
@@ -21,8 +26,9 @@ class UserService(val userRepository: UserRepository) {
     fun addUser(request: RegisterRequest): User {
         val user = User(
             login = request.login,
-            password = request.password,
-            role = request.role
+            password = encoder.encode(request.password),
+            role = request.role,
+            createdDate = LocalDate.now()
         )
 
         return userRepository.save(user)
