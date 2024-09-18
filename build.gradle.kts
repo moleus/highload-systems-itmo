@@ -13,7 +13,7 @@ plugins {
 
 group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
-var jdk_version = 21
+var jdkVersion = 21
 
 configurations {
     compileOnly {
@@ -83,7 +83,7 @@ if (hostArchitecture == "aarch64") {
 jib {
 
     from {
-        image = "openjdk:${jdk_version}-jdk-slim"
+        image = "openjdk:$jdkVersion-jdk-slim"
         platforms {
             platform {
                 architecture = hostArchitecture
