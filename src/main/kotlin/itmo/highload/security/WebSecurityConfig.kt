@@ -1,4 +1,4 @@
-@file:Suppress("MaximumLineLength")
+@file:Suppress("MaxLineLength")
 package itmo.highload.security
 
 import itmo.highload.security.jwt.JwtFilter
