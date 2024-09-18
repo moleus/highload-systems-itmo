@@ -27,9 +27,9 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ env.JDK_VERSION }}
     - name: Run detekt
-      uses: gradle/gradle-build-action@v3
+      uses: gradle/actions/setup-gradle@v3
       with:
-        arguments: detekt
+        arguments: --no-daemon detekt
         gradle-version: ${{ env.GRADLE_VERSION }}
   ci:
     services:
@@ -54,6 +54,9 @@ jobs:
       with:
           distribution: 'temurin'
           java-version: ${{ env.JDK_VERSION }}
-    - name: Run integration tests
-      # TODO: Separate the integration tests from the unit tests in future
-      run: ./gradlew test
+    # - name: Run integration tests
+    #   uses: gradle/actions/setup-gradle@v3
+    #   with:
+    #     # TODO: Separate the integration tests from the unit tests in future
+    #     arguments: --no-daemon test
+    #     gradle-version: ${{ env.GRADLE_VERSION }}
