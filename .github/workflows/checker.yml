@@ -29,7 +29,7 @@ jobs:
     - name: Run detekt
       uses: gradle/gradle-build-action@v3
       with:
-        arguments: detekt --config detekt.yml
+        arguments: detekt
         gradle-version: ${{ env.GRADLE_VERSION }}
   ci:
     services:
