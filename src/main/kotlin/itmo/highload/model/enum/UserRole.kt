@@ -7,8 +7,10 @@ import java.util.*
 @RequiredArgsConstructor
 enum class UserRole : GrantedAuthority {
 
-    CLIENT,
-    ADMIN;
+    CUSTOMER,
+    EXPENSE_MANAGER,
+    ADOPTION_MANAGER,
+    SUPERUSER;
 
     override fun getAuthority(): String {
         return super.toString().uppercase(Locale.getDefault())

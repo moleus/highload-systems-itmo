@@ -12,6 +12,7 @@ import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.time.LocalDate
 
 @Entity
 @Table(name = "app_user")
@@ -30,7 +31,10 @@ data class User(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val role: UserRole
+    val role: UserRole,
+
+    @Column
+    val createdDate: LocalDate
 
 ) : UserDetails {
 
