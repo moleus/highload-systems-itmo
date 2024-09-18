@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service
 @Service
 @RequiredArgsConstructor
 class AuthService(
-    val jwtProvider: JwtProvider,
-    val userService: UserService,
-    val encoder: PasswordEncoder
+    private val jwtProvider: JwtProvider,
+    private val userService: UserService,
+    private val encoder: PasswordEncoder
 ) {
 
     @Throws(AuthException::class)
