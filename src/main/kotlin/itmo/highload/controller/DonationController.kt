@@ -1,0 +1,45 @@
+package itmo.highload.controller
+
+import itmo.highload.dto.DonationDto
+import itmo.highload.service.TransactionService
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/api/transactions/donations")
+class DonationController(val transactionService: TransactionService) {
+
+    // TODO пагинация
+    @GetMapping("/manager")
+    @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
+    fun getAllDonations() {
+
+    }
+
+    @GetMapping("/manager/{customerId}")
+    @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
+    fun getDonationByCustomerForManager(@PathVariable customerId: Int) {
+
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    fun getDonationByCustomerForCustomer() {
+        //customerId берется из securityContext
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    fun addDonation(@RequestBody @Valid donationDto: DonationDto) {
+        return transactionService.saveDonation(donationDto)
+    }
+}

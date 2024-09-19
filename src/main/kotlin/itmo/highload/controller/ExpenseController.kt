@@ -1,0 +1,39 @@
+package itmo.highload.controller
+
+import itmo.highload.dto.ExpenseDto
+import itmo.highload.service.TransactionService
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/api/transactions/expenses")
+class ExpenseController(val transactionService: TransactionService) {
+
+    // TODO пагинация
+    @GetMapping
+    @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
+    fun getAllExpenses() {
+
+    }
+
+    @GetMapping("/{purposeId}")
+    @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
+    fun getExpensesByPurpose(@PathVariable purposeId: Int) {
+
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
+    fun addExpense(@RequestBody @Valid expenseDto: ExpenseDto) {
+
+    }
+}
