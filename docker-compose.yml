@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USERNAME:?error}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_PORT: 15432
+    ports:
+      - "15432:15432"
+  app:
+    image: moleus/highload-systems-itmo:dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: ${POSTGRES_URL:?error}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME:?error}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?error}
