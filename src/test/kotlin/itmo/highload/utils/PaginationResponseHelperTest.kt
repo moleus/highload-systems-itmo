@@ -10,15 +10,13 @@ import org.springframework.http.ResponseEntity
 
 class PaginationResponseHelperTest {
 
-    private val paginationResponseHelper = PaginationResponseHelper()
-
     @Test
     fun `test createInfinityScrollHeaders`() {
         val page = mockk<Page<*>>()
         every { page.number } returns 1
         every { page.hasNext() } returns true
 
-        val headers: HttpHeaders = paginationResponseHelper.createInfinityScrollHeaders(page)
+        val headers: HttpHeaders = PaginationResponseHelper.createInfinityScrollHeaders(page)
 
         assertEquals("1", headers["X-Current-Page"]?.get(0))
         assertEquals("true", headers["X-Has-Next-Page"]?.get(0))
@@ -32,7 +30,7 @@ class PaginationResponseHelperTest {
         every { page.totalElements } returns 100L
         every { page.numberOfElements } returns 50
 
-        val headers: HttpHeaders = paginationResponseHelper.createPaginationHeaders(page)
+        val headers: HttpHeaders = PaginationResponseHelper.createPaginationHeaders(page)
 
         assertEquals("2", headers["X-Current-Page"]?.get(0))
         assertEquals("10", headers["X-Total-Pages"]?.get(0))
@@ -52,7 +50,7 @@ class PaginationResponseHelperTest {
         every { entityPage.totalElements } returns 3
         every { entityPage.numberOfElements } returns 3
 
-        val response: ResponseEntity<List<Int>> = paginationResponseHelper.createPaginatedResponse(
+        val response: ResponseEntity<List<Int>> = PaginationResponseHelper.createPaginatedResponse(
             entityPage, dataTransformer)
 
         val expectedTransformedData = listOf(5, 6, 7)

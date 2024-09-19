@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 
-class PaginationResponseHelper {
+object PaginationResponseHelper {
     fun createInfinityScrollHeaders(entityPage: Page<*>): HttpHeaders {
         val headers = HttpHeaders()
         headers.add("X-Current-Page", entityPage.number.toString())
@@ -28,9 +28,8 @@ class PaginationResponseHelper {
         dataTransformer: (List<T>) -> List<D>,
     ): ResponseEntity<List<D>> {
         val dtoList: List<D> = dataTransformer(entityPage.content)
-        val responseHeaders: HttpHeaders = PaginationResponseHelper().createPaginationHeaders(entityPage)
+        val responseHeaders: HttpHeaders = createPaginationHeaders(entityPage)
 
         return ResponseEntity.ok().headers(responseHeaders).body(dtoList)
     }
-
 }
