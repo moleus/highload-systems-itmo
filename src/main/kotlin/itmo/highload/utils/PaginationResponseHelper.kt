@@ -2,8 +2,9 @@ package itmo.highload.utils
 
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseEntity
 
-class PaginationHeadersCreator {
+class PaginationResponseHelper {
     fun createInfinityScrollHeaders(entityPage: Page<*>): HttpHeaders {
         val headers = HttpHeaders()
         headers.add("X-Current-Page", entityPage.number.toString())
@@ -20,6 +21,16 @@ class PaginationHeadersCreator {
         headers.add("X-Current-Element-Num", entityPage.numberOfElements.toString())
 
         return headers
+    }
+
+    fun <T, D> createPaginatedResponse(
+        entityPage: Page<T>,
+        dataTransformer: (List<T>) -> List<D>,
+    ): ResponseEntity<List<D>> {
+        val dtoList: List<D> = dataTransformer(entityPage.content)
+        val responseHeaders: HttpHeaders = PaginationResponseHelper().createPaginationHeaders(entityPage)
+
+        return ResponseEntity.ok().headers(responseHeaders).body(dtoList)
     }
 
 }
