@@ -9,7 +9,6 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import lombok.RequiredArgsConstructor
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -19,7 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 
 @Component
-@RequiredArgsConstructor
 class JwtFilter(
     val jwtProvider: JwtProvider,
     val userService: UserService
@@ -46,9 +44,12 @@ class JwtFilter(
                 )
                 SecurityContextHolder.getContext().authentication = authentication
             } catch (e: ExpiredJwtException) {
-                response.setHeader("error", e.message)
+                response.status = HttpServletResponse.SC_UNAUTHORIZED
+                response.contentType = "application/json"
+                response.characterEncoding = "UTF-8"
+                response.writer.write("""{"error": "${e.message}"}""")
             } catch (e: JwtException) {
-                log.error("Failed to validate access token: {}", e.message)
+                log.info("Failed to validate access token: {}", e.message)
             }
         }
         filterChain.doFilter(request, response)

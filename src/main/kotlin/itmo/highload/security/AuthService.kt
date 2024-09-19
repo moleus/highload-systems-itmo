@@ -25,12 +25,14 @@ class AuthService(
         try {
             val user: User = userService.getByLogin(login)
 
-            if (encoder.matches(password, user.password)) {
-                val accessToken: String = jwtProvider.generateAccessToken(user)
-                val refreshToken: String = jwtProvider.generateRefreshToken(user)
-                return JwtResponse(accessToken, refreshToken, user.role)
+            if (!encoder.matches(password, user.password)) {
+                throw AuthException("Wrong password")
             }
-            throw AuthException("Wrong password")
+
+            val accessToken: String = jwtProvider.generateAccessToken(user)
+            val refreshToken: String = jwtProvider.generateRefreshToken(user)
+            return JwtResponse(accessToken, refreshToken, user.role)
+
         } catch (e: UsernameNotFoundException) {
             throw AuthException("User not found", e)
         }
@@ -47,7 +49,7 @@ class AuthService(
             val username: String = jwtProvider.getRefreshClaims(refreshToken).subject
             val dbUser: User = userService.getByLogin(username)
             val newAccessToken: String = jwtProvider.generateAccessToken(dbUser)
-            return JwtResponse(newAccessToken, null, dbUser.role)
+            return JwtResponse(newAccessToken, refreshToken, dbUser.role)
 
         } catch (e: JwtException) {
             throw AuthException("Invalid refresh JWT token", e)

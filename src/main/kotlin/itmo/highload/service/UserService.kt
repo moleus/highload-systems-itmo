@@ -1,8 +1,8 @@
 package itmo.highload.service
 
-import itmo.highload.repository.UserRepository
 import itmo.highload.controller.request.RegisterRequest
 import itmo.highload.model.User
+import itmo.highload.repository.UserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -19,8 +19,7 @@ class UserService(
 
     @Throws(UsernameNotFoundException::class)
     fun getByLogin(login: String): User {
-        val user: User? = userRepository.findByLogin(login)
-        return user ?: throw UsernameNotFoundException("User not found")
+        return userRepository.findByLogin(login) ?: throw UsernameNotFoundException("User not found")
     }
 
     fun addUser(request: RegisterRequest): User {
@@ -35,7 +34,6 @@ class UserService(
     }
 
     fun checkIfExists(login: String): Boolean {
-        val dbUser: User? = userRepository.findByLogin(login)
-        return dbUser != null
+        return userRepository.findByLogin(login) != null
     }
 }

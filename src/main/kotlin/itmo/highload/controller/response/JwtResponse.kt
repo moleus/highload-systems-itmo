@@ -8,7 +8,7 @@ class JwtResponse(
     @NotBlank
     val accessToken: String,
     @NotBlank
-    val refreshToken: String?,
+    val refreshToken: String,
     @NotNull
     val role: UserRole
 )

@@ -10,6 +10,7 @@ import jakarta.security.auth.message.AuthException
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,13 +24,14 @@ class AuthController(private val authService: AuthService) {
     fun login(@RequestBody @Valid request: LoginRequest): ResponseEntity<*> {
         try {
             val jwtResponse: JwtResponse = authService.login(request.login, request.password)
-            return ResponseEntity.ok<Any>(jwtResponse)
+            return ResponseEntity.ok(jwtResponse)
         } catch (e: AuthException) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body<String>(e.message)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.message)
         }
     }
 
     @PostMapping("/register")
+    @PreAuthorize("hasAuthority('SUPERUSER')")
     fun register(@RequestBody @Valid request: RegisterRequest): ResponseEntity<String> {
         if (authService.checkIfUserExists(request.login)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exist")
@@ -43,9 +45,9 @@ class AuthController(private val authService: AuthService) {
     fun getNewAccessToken(@RequestBody @Valid request: JwtRefreshRequest): ResponseEntity<*> {
         try {
             val jwtResponse: JwtResponse = authService.getNewAccessToken(request.refreshToken)
-            return ResponseEntity.ok<Any>(jwtResponse)
+            return ResponseEntity.ok(jwtResponse)
         } catch (e: AuthException) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body<String>(e.message)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.message)
         }
     }
 
@@ -53,9 +55,9 @@ class AuthController(private val authService: AuthService) {
     fun getNewRefreshToken(@RequestBody @Valid request: JwtRefreshRequest): ResponseEntity<*> {
         try {
             val jwtResponse: JwtResponse = authService.refresh(request.refreshToken)
-            return ResponseEntity.ok<Any>(jwtResponse)
+            return ResponseEntity.ok(jwtResponse)
         } catch (e: AuthException) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body<String>(e.message)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.message)
         }
     }
 }
