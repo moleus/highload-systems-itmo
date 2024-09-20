@@ -7,13 +7,11 @@ import itmo.highload.model.User
 import itmo.highload.security.jwt.JwtProvider
 import itmo.highload.service.UserService
 import jakarta.security.auth.message.AuthException
-import lombok.RequiredArgsConstructor
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-@RequiredArgsConstructor
 class AuthService(
     private val jwtProvider: JwtProvider,
     private val userService: UserService,

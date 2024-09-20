@@ -3,7 +3,6 @@ package itmo.highload.service
 import itmo.highload.controller.request.RegisterRequest
 import itmo.highload.model.User
 import itmo.highload.repository.UserRepository
-import lombok.RequiredArgsConstructor
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -11,7 +10,6 @@ import java.time.LocalDate
 import java.util.*
 
 @Service
-@RequiredArgsConstructor
 class UserService(
     private val userRepository: UserRepository,
     private val encoder: PasswordEncoder
