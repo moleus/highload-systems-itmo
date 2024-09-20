@@ -1,6 +1,7 @@
 package itmo.highload.controller
 
 import itmo.highload.dto.DonationDto
+import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -20,26 +21,26 @@ class DonationController(val transactionService: TransactionService) {
     // TODO пагинация
     @GetMapping("/manager")
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getAllDonations() {
+    fun getAllDonations(): List<TransactionResponse> {
 
     }
 
     @GetMapping("/manager/{customerId}")
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getDonationByCustomerForManager(@PathVariable customerId: Int) {
+    fun getDonationsByCustomerForManager(@PathVariable customerId: Int): List<TransactionResponse> {
 
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    fun getDonationByCustomerForCustomer() {
+    fun getDonationsByCustomerForCustomer(): List<TransactionResponse> {
         //customerId берется из securityContext
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    fun addDonation(@RequestBody @Valid donationDto: DonationDto) {
+    fun addDonation(@RequestBody @Valid donationDto: DonationDto): TransactionResponse {
         return transactionService.saveDonation(donationDto)
     }
 }

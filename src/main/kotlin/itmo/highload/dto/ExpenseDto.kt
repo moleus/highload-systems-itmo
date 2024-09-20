@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull
 
 data class ExpenseDto(
     @NotNull
-    val purposeName: Int,
+    val purposeId: Int,
     @NotNull
     @Min(0)
     val moneyAmount: Int

@@ -1,6 +1,7 @@
 package itmo.highload.controller
 
 import itmo.highload.dto.ExpenseDto
+import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -20,20 +21,20 @@ class ExpenseController(val transactionService: TransactionService) {
     // TODO пагинация
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getAllExpenses() {
+    fun getAllExpenses(): List<TransactionResponse> {
 
     }
 
     @GetMapping("/{purposeId}")
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getExpensesByPurpose(@PathVariable purposeId: Int) {
+    fun getExpensesByPurpose(@PathVariable purposeId: Int): List<TransactionResponse> {
 
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun addExpense(@RequestBody @Valid expenseDto: ExpenseDto) {
+    fun addExpense(@RequestBody @Valid expenseDto: ExpenseDto): TransactionResponse {
 
     }
 }

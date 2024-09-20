@@ -1,6 +1,7 @@
 package itmo.highload.controller
 
-import itmo.highload.dto.AdoptionRequestUpdateDto
+import itmo.highload.dto.AdoptionRequestDto
+import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -22,39 +23,39 @@ class AdoptionRequestController(val adoptionRequestService: AdoptionRequestServi
     // TODO пагинация
     @GetMapping
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getAllAdoptionRequests() {
+    fun getAllAdoptionRequests(): List<AdoptionRequestResponse> {
 
     }
 
     @GetMapping("/pending")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getPendingAdoptionRequests() {
+    fun getPendingAdoptionRequests(): List<AdoptionRequestResponse> {
 
     }
 
     @GetMapping("/{customerId}")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getAdoptionRequestsByCustomerForManager(@PathVariable customerId: Int) {
+    fun getAdoptionRequestsByCustomerForManager(@PathVariable customerId: Int): List<AdoptionRequestResponse> {
 
     }
 
     @GetMapping("/customer")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    fun getAdoptionRequestsByCustomerForCustomer() {
+    fun getAdoptionRequestsByCustomerForCustomer(): List<AdoptionRequestResponse> {
         //customerId берется из securityContext
     }
 
     @PostMapping("/{animalId}")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    fun addAdoptionRequest(@PathVariable animalId: Int) {
+    fun addAdoptionRequest(@PathVariable animalId: Int): AdoptionRequestResponse {
 
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun updateAdoptionRequest(@RequestBody @Valid request: AdoptionRequestUpdateDto) {
+    fun updateAdoptionRequest(@RequestBody @Valid request: AdoptionRequestDto): AdoptionRequestResponse {
 
     }
 
