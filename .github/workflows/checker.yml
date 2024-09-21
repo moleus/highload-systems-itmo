@@ -48,16 +48,16 @@ jobs:
         gradle-version: ${{ env.GRADLE_VERSION }}
     - name: Run application and database
       run: | 
-        docker-compose up -d
-        docker-compose ps
+        docker compose up -d
+        docker compose ps
         while ! pg_isready -h localhost -p 15432 -U runner -d postgres; do
           sleep 1
         done
-        if [ "$(docker inspect -f '{{.State.Running}}' $(docker-compose ps -q))" != "true" ]; then
+        if [ "$(docker inspect -f '{{.State.Running}}' $(docker compose ps -q))" != "true" ]; then
           echo "Docker container failed to start"
           exit 1
         fi
-        docker-compose down
+        docker compose down
     # - name: Run integration tests
     #   uses: gradle/actions/setup-gradle@v3
     #   with:

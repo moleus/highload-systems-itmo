@@ -35,7 +35,7 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE health_statuses AS ENUM ('Healthy', 'MinorInjury', 'SeriousInjury', 'Sick', 'Recovering', 'Dead');
+            sql: CREATE TYPE health_statuses AS ENUM ('Healthy', 'Injury', 'Sick', 'Recovering', 'Dead');
           rollback:
             sql: DROP TYPE health_statuses;
 
