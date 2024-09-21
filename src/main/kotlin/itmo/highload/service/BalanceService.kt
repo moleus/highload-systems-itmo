@@ -1,5 +1,6 @@
 package itmo.highload.service
 
-class BalanceService {
+import org.springframework.stereotype.Service
 
-}
+@Service
+class BalanceService
