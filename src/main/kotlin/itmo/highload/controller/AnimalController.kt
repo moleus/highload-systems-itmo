@@ -1,9 +1,12 @@
+@file:Suppress("UnusedParameter", "CommentWrapping")
+
 package itmo.highload.controller
 
 import itmo.highload.dto.AnimalDto
 import itmo.highload.dto.response.AnimalResponse
 import itmo.highload.service.AnimalService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -20,10 +24,18 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
-    // TODO пагинация и бесконечная прокрутка
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAllAnimals(): List<AnimalResponse> {
+    fun getAllAnimalsPage(pageable: Pageable): List<AnimalResponse> {
+        return listOf()
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    fun getAllAnimalsInfiniteScroll(
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "limit", defaultValue = "10") limit: Int
+    ): List<AnimalResponse> {
         return listOf()
     }
 

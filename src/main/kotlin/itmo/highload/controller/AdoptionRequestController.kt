@@ -6,6 +6,7 @@ import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,18 +22,18 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/adoption-requests")
 class AdoptionRequestController(val adoptionRequestService: AdoptionRequestService) {
 
-    // TODO пагинация
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAdoptionRequests(
         @RequestParam(required = false) hasPendingStatus: Boolean,
-        /*@AuthenticationPrincipal user: User*/
+        /*@AuthenticationPrincipal user: User,*/
+        pageable: Pageable
     ): List<AdoptionRequestResponse> {
         /*
         if (user.role == Role.ADOPTION_MANAGER) {
-            adoptionRequestService.getAll(hasPendingStatus)
+            adoptionRequestService.getAll(hasPendingStatus, pageable)
         } else if (user.role == Role.CUSTOMER) {
-            adoptionRequestService.getAllByCustomer(user.id)
+            adoptionRequestService.getAllByCustomer(user.id, pageable)
         }
          */
 

@@ -6,6 +6,7 @@ import itmo.highload.dto.ExpenseDto
 import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,16 +21,18 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/transactions/expenses")
 class ExpenseController(val transactionService: TransactionService) {
 
-    // TODO пагинация
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getAllExpenses(): List<TransactionResponse> {
+    fun getAllExpenses(pageable: Pageable): List<TransactionResponse> {
         return listOf()
     }
 
     @GetMapping("/{purposeId}")
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getExpensesByPurpose(@PathVariable purposeId: Int): List<TransactionResponse> {
+    fun getExpensesByPurpose(
+        @PathVariable purposeId: Int,
+        pageable: Pageable
+    ): List<TransactionResponse> {
         return listOf()
     }
 
