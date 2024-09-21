@@ -53,8 +53,8 @@ jobs:
         while ! pg_isready -h localhost -p 15432 -U runner -d postgres; do
           sleep 1
         done
-        if [ "$(docker inspect -f '{{.State.Running}}' $(docker compose ps -q))" != "true" ]; then
-          echo "Docker container failed to start"
+        if [ "$(docker inspect -f '{{.State.Running}}' $(docker compose ps -q) | grep -c 'true')" -ne 2 ]; then
+          echo "Docker containers failed to start"
           exit 1
         fi
         docker compose down
