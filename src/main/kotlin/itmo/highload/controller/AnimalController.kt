@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/animals")
+@RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
     // TODO пагинация и бесконечная прокрутка
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimals(): List<AnimalResponse> {
-
+        return listOf()
     }
 
     @GetMapping("/{animalId}")
@@ -44,7 +44,10 @@ class AnimalController(val animalService: AnimalService) {
     @PutMapping("/{animalId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun updateAnimal(@PathVariable animalId: Int, @RequestBody @Valid request: AnimalDto): AnimalResponse {
+    fun updateAnimal(
+        @PathVariable animalId: Int,
+        @RequestBody @Valid request: AnimalDto
+    ): AnimalResponse {
         return animalService.update(animalId, request)
     }
 
@@ -54,5 +57,4 @@ class AnimalController(val animalService: AnimalService) {
     fun deleteAnimal(@PathVariable animalId: Int) {
         animalService.delete(animalId)
     }
-
 }

@@ -1,3 +1,5 @@
+@file:Suppress("UnusedParameter", "CommentWrapping")
+
 package itmo.highload.controller
 
 import itmo.highload.dto.ExpenseDto
@@ -15,26 +17,26 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/transactions/expenses")
+@RequestMapping("/api/v1/transactions/expenses")
 class ExpenseController(val transactionService: TransactionService) {
 
     // TODO пагинация
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllExpenses(): List<TransactionResponse> {
-
+        return listOf()
     }
 
     @GetMapping("/{purposeId}")
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getExpensesByPurpose(@PathVariable purposeId: Int): List<TransactionResponse> {
-
+        return listOf()
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun addExpense(@RequestBody @Valid expenseDto: ExpenseDto): TransactionResponse {
-
+        return transactionService.saveExpense(expenseDto)
     }
 }

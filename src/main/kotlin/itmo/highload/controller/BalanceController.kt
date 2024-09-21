@@ -1,3 +1,5 @@
+@file:Suppress("UnusedParameter", "CommentWrapping")
+
 package itmo.highload.controller
 
 import itmo.highload.dto.response.BalanceResponse
@@ -10,26 +12,26 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/balances")
+@RequestMapping("/api/v1/balances")
 class BalanceController(val balanceService: BalanceService) {
 
     // TODO пагинация
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllBalances(): List<BalanceResponse> {
-
+        return listOf()
     }
 
     @GetMapping("/{purposeId}")
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getBalancesByPurpose(@PathVariable purposeId: Int): List<BalanceResponse> {
-
+        return listOf()
     }
 
-    @GetMapping("/purpose")
+    @GetMapping("/purposes")
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER', 'CUSTOMER')")
     fun getAllPurposes(): List<PurposeResponse> {
-
+        return listOf()
     }
 
 
