@@ -32,19 +32,6 @@ jobs:
         arguments: --no-daemon detekt
         gradle-version: ${{ env.GRADLE_VERSION }}
   ci:
-    services:
-        postgres:
-            image: postgres:15
-            env:
-              POSTGRES_USER: ${{ env.PGUSER }}
-              POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
-            options: >-
-              --health-cmd pg_isready
-              --health-interval 10s
-              --health-timeout 5s
-              --health-retries 5
-            ports:
-            - 5432:5432
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -54,6 +41,23 @@ jobs:
       with:
           distribution: 'temurin'
           java-version: ${{ env.JDK_VERSION }}
+    - name: Build docker image
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        arguments: --no-daemon jibDockerBuild
+        gradle-version: ${{ env.GRADLE_VERSION }}
+    - name: Run application and database
+      run: | 
+        docker-compose up -d
+        docker-compose ps
+        while ! pg_isready -h localhost -p 15432 -U runner -d postgres; do
+          sleep 1
+        done
+        if [ "$(docker inspect -f '{{.State.Running}}' $(docker-compose ps -q))" != "true" ]; then
+          echo "Docker container failed to start"
+          exit 1
+        fi
+        docker-compose down
     # - name: Run integration tests
     #   uses: gradle/actions/setup-gradle@v3
     #   with:
