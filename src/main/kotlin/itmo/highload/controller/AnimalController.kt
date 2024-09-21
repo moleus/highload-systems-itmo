@@ -30,7 +30,7 @@ class AnimalController(val animalService: AnimalService) {
         return listOf()
     }
 
-    @GetMapping
+    @GetMapping("/scroll")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsInfiniteScroll(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
