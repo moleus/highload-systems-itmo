@@ -14,12 +14,12 @@ data class AnimalDto(
     @NotBlank
     val type: String,
 
-    @NotNull
-    val gender: Gender,
+//    @NotNull
+//    val gender: Gender,
 
     @NotNull
     val isCastrated: Boolean,
 
-    @NotNull
-    val healthStatus: HealthStatus
+//    @NotNull
+//    val healthStatus: HealthStatus
 )
