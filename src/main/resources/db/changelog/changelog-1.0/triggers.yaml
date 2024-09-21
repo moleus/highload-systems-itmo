@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-adoption-requests-triggers
+      author: Moleus
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: "$$"
+            splitStatements: true
+            stripComments: true
+            sql: >-
+              CREATE OR REPLACE FUNCTION check_adoption_requests()
+              RETURNS TRIGGER AS $$
+                      BEGIN
+                        PERFORM 1 FROM users WHERE id = NEW.customer_id AND role = 'customer';
+                        IF NOT FOUND THEN
+                          RAISE EXCEPTION 'customer_id must reference a user with role customer';
+                        END IF;
+                        IF NEW.manager_id IS NOT NULL THEN
+                          PERFORM 1 FROM users WHERE id = NEW.manager_id AND role = 'adoption manager';
+                          IF NOT FOUND THEN
+                            RAISE EXCEPTION 'manager_id must reference a user with role adoption manager';
+                          END IF;
+                        END IF;
+                RETURN NEW;
+              EXCEPTION
+                WHEN OTHERS THEN
+                  ROLLBACK;
+                  RAISE;
+                      END;
+              $$ LANGUAGE plpgsql;
+
+              CREATE TRIGGER check_adoption_requests_trigger
+              BEFORE INSERT OR UPDATE ON adoption_requests
+              FOR EACH ROW EXECUTE FUNCTION check_adoption_requests();
+
+  - changeSet:
+      id: create-check-transactions-triggers
+      author: Moleus
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: "$$"
+            splitStatements: true
+            stripComments: true
+            sql: >-
+              CREATE OR REPLACE FUNCTION check_transactions()
+              RETURNS TRIGGER AS $$
+                          BEGIN
+                            IF NEW.is_donation THEN
+                              PERFORM 1 FROM users WHERE id = NEW.user_id AND role = 'customer';
+                              IF NOT FOUND THEN
+                                RAISE EXCEPTION 'user_id must reference a user with role customer when is_donation is true';
+                              END IF;
+                            ELSE
+                              PERFORM 1 FROM users WHERE id = NEW.user_id AND role = 'expense manager';
+                              IF NOT FOUND THEN
+                                RAISE EXCEPTION 'user_id must reference a user with role expense manager when is_donation is false';
+                              END IF;
+                            END IF;
+                RETURN NEW;
+              EXCEPTION
+                WHEN OTHERS THEN
+                  ROLLBACK;
+                  RAISE;
+              END;
+              $$ LANGUAGE plpgsql;
+              
+              CREATE TRIGGER check_transactions_trigger
+              BEFORE INSERT OR UPDATE ON transactions
+              FOR EACH ROW EXECUTE FUNCTION check_transactions();

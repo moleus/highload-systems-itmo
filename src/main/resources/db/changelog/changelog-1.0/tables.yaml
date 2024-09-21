@@ -1,0 +1,316 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-genders-enum
+      author: Moleus
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: CREATE TYPE genders AS ENUM ('Female', 'Male');
+          rollback:
+            sql: DROP TYPE genders;
+
+  - changeSet:
+      id: create-role-enum
+      author: Moleus
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: CREATE TYPE role AS ENUM ('Customer', 'Expense Manager', 'Adoption Manager');
+          rollback:
+            sql: DROP TYPE role;
+
+  - changeSet:
+      id: create-adoption-status-enum
+      author: Moleus
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: CREATE TYPE adoption_statuses AS ENUM ('Pending', 'Approved', 'Denied');
+          rollback:
+            sql: DROP TYPE adoption_statuses;
+
+  - changeSet:
+      id: create-health-status-enum
+      author: Moleus
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: CREATE TYPE health_statuses AS ENUM ('Healthy', 'MinorInjury', 'SeriousInjury', 'Sick', 'Recovering', 'Dead');
+          rollback:
+            sql: DROP TYPE health_statuses;
+
+  - changeSet:
+      id: create-roles
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: username
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(80)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-users
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: login
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: role
+                  constraints:
+                      nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    checkConstraint: "name <> ''"
+              - column:
+                  name: creation_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-animals
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: animals
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type_of_animal
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gender
+                  type: genders
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_castrated
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: health_status
+                  type: health_statuses
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-expense-purposes
+      author: Moleus
+      changes:
+          - createTable:
+              tableName: expense_purposes
+              columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+                      autoIncrement: true
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                      nullable: false
+                      unique: true
+
+  - changeSet:
+      id: create-ownerships
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: ownerships
+            columns:
+              - column:
+                  name: customer_id
+                  type: INT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_ownerships_customer
+                    references: users(id)
+              - column:
+                  name: animal_id
+                  type: INT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_ownerships_animal
+                    references: animals(id)
+
+  - changeSet:
+      id: create-adoption-requests
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: adoption_requests
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: date_time
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: adoption_statuses
+                  constraints:
+                      nullable: false
+              - column:
+                  name: customer_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_adoption_requests_customer
+                    references: users(id)
+              - column:
+                  name: manager_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_adoption_requests_manager
+                    references: users(id)
+              - column:
+                  name: animal_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_adoption_requests_animal
+                    references: animals(id)
+
+  - changeSet:
+      id: create-balances
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: balances
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: purpose
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: money_amount
+                  type: INT
+                  constraints:
+                    nullable: false
+                    checkConstraint: "money_amount >= 0"
+              - column:
+                  name: is_donation
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-transactions
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: date_time
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transactions_user
+                    references: users(id)
+              - column:
+                  name: purpose_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transactions_purpose
+                    references: expense_purposes(id)
+              - column:
+                  name: money_amount
+                  type: INT
+                  constraints:
+                    nullable: false
+                    checkConstraint: "money_amount > 0"
+              - column:
+                  name: is_donation
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
