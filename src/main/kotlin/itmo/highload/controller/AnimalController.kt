@@ -48,7 +48,7 @@ class AnimalController(val animalService: AnimalService) {
 
     @GetMapping("/health-statuses")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getAllHealthStatuses()/*: List<HealthStatus>*/ {
+    fun getAllHealthStatuses(pageable: Pageable)/*: List<HealthStatus>*/ {
         return
     }
 
