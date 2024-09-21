@@ -46,6 +46,12 @@ class AnimalController(val animalService: AnimalService) {
         return animalService.get(animalId)
     }
 
+    @GetMapping("/health-statuses")
+    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
+    fun getAllHealthStatuses()/*: List<HealthStatus>*/ {
+        return
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")

@@ -39,6 +39,16 @@ class AdoptionRequestController(val adoptionRequestService: AdoptionRequestServi
         return listOf()
     }
 
+    @GetMapping("/statuses")
+    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
+    fun getAllStatuses(
+        pageable: Pageable
+    )/*: List<AdoptionRequestStatus>*/ {
+        /*
+            adoptionRequestService.getAllStatuses()
+         */
+    }
+
     @PostMapping("/{animalId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     fun addAdoptionRequest(
