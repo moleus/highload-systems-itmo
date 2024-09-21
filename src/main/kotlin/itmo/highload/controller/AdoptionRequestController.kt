@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -25,13 +24,13 @@ class AdoptionRequestController(val adoptionRequestService: AdoptionRequestServi
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAdoptionRequests(
-        @RequestParam(required = false) hasPendingStatus: Boolean,
-        /*@AuthenticationPrincipal user: User,*/
+        /*@RequestParam(required = false) status: AdoptionRequestStatus,
+        @AuthenticationPrincipal user: User,*/
         pageable: Pageable
     ): List<AdoptionRequestResponse> {
         /*
         if (user.role == Role.ADOPTION_MANAGER) {
-            adoptionRequestService.getAll(hasPendingStatus, pageable)
+            adoptionRequestService.getAll(status, pageable)
         } else if (user.role == Role.CUSTOMER) {
             adoptionRequestService.getAllByCustomer(user.id, pageable)
         }
