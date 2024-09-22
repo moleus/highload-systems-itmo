@@ -20,7 +20,7 @@ data class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Int = 0,
 
     @Column(unique = true, nullable = false)
     @Size(min = 4, max = 50)

@@ -23,13 +23,10 @@ object PaginationResponseHelper {
         return headers
     }
 
-    fun <T, D> createPaginatedResponse(
-        entityPage: Page<T>,
-        dataTransformer: (List<T>) -> List<D>,
-    ): ResponseEntity<List<D>> {
-        val dtoList: List<D> = dataTransformer(entityPage.content)
+    fun <T> createPaginatedResponseWithHeaders(
+        entityPage: Page<T>
+    ): ResponseEntity<Page<T>> {
         val responseHeaders: HttpHeaders = createPaginationHeaders(entityPage)
-
-        return ResponseEntity.ok().headers(responseHeaders).body(dtoList)
+        return ResponseEntity.ok().headers(responseHeaders).body(entityPage)
     }
 }
