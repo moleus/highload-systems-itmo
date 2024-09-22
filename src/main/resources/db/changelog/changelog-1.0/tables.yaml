@@ -5,7 +5,7 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE genders AS ENUM ('Female', 'Male');
+            sql: CREATE TYPE genders AS ENUM ('FEMALE', 'MALE');
           rollback:
             sql: DROP TYPE genders;
 
@@ -15,7 +15,7 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE role AS ENUM ('Customer', 'Expense Manager', 'Adoption Manager');
+            sql: CREATE TYPE role AS ENUM ('CUSTOMER', 'EXPENSE_MANAGER', 'ADOPTION_MANAGER', 'SUPERUSER');
           rollback:
             sql: DROP TYPE role;
 
@@ -25,7 +25,7 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE adoption_statuses AS ENUM ('Pending', 'Approved', 'Denied');
+            sql: CREATE TYPE adoption_statuses AS ENUM ('PENDING', 'APPROVED', 'DENIED');
           rollback:
             sql: DROP TYPE adoption_statuses;
 
@@ -35,35 +35,9 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE health_statuses AS ENUM ('Healthy', 'Injury', 'Sick', 'Recovering', 'Dead');
+            sql: CREATE TYPE health_statuses AS ENUM ('HEALTHY', 'INJURY', 'SICK', 'RECOVERING', 'DEAD');
           rollback:
             sql: DROP TYPE health_statuses;
-
-  - changeSet:
-      id: create-roles
-      author: Moleus
-      changes:
-        - createTable:
-            tableName: roles
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-                    autoIncrement: true
-              - column:
-                  name: username
-                  type: VARCHAR(30)
-                  constraints:
-                    nullable: false
-                    unique: true
-              - column:
-                  name: password
-                  type: VARCHAR(80)
-                  constraints:
-                    nullable: false
 
   - changeSet:
       id: create-users
