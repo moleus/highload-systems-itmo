@@ -42,6 +42,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.mockk:mockk")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 kotlin {
