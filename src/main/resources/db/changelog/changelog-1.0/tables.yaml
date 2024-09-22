@@ -262,8 +262,8 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_transactions_purpose
-                    references: expense_purposes(id)
+                    foreignKeyName: fk_transactions_balance
+                    references: balances(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:
