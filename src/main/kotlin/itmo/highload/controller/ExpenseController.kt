@@ -2,7 +2,7 @@
 
 package itmo.highload.controller
 
-import itmo.highload.dto.ExpenseDto
+import itmo.highload.dto.TransactionDto
 import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
@@ -39,7 +39,7 @@ class ExpenseController(val transactionService: TransactionService) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun addExpense(@RequestBody @Valid expenseDto: ExpenseDto): TransactionResponse {
+    fun addExpense(@RequestBody @Valid expenseDto: TransactionDto): TransactionResponse {
         return transactionService.saveExpense(expenseDto)
     }
 }

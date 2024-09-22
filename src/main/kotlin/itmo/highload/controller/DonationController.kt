@@ -2,7 +2,7 @@
 
 package itmo.highload.controller
 
-import itmo.highload.dto.DonationDto
+import itmo.highload.dto.TransactionDto
 import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
@@ -44,7 +44,7 @@ class DonationController(val transactionService: TransactionService) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    fun addDonation(@RequestBody @Valid donationDto: DonationDto): TransactionResponse {
+    fun addDonation(@RequestBody @Valid donationDto: TransactionDto): TransactionResponse {
         return transactionService.saveDonation(donationDto)
     }
 }

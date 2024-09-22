@@ -3,7 +3,7 @@ package itmo.highload.dto
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 
-data class ExpenseDto(
+data class TransactionDto(
     @NotNull
     val purposeId: Int,
     @NotNull
