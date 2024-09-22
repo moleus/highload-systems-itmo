@@ -4,33 +4,87 @@ import io.restassured.RestAssured
 import io.restassured.parsing.Parser
 import io.restassured.response.Response
 import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.dto.response.AnimalResponse
 import itmo.highload.dto.response.UserResponse
+import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.Animal
+import itmo.highload.model.Customer
+import itmo.highload.model.User
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.model.enum.UserRole
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
+import itmo.highload.repository.CustomerRepository
+import itmo.highload.repository.UserRepository
 import itmo.highload.security.jwt.JwtProvider
 import itmo.highload.utils.defaultJsonRequestSpec
 import itmo.highload.utils.withJwt
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import java.time.LocalDate
 import java.time.LocalDateTime
 
+val animals = listOf(
+    Animal(
+        id = 1000,
+        name = "Buddy",
+        typeOfAnimal = "Dog",
+        gender = Gender.MALE,
+        isCastrated = true,
+        healthStatus = HealthStatus.HEALTHY
+    ), Animal(
+        id = 1,
+        name = "Molly",
+        typeOfAnimal = "Cat",
+        gender = Gender.FEMALE,
+        isCastrated = false,
+        healthStatus = HealthStatus.SICK
+    )
+)
+
+val users = listOf(
+    User(
+        id = 1000, login = "customer", password = "password", role = UserRole.CUSTOMER, createdDate = LocalDate.now()
+    ), User(
+        id = 1001, login = "customer2", password = "password", role = UserRole.CUSTOMER, createdDate = LocalDate.now()
+    )
+)
+
+val customers = users.map {
+    Customer(
+        id = it.id!!.toInt(), gender = Gender.MALE, phone = "+79991234567", address = "None Avenue"
+    )
+}
+
+val adoptionRequests = listOf(
+    AdoptionRequest(
+        id = 1000,
+        status = AdoptionStatus.PENDING,
+        customer = customers[0],
+        animal = animals[0],
+        dateTime = LocalDateTime.now(),
+        manager = null,
+    )
+)
 
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
     private val animalRepository: AnimalRepository,
+    private val customerRepository: CustomerRepository,
+    private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
 ) {
 
@@ -38,32 +92,22 @@ class TestAdoptionRequest @Autowired constructor(
     private var port: Int = 0
     private val apiUrlBasePath = "/api/v1/adoption-requests"
 
-    private val customerToken = jwtProvider.generateAccessToken("customer", UserRole.CUSTOMER)
+    private fun getCustomerToken(login: String) = jwtProvider.generateAccessToken(login, UserRole.CUSTOMER)
 
-    val animals = listOf(
-        Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        ), Animal(
-            id = 2,
-            name = "Molly",
-            typeOfAnimal = "Cat",
-            gender = Gender.FEMALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.SICK
-        )
-    )
+    private fun getAdoptionManagerToken(login: String) =
+        jwtProvider.generateAccessToken(login, UserRole.ADOPTION_MANAGER)
 
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON;
 
+        userRepository.deleteAll()
+        userRepository.saveAll(users)
+        customerRepository.deleteAll()
+        customerRepository.saveAll(customers)
         adoptionRequestRepository.deleteAll()
+        adoptionRequestRepository.saveAll(adoptionRequests)
         animalRepository.deleteAll()
         animalRepository.saveAll(animals)
     }
@@ -72,6 +116,8 @@ class TestAdoptionRequest @Autowired constructor(
     fun `test add adoption request`() {
         val animal = animals[0]
         val animalId = animal.id
+        val user = users[0]
+        val token = getCustomerToken(user.login)
 
         val expectedAnimalResponse = animal.let {
             AnimalResponse(
@@ -84,41 +130,86 @@ class TestAdoptionRequest @Autowired constructor(
             )
         }
         val expectedAdoptionRequestResponse = AdoptionRequestResponse(
-            id = 1,
-            dateTime = LocalDateTime.now(),
+            id = 2,
+            dateTime = LocalDateTime.now(),  // TODO: ignore time, we can't predict it
             status = AdoptionStatus.PENDING,
-            customer = UserResponse(id = 1, name = "John Doe"),
+            customer = UserResponse(id = user.id!!, login = "customer"),
             manager = null,
             animal = expectedAnimalResponse
         )
 
-        val response: Response = defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/$animalId")
+        val response: Response = defaultJsonRequestSpec().withJwt(token).post("$apiUrlBasePath/$animalId")
 
-
-        response.then().statusCode(200).body("animal", equalTo(expectedAnimalResponse))
+        response.then().statusCode(200).body("animal", equalTo(expectedAdoptionRequestResponse))
     }
 
     @Test
-    fun `test get all adoption requests`() {
-        val response: Response = defaultJsonRequestSpec().withJwt(customerToken).get(apiUrlBasePath)
+    fun `test get all adoption requests for customer`() {
+        val user = users[0]
+        val token = getCustomerToken(user.login)
 
-        response.then().statusCode(200).body("size()", equalTo(0)) // Adjust based on expected data
+        val expectedAdoptionRequestResponse = adoptionRequests.map {
+            AdoptionRequestResponse(
+                id = it.id,
+                dateTime = it.dateTime,
+                status = it.status,
+                customer = UserResponse(id = user.id!!, login = "customer"),
+                manager = null,
+                animal = AnimalResponse(
+                    id = it.animal.id,
+                    name = it.animal.name,
+                    type = it.animal.typeOfAnimal,
+                    gender = it.animal.gender,
+                    isCastrated = it.animal.isCastrated,
+                    healthStatus = it.animal.healthStatus
+                )
+            )
+        }
+
+        val response: Response = defaultJsonRequestSpec().withJwt(token).get(apiUrlBasePath)
+        response.then().statusCode(200).body("", `is`(expectedAdoptionRequestResponse))
+
+        // empty response for customer2
+
+        val user2 = users[1]
+        val token2 = getCustomerToken(user2.login)
+        val response2: Response = defaultJsonRequestSpec().withJwt(token2).get(apiUrlBasePath)
+        response2.then().statusCode(200).body("", `is`(emptyList<AdoptionRequestResponse>()))
     }
 
     @Test
     fun `test update adoption request`() {
-        val requestBody = mapOf("status" to "APPROVED")
-        val response: Response = defaultJsonRequestSpec().withJwt(customerToken).body(requestBody).patch(apiUrlBasePath)
+        val requestBody = UpdateAdoptionRequestStatusDto(
+            id = 1, status = AdoptionStatus.APPROVED
+        )
 
-        response.then().statusCode(200).body("status", equalTo("APPROVED"))
+        // Token for the owner of the adoption request
+        val ownerToken = getCustomerToken(users[0].login)
+        val ownerResponse: Response =
+            defaultJsonRequestSpec().withJwt(ownerToken).body(requestBody).patch(apiUrlBasePath)
+        ownerResponse.then().statusCode(403)
+
+        // Token for the adoption manager
+        val managerToken = getAdoptionManagerToken("manager")
+        val managerResponse: Response =
+            defaultJsonRequestSpec().withJwt(managerToken).body(requestBody).patch(apiUrlBasePath)
+        managerResponse.then().statusCode(200).body("status", equalTo(AdoptionStatus.APPROVED.name))
     }
 
     @Test
-    fun `test delete adoption request`() {
-        val animalId = 1
-        val response: Response = defaultJsonRequestSpec().withJwt(customerToken).delete("$apiUrlBasePath/$animalId")
+    fun `test only owner can delete adoption request`() {
+        val animalId = animals[0].id
 
-        response.then().statusCode(200)
+        // Token for another customer
+        val otherCustomerToken = getCustomerToken(users[1].login)
+        val otherCustomerResponse: Response =
+            defaultJsonRequestSpec().withJwt(otherCustomerToken).delete("$apiUrlBasePath/$animalId")
+        otherCustomerResponse.then().statusCode(403)
+
+        // Token for the owner of the adoption request
+        val ownerToken = getCustomerToken(users[0].login)
+        val ownerResponse: Response = defaultJsonRequestSpec().withJwt(ownerToken).delete("$apiUrlBasePath/$animalId")
+        ownerResponse.then().statusCode(200)
     }
 
     @ParameterizedTest(name = "Only customer can delete adoption request: {0}")
@@ -128,7 +219,7 @@ class TestAdoptionRequest @Autowired constructor(
             return
         }
         val animalId = 1
-        val otherRoleToken = jwtProvider.generateAccessToken("otherRoleUser", role)
+        val otherRoleToken = jwtProvider.generateAccessToken("customer", role)
         val response: Response = defaultJsonRequestSpec().withJwt(otherRoleToken).delete("$apiUrlBasePath/$animalId")
 
         response.then().statusCode(403) // Adjust based on expected status code for forbidden access

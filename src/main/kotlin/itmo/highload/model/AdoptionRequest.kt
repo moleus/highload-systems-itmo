@@ -36,7 +36,7 @@ data class AdoptionRequest(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id", nullable = true)
-    val manager: User,
+    val manager: User?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id", nullable = false)
