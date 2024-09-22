@@ -77,7 +77,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-testcontainers")
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                // springboot testcontainers
+                implementation("org.springframework.boot:spring-boot-starter-security")
                 implementation("org.testcontainers:testcontainers")
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
