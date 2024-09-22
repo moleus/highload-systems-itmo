@@ -61,6 +61,7 @@ class BalanceController(val balanceService: BalanceService) {
         if (hasHeaders) {
             return PaginationResponseHelper.createPaginatedResponseWithHeaders(mapPageToPurposeResponse(page))
         }
+
         return ResponseEntity.ok(mapPageToPurposeResponse(page))
     }
 
