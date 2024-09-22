@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
 
 @Entity
-@Table(name = "users")
+@Table(name = "app_users")
 data class User(
 
     @Id
@@ -34,7 +34,7 @@ data class User(
     val role: UserRole,
 
     @Column
-    val createdDate: LocalDate
+    val creationDate: LocalDate
 
 ) : UserDetails {
 

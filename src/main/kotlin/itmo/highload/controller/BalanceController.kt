@@ -1,5 +1,3 @@
-@file:Suppress("UnusedParameter", "CommentWrapping")
-
 package itmo.highload.controller
 
 import itmo.highload.dto.response.BalanceResponse
@@ -47,13 +45,15 @@ class BalanceController(val balanceService: BalanceService) {
         pageable: Pageable
     ): ResponseEntity<Page<PurposeResponse>> {
         val page: Page<PurposeResponse> = balanceService.getAllPurposes(pageable)
+
         if (hasHeaders) {
-            return PaginationResponseHelper.createPaginatedResponse(page)
+            return PaginationResponseHelper.createPaginatedResponseWithHeaders(page)
         }
         return ResponseEntity.ok(page)
     }
 
     @PostMapping("/purposes")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) name: String): PurposeResponse {
         return balanceService.addPurpose(name)

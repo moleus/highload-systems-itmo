@@ -15,7 +15,7 @@ object TransactionMapper {
         return Transaction(
             dateTime = LocalDateTime.now(),
             user = user,
-            balancePurpose = balance,
+            balance = balance,
             moneyAmount = dto.moneyAmount,
             isDonation = isDonation
         )
@@ -25,8 +25,8 @@ object TransactionMapper {
         return TransactionResponse(
             dateTime = entity.dateTime,
             purpose = PurposeResponse(
-                id = entity.balancePurpose.id,
-                name = entity.balancePurpose.purpose
+                id = entity.balance.id,
+                name = entity.balance.purpose
             ),
             user = UserResponse(
                 id = entity.user.id,
