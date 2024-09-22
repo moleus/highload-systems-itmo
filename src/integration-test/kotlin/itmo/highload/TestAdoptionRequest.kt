@@ -4,8 +4,11 @@ import io.restassured.RestAssured
 import io.restassured.parsing.Parser
 import io.restassured.response.Response
 import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.dto.response.AnimalResponse
+import itmo.highload.dto.response.UserResponse
 import itmo.highload.model.Animal
+import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.model.enum.UserRole
@@ -21,6 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import java.time.LocalDateTime
 
 
 @IntegrationTestContext
@@ -68,7 +72,6 @@ class TestAdoptionRequest @Autowired constructor(
     fun `test add adoption request`() {
         val animal = animals[0]
         val animalId = animal.id
-        val response: Response = defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/$animalId")
 
         val expectedAnimalResponse = animal.let {
             AnimalResponse(
@@ -80,6 +83,17 @@ class TestAdoptionRequest @Autowired constructor(
                 healthStatus = it.healthStatus
             )
         }
+        val expectedAdoptionRequestResponse = AdoptionRequestResponse(
+            id = 1,
+            dateTime = LocalDateTime.now(),
+            status = AdoptionStatus.PENDING,
+            customer = UserResponse(id = 1, name = "John Doe"),
+            manager = null,
+            animal = expectedAnimalResponse
+        )
+
+        val response: Response = defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/$animalId")
+
 
         response.then().statusCode(200).body("animal", equalTo(expectedAnimalResponse))
     }

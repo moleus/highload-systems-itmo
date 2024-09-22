@@ -8,6 +8,6 @@ class AdoptionRequestResponse(
     val dateTime: LocalDateTime,
     val status: AdoptionStatus,
     val customer: UserResponse,
-    val manager: UserResponse,
+    val manager: UserResponse?,
     val animal: AnimalResponse
 )
