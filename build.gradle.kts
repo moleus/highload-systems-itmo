@@ -44,7 +44,6 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
 }
 
 kotlin {
