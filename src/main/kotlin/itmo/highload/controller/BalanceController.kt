@@ -2,6 +2,8 @@ package itmo.highload.controller
 
 import itmo.highload.dto.response.BalanceResponse
 import itmo.highload.dto.response.PurposeResponse
+import itmo.highload.mapper.BalanceMapper
+import itmo.highload.model.Balance
 import itmo.highload.service.BalanceService
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.constraints.NotBlank
@@ -24,18 +26,28 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/balances")
 class BalanceController(val balanceService: BalanceService) {
 
+    private fun mapPageToBalanceResponse(page: Page<Balance>): Page<BalanceResponse> {
+        return page.map { balance -> BalanceMapper.toBalanceResponse(balance) }
+    }
+
+    private fun mapPageToPurposeResponse(page: Page<Balance>): Page<PurposeResponse> {
+        return page.map { balance -> BalanceMapper.toPurposeResponse(balance) }
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllBalances(pageable: Pageable): Page<BalanceResponse> {
-        return balanceService.getAll(pageable)
+        val page = balanceService.getAll(pageable)
+        return mapPageToBalanceResponse(page)
     }
 
     @GetMapping("/{balanceId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getBalanceById(@PathVariable balanceId: Int): BalanceResponse {
-        return balanceService.getById(balanceId)
+        val balance = balanceService.getById(balanceId)
+        return BalanceMapper.toBalanceResponse(balance)
     }
 
     @GetMapping("/purposes")
@@ -44,18 +56,19 @@ class BalanceController(val balanceService: BalanceService) {
         @RequestParam(required = false) hasHeaders: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<PurposeResponse>> {
-        val page: Page<PurposeResponse> = balanceService.getAllPurposes(pageable)
+        val page = balanceService.getAllPurposes(pageable)
 
         if (hasHeaders) {
-            return PaginationResponseHelper.createPaginatedResponseWithHeaders(page)
+            return PaginationResponseHelper.createPaginatedResponseWithHeaders(mapPageToPurposeResponse(page))
         }
-        return ResponseEntity.ok(page)
+        return ResponseEntity.ok(mapPageToPurposeResponse(page))
     }
 
     @PostMapping("/purposes")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) name: String): PurposeResponse {
-        return balanceService.addPurpose(name)
+        val purpose = balanceService.addPurpose(name)
+        return BalanceMapper.toPurposeResponse(purpose)
     }
 }

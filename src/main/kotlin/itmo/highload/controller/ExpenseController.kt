@@ -2,6 +2,8 @@ package itmo.highload.controller
 
 import itmo.highload.dto.TransactionDto
 import itmo.highload.dto.response.TransactionResponse
+import itmo.highload.mapper.TransactionMapper
+import itmo.highload.model.Transaction
 import itmo.highload.model.User
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
@@ -22,11 +24,16 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/transactions/expenses")
 class ExpenseController(val transactionService: TransactionService) {
 
+    private fun mapPageToResponse(page: Page<Transaction>): Page<TransactionResponse> {
+        return page.map { transaction -> TransactionMapper.toResponse(transaction) }
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllExpenses(pageable: Pageable): Page<TransactionResponse> {
-        return transactionService.getAll(isDonation = false, pageable)
+        val page = transactionService.getAll(isDonation = false, pageable)
+        return mapPageToResponse(page)
     }
 
     @GetMapping("/{purposeId}")
@@ -36,7 +43,8 @@ class ExpenseController(val transactionService: TransactionService) {
         @PathVariable purposeId: Int,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        return transactionService.getAllByPurpose(isDonation = false, purposeId, pageable)
+        val page = transactionService.getAllByPurpose(isDonation = false, purposeId, pageable)
+        return mapPageToResponse(page)
     }
 
     @PostMapping
@@ -46,6 +54,7 @@ class ExpenseController(val transactionService: TransactionService) {
         @AuthenticationPrincipal user: User,
         @RequestBody @Valid expenseDto: TransactionDto
     ): TransactionResponse {
-        return transactionService.addTransaction(expenseDto, user, isDonation = false)
+        val transaction = transactionService.addTransaction(expenseDto, user, isDonation = false)
+        return TransactionMapper.toResponse(transaction)
     }
 }

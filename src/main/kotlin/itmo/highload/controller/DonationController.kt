@@ -2,6 +2,8 @@ package itmo.highload.controller
 
 import itmo.highload.dto.TransactionDto
 import itmo.highload.dto.response.TransactionResponse
+import itmo.highload.mapper.TransactionMapper
+import itmo.highload.model.Transaction
 import itmo.highload.model.User
 import itmo.highload.model.enum.UserRole
 import itmo.highload.service.TransactionService
@@ -23,6 +25,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/transactions/donations")
 class DonationController(val transactionService: TransactionService) {
 
+    private fun mapPageToResponse(page: Page<Transaction>): Page<TransactionResponse> {
+        return page.map { transaction -> TransactionMapper.toResponse(transaction) }
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER', 'CUSTOMER')")
@@ -30,10 +36,13 @@ class DonationController(val transactionService: TransactionService) {
         @AuthenticationPrincipal user: User,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        if (user.role == UserRole.EXPENSE_MANAGER) {
-            return transactionService.getAll(isDonation = true, pageable)
+        val page = if (user.role == UserRole.EXPENSE_MANAGER) {
+            transactionService.getAll(isDonation = true, pageable)
+        } else {
+            transactionService.getAllByUser(isDonation = true, user.id, pageable)
         }
-        return transactionService.getAllByUser(isDonation = true, user.id, pageable)
+
+        return mapPageToResponse(page)
     }
 
     @GetMapping("/{customerId}")
@@ -43,7 +52,8 @@ class DonationController(val transactionService: TransactionService) {
         @PathVariable customerId: Int,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        return transactionService.getAllByUser(isDonation = true, customerId, pageable)
+        val page = transactionService.getAllByUser(isDonation = true, customerId, pageable)
+        return mapPageToResponse(page)
     }
 
     @PostMapping
@@ -53,6 +63,7 @@ class DonationController(val transactionService: TransactionService) {
         @AuthenticationPrincipal user: User,
         @RequestBody @Valid donationDto: TransactionDto
     ): TransactionResponse {
-        return transactionService.addTransaction(donationDto, user, isDonation = true)
+        val transaction = transactionService.addTransaction(donationDto, user, isDonation = true)
+        return TransactionMapper.toResponse(transaction)
     }
 }
