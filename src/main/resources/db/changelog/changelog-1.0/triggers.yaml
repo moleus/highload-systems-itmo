@@ -12,8 +12,7 @@ databaseChangeLog:
               CREATE OR REPLACE FUNCTION check_adoption_requests()
               RETURNS TRIGGER AS $$
                       BEGIN
-                        PERFORM 1 FROM users WHERE id = NEW.customer_id AND role = 'customer';
-                        IF NOT FOUND THEN
+                        IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.customer_id AND role = 'customer') THEN
                           RAISE EXCEPTION 'customer_id must reference a user with role customer';
                         END IF;
                         IF NEW.manager_id IS NOT NULL THEN
@@ -23,11 +22,7 @@ databaseChangeLog:
                           END IF;
                         END IF;
                 RETURN NEW;
-              EXCEPTION
-                WHEN OTHERS THEN
-                  ROLLBACK;
-                  RAISE;
-                      END;
+              END;
               $$ LANGUAGE plpgsql;
 
               CREATE TRIGGER check_adoption_requests_trigger
@@ -48,8 +43,7 @@ databaseChangeLog:
               RETURNS TRIGGER AS $$
                           BEGIN
                             IF NEW.is_donation THEN
-                              PERFORM 1 FROM users WHERE id = NEW.user_id AND role = 'customer';
-                              IF NOT FOUND THEN
+                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'customer') THEN
                                 RAISE EXCEPTION 'user_id must reference a user with role customer when is_donation is true';
                               END IF;
                             ELSE
@@ -59,10 +53,6 @@ databaseChangeLog:
                               END IF;
                             END IF;
                 RETURN NEW;
-              EXCEPTION
-                WHEN OTHERS THEN
-                  ROLLBACK;
-                  RAISE;
               END;
               $$ LANGUAGE plpgsql;
               
