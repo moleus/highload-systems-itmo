@@ -29,7 +29,7 @@ data class Transaction(
     val user: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "purpose_id", nullable = false)
+    @JoinColumn(name = "balance_id", nullable = false)
     val balancePurpose: Balance,
 
     @Column(name = "money_amount", nullable = false)
