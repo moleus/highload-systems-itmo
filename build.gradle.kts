@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import java.util.*
 
 plugins {
@@ -9,6 +11,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
+    `jvm-test-suite`
 }
 
 group = "ru.itmo"
@@ -26,7 +29,6 @@ repositories {
 }
 
 dependencies {
-
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -54,13 +56,70 @@ kotlin {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            targets.all {
+                testTask.configure {
+                    setupEnvironment()
+                }
+            }
+        }
+
+        register<JvmTestSuite>("integrationTest") {
+            useJUnitJupiter()
+            testType.set(TestSuiteType.INTEGRATION_TEST)
+
+            dependencies {
+                implementation(project())
+                implementation("org.springframework.boot:spring-boot-starter-test")
+                implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework.boot:spring-boot-testcontainers")
+                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+                // springboot testcontainers
+                implementation("org.testcontainers:testcontainers")
+                implementation("org.testcontainers:postgresql")
+                implementation("org.testcontainers:junit-jupiter")
+                implementation("io.rest-assured:rest-assured")
+            }
+
+            sources {
+                kotlin {
+                    srcDir("src/integration-test/kotlin")
+                }
+            }
+
+            // run integration tests after unit tests
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                        setupEnvironment()
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun Test.setupEnvironment() {
     environment("SPRING_DATASOURCE_URL", System.getenv("SPRING_DATASOURCE_URL"))
     environment("SPRING_DATASOURCE_USERNAME", System.getenv("SPRING_DATASOURCE_USERNAME"))
     environment("SPRING_DATASOURCE_PASSWORD", System.getenv("SPRING_DATASOURCE_PASSWORD"))
 }
 
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
+}
+
+//tasks.withType<Test> {
+//    useJUnitPlatform()
+//    environment("SPRING_DATASOURCE_URL", System.getenv("SPRING_DATASOURCE_URL"))
+//    environment("SPRING_DATASOURCE_USERNAME", System.getenv("SPRING_DATASOURCE_USERNAME"))
+//    environment("SPRING_DATASOURCE_PASSWORD", System.getenv("SPRING_DATASOURCE_PASSWORD"))
+//}
+//
 subprojects {
     apply(plugin = "com.ncorti.ktfmt.gradle")
 
@@ -85,8 +144,8 @@ var hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
 if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
 }
-jib {
 
+jib {
     from {
         image = "openjdk:$jdkVersion-jdk-slim"
         platforms {
