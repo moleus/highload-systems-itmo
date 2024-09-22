@@ -1,4 +1,4 @@
-package itmo.highload.model.enums
+package itmo.highload.model.enum
 
 enum class Gender {
     MALE, FEMALE

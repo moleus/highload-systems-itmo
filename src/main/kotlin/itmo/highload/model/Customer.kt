@@ -1,6 +1,6 @@
 package itmo.highload.model
 
-import itmo.highload.model.enums.Gender
+import itmo.highload.model.enum.Gender
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import jakarta.persistence.Id
