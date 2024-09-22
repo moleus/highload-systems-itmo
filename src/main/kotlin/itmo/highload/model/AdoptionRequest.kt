@@ -1,6 +1,6 @@
 package itmo.highload.model
 
-import itmo.highload.model.enums.AdoptionStatus
+import itmo.highload.model.enum.AdoptionStatus
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import jakarta.persistence.Id

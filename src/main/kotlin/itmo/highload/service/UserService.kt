@@ -1,6 +1,6 @@
 package itmo.highload.service
 
-import itmo.highload.controller.request.RegisterRequest
+import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
 import itmo.highload.repository.UserRepository
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -20,7 +20,7 @@ class UserService(
         return userRepository.findByLogin(login) ?: throw UsernameNotFoundException("User not found")
     }
 
-    fun addUser(request: RegisterRequest): User {
+    fun addUser(request: RegisterDto): User {
         val user = User(
             login = request.login,
             password = encoder.encode(request.password),

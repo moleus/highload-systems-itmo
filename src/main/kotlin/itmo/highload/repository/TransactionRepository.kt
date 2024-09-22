@@ -1,4 +1,4 @@
-package itmo.highload.repositories
+package itmo.highload.repository
 
 import itmo.highload.model.Transaction
 import itmo.highload.model.User

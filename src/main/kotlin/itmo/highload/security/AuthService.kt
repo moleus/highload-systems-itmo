@@ -1,8 +1,8 @@
 package itmo.highload.security
 
 import io.jsonwebtoken.JwtException
-import itmo.highload.controller.request.RegisterRequest
-import itmo.highload.controller.response.JwtResponse
+import itmo.highload.dto.RegisterDto
+import itmo.highload.dto.response.JwtResponse
 import itmo.highload.model.User
 import itmo.highload.security.jwt.JwtProvider
 import itmo.highload.service.UserService
@@ -36,7 +36,7 @@ class AuthService(
         }
     }
 
-    fun register(request: RegisterRequest): User {
+    fun register(request: RegisterDto): User {
         return userService.addUser(request)
     }
 

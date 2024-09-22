@@ -1,4 +1,4 @@
-package itmo.highload.controller.response
+package itmo.highload.dto.response
 
 import itmo.highload.model.enum.UserRole
 import jakarta.validation.constraints.NotBlank

@@ -1,4 +1,4 @@
-package itmo.highload.repositories
+package itmo.highload.repository
 
 import itmo.highload.model.Balance
 import org.springframework.data.jpa.repository.JpaRepository
