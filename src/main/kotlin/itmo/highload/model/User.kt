@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "users")
 data class User(
 
     @Id
