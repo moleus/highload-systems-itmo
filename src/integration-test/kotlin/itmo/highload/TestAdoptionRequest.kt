@@ -96,8 +96,7 @@ class TestAdoptionRequest @Autowired constructor(
         val requestBody = mapOf("status" to "APPROVED")
         val response: Response = defaultJsonRequestSpec().withJwt(customerToken).body(requestBody).patch(apiUrlBasePath)
 
-        // expect unauthorized
-        response.then().statusCode(401)
+        response.then().statusCode(200).body("status", equalTo("APPROVED"))
     }
 
     @Test
