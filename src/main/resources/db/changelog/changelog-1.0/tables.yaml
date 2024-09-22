@@ -126,6 +126,7 @@ databaseChangeLog:
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
+                    checkConstraint: "name <> ''"
               - column:
                   name: type_of_animal
                   type: VARCHAR(50)
@@ -148,27 +149,6 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
-      id: create-expense-purposes
-      author: Moleus
-      changes:
-          - createTable:
-              tableName: expense_purposes
-              columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  constraints:
-                      primaryKey: true
-                      nullable: false
-                      autoIncrement: true
-              - column:
-                  name: name
-                  type: VARCHAR(50)
-                  constraints:
-                      nullable: false
-                      unique: true
-
-  - changeSet:
       id: create-ownerships
       author: Moleus
       changes:
@@ -183,6 +163,8 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_ownerships_customer
                     references: users(id)
+                    deleteCascade: true
+                    validateForeignKey: true
               - column:
                   name: animal_id
                   type: INT
@@ -191,6 +173,8 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_ownerships_animal
                     references: animals(id)
+                    deleteCascade: true
+                    validateForeignKey: true
 
   - changeSet:
       id: create-adoption-requests
@@ -223,6 +207,8 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_adoption_requests_customer
                     references: users(id)
+                    deleteCascade: true
+                    validateForeignKey: true
               - column:
                   name: manager_id
                   type: INT
@@ -230,6 +216,8 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_adoption_requests_manager
                     references: users(id)
+                    deleteCascade: true
+                    validateForeignKey: true
               - column:
                   name: animal_id
                   type: INT
@@ -237,6 +225,8 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_adoption_requests_animal
                     references: animals(id)
+                    deleteCascade: true
+                    validateForeignKey: true
 
   - changeSet:
       id: create-balances
@@ -264,11 +254,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     checkConstraint: "money_amount >= 0"
-              - column:
-                  name: is_donation
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
 
   - changeSet:
       id: create-transactions
@@ -296,13 +281,17 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_transactions_user
                     references: users(id)
+                    deleteCascade: true
+                    validateForeignKey: true
               - column:
-                  name: purpose_id
+                  name: balance_id
                   type: INT
                   constraints:
                     nullable: false
                     foreignKeyName: fk_transactions_purpose
                     references: expense_purposes(id)
+                    deleteCascade: true
+                    validateForeignKey: true
               - column:
                   name: money_amount
                   type: INT
