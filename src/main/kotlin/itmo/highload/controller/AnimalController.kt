@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
-    private val MAX_PAGE_SIZE = 50
+    companion object {
+        private const val MAX_PAGE_SIZE = 50
+    }
+
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
