@@ -28,9 +28,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
     }
 
     fun update(animalId: Int, request: AnimalDto): Animal {
-        val existingAnimal = animalRepository.findById(animalId).orElseThrow {
-            EntityNotFoundException("Animal not found")
-        }
+        val existingAnimal = get(animalId)
         validateAnimal(existingAnimal, request)
 
         existingAnimal.name = request.name
@@ -38,13 +36,10 @@ class AnimalService(private val animalRepository: AnimalRepository) {
         existingAnimal.healthStatus = request.healthStatus
 
         return animalRepository.save(existingAnimal)
-
     }
 
     fun delete(animalId: Int) {
-        val existingAnimal = animalRepository.findById(animalId).orElseThrow {
-            EntityNotFoundException("Animal not found")
-        }
+        val existingAnimal = get(animalId)
         animalRepository.delete(existingAnimal)
     }
 

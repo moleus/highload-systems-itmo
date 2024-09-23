@@ -1,5 +1,3 @@
-@file:Suppress("UnusedParameter", "CommentWrapping")
-
 package itmo.highload.controller
 
 import itmo.highload.dto.AnimalDto
@@ -47,7 +45,6 @@ class AnimalController(val animalService: AnimalService) {
     }
 
     @GetMapping("/{animalId}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAnimal(@PathVariable animalId: Int): AnimalResponse {
         val animal = animalService.get(animalId)
@@ -69,7 +66,6 @@ class AnimalController(val animalService: AnimalService) {
     }
 
     @PutMapping("/{animalId}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAnimal(
         @PathVariable animalId: Int,

@@ -34,8 +34,12 @@ class WebSecurityConfig {
             }
             .authorizeHttpRequests { requests: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
                 requests
-                    .requestMatchers("/", "/bundle.js", "/index.html", "/api/auth/**", "/error").permitAll()
-                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
+                    .requestMatchers(
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/token",
+                        "/api/v1/auth/refresh",
+                        "/error"
+                    ).permitAll()
                     .anyRequest().authenticated()
             }
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)

@@ -2,7 +2,9 @@ package itmo.highload.service
 
 import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
+import itmo.highload.model.enum.Role
 import itmo.highload.repository.UserRepository
+import jakarta.annotation.PostConstruct
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -15,6 +17,46 @@ class UserService(
     private val encoder: PasswordEncoder
 ) {
 
+    @PostConstruct
+    fun initializeUsers() {
+        if (!checkIfExists("superuser")) {
+            val user = User(
+                login = "superuser",
+                password = encoder.encode("123"),
+                role = Role.SUPERUSER,
+                creationDate = LocalDate.now()
+            )
+            userRepository.save(user)
+        }
+        if (!checkIfExists("customer")) {
+            val user = User(
+                login = "customer",
+                password = encoder.encode("123"),
+                role = Role.CUSTOMER,
+                creationDate = LocalDate.now()
+            )
+            userRepository.save(user)
+        }
+        if (!checkIfExists("emanager")) {
+            val user = User(
+                login = "emanager",
+                password = encoder.encode("123"),
+                role = Role.EXPENSE_MANAGER,
+                creationDate = LocalDate.now()
+            )
+            userRepository.save(user)
+        }
+        if (!checkIfExists("amanager")) {
+            val user = User(
+                login = "amanager",
+                password = encoder.encode("123"),
+                role = Role.ADOPTION_MANAGER,
+                creationDate = LocalDate.now()
+            )
+            userRepository.save(user)
+        }
+    }
+
     @Throws(UsernameNotFoundException::class)
     fun getByLogin(login: String): User {
         return userRepository.findByLogin(login) ?: throw UsernameNotFoundException("User not found")
@@ -25,7 +67,7 @@ class UserService(
             login = request.login,
             password = encoder.encode(request.password),
             role = request.role,
-            createdDate = LocalDate.now()
+            creationDate = LocalDate.now()
         )
 
         return userRepository.save(user)

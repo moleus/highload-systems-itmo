@@ -38,11 +38,9 @@ class PaginationResponseHelperTest {
         assertEquals("50", headers["X-Current-Element-Num"]?.get(0))
     }
 
-
     @Test
-    fun `test createPaginatedResponse`() {
+    fun `test createPaginatedResponseWithHeaders`() {
         val entityPage = mockk<Page<String>>()
-        val dataTransformer: (List<String>) -> List<Int> = { content -> content.map { it.length } }
 
         every { entityPage.content } returns listOf("Item1", "Item22", "Item333")
         every { entityPage.number } returns 0
@@ -50,10 +48,10 @@ class PaginationResponseHelperTest {
         every { entityPage.totalElements } returns 3
         every { entityPage.numberOfElements } returns 3
 
-        val response: ResponseEntity<List<Int>> = PaginationResponseHelper.createPaginatedResponse(
-            entityPage, dataTransformer)
+        val response: ResponseEntity<Page<String>> =
+            PaginationResponseHelper.createPaginatedResponseWithHeaders(entityPage)
 
-        val expectedTransformedData = listOf(5, 6, 7)
+        val expectedTransformedData = listOf("Item1", "Item22", "Item333")
         val headers = response.headers
 
         assertEquals("0", headers["X-Current-Page"]?.first())
@@ -61,7 +59,6 @@ class PaginationResponseHelperTest {
         assertEquals("3", headers["X-Total-Elements"]?.first())
         assertEquals("3", headers["X-Current-Element-Num"]?.first())
 
-        assertEquals(expectedTransformedData, response.body)
-
+        assertEquals(expectedTransformedData, response.body!!.content)
     }
 }

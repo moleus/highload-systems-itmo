@@ -12,6 +12,8 @@ import jakarta.persistence.EnumType
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
 @Entity
 @Table(name = "customers")
@@ -26,6 +28,7 @@ data class Customer(
     val phone: String,
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(nullable = false)
     val gender: Gender,
 

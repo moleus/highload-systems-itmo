@@ -23,8 +23,8 @@ object PaginationResponseHelper {
         return headers
     }
 
-    fun <T,> createPaginatedResponse(
-        entityPage: Page<T>,
+    fun <T> createPaginatedResponseWithHeaders(
+        entityPage: Page<T>
     ): ResponseEntity<Page<T>> {
         val responseHeaders: HttpHeaders = createPaginationHeaders(entityPage)
         return ResponseEntity.ok().headers(responseHeaders).body(entityPage)
