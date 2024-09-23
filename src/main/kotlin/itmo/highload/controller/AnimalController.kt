@@ -1,5 +1,3 @@
-@file:Suppress("UnusedParameter", "CommentWrapping")
-
 package itmo.highload.controller
 
 import itmo.highload.dto.AnimalDto
