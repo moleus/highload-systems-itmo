@@ -11,7 +11,10 @@ import itmo.highload.repository.CustomerRepository
 import itmo.highload.service.exception.EntityAlreadyExistsException
 import itmo.highload.service.exception.InvalidAdoptionRequestStatusException
 import itmo.highload.mapper.AdoptionRequestMapper
+import itmo.highload.model.Ownership
+import itmo.highload.repository.OwnershipRepository
 import jakarta.persistence.EntityNotFoundException
+import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -20,8 +23,10 @@ import org.springframework.stereotype.Service
 class AdoptionRequestService(
     private val adoptionRequestRepository: AdoptionRequestRepository,
     private val customerRepository: CustomerRepository,
-    private val animalService: AnimalService
+    private val animalService: AnimalService,
+    private val ownershipRepository: OwnershipRepository
 ) {
+
     fun save(customerId: Int, animalId: Int): AdoptionRequest {
         if (adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) != null) {
             throw EntityAlreadyExistsException(
@@ -39,6 +44,7 @@ class AdoptionRequestService(
         return adoptionRequestRepository.save(adoptionRequest)
     }
 
+    @Transactional
     fun update(manager: User, request: UpdateAdoptionRequestStatusDto): AdoptionRequest {
         val adoptionRequest = adoptionRequestRepository.findById(request.id).orElseThrow {
             EntityNotFoundException("Adoption request not found")
@@ -46,6 +52,15 @@ class AdoptionRequestService(
 
         adoptionRequest.status = request.status
         adoptionRequest.manager = manager
+
+        if (request.status == AdoptionStatus.APPROVED) {
+            val ownership = Ownership(
+                customer = adoptionRequest.customer,
+                animal = adoptionRequest.animal,
+            )
+
+            ownershipRepository.save(ownership)
+        }
 
         return adoptionRequestRepository.save(adoptionRequest)
     }
