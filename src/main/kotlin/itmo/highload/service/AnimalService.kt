@@ -9,6 +9,7 @@ import itmo.highload.model.enum.HealthStatus
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.service.exception.InvalidAnimalUpdateException
 import itmo.highload.service.mapper.AnimalMapper
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service
 @Service
 class AnimalService (private val animalRepository: AnimalRepository) {
     fun get(animalId: Int): Animal {
-        return animalRepository.findById(animalId).get()
+        return animalRepository.findById(animalId).orElseThrow {
+            EntityNotFoundException("Animal with ID $animalId not found")
+        }
     }
 
     fun save(request: AnimalDto): Animal {
@@ -25,7 +28,9 @@ class AnimalService (private val animalRepository: AnimalRepository) {
     }
 
     fun update(animalId: Int, request: AnimalDto): Animal {
-        val existingAnimal = animalRepository.findById(animalId).orElseThrow()
+        val existingAnimal = animalRepository.findById(animalId).orElseThrow {
+            EntityNotFoundException("Animal not found")
+        }
         validateAnimal(existingAnimal, request)
 
         existingAnimal.name = request.name
@@ -37,7 +42,9 @@ class AnimalService (private val animalRepository: AnimalRepository) {
     }
 
     fun delete(animalId: Int) {
-        val existingAnimal = animalRepository.findById(animalId).orElseThrow()
+        val existingAnimal = animalRepository.findById(animalId).orElseThrow {
+            EntityNotFoundException("Animal not found")
+        }
         animalRepository.delete(existingAnimal)
     }
 

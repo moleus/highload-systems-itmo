@@ -25,11 +25,17 @@ class AdoptionRequestService(
 ) {
     fun save(customerId: Int, animalId: Int): AdoptionRequest {
         if (adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) != null) {
-            throw AdoptionRequestAlreadyExistsException("An adoption request already exists " +
-                    "for customer ID: $customerId and animal ID: $animalId")
+            throw AdoptionRequestAlreadyExistsException(
+                "An adoption request already exists " +
+                        "for customer ID: $customerId and animal ID: $animalId"
+            )
         }
-        val customer = customerRepository.findById(customerId).orElseThrow()
-        val animal = animalRepository.findById(animalId).orElseThrow()
+        val customer = customerRepository.findById(customerId).orElseThrow {
+            EntityNotFoundException("Customer not found")
+        }
+        val animal = animalRepository.findById(animalId).orElseThrow {
+            EntityNotFoundException("Animal not found")
+        }
 
         val adoptionRequest = AdoptionRequestMapper.toEntity(customer, animal, AdoptionStatus.PENDING)
 
@@ -37,7 +43,9 @@ class AdoptionRequestService(
     }
 
     fun update(manager: User, request: UpdateAdoptionRequestStatusDto): AdoptionRequest {
-        val adoptionRequest = adoptionRequestRepository.findById(request.id).orElseThrow()
+        val adoptionRequest = adoptionRequestRepository.findById(request.id).orElseThrow {
+            EntityNotFoundException("Adoption request not found")
+        }
 
         adoptionRequest.status = request.status
         adoptionRequest.manager = manager
@@ -49,8 +57,10 @@ class AdoptionRequestService(
         val adoptionRequest = adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
             ?: throw EntityNotFoundException("Adoption request not found")
         if (adoptionRequest.status != AdoptionStatus.PENDING) {
-            throw InvalidAdoptionRequestStatusException("Cannot delete adoption " +
-                    "request with status: ${adoptionRequest.status}")
+            throw InvalidAdoptionRequestStatusException(
+                "Cannot delete adoption " +
+                        "request with status: ${adoptionRequest.status}"
+            )
         }
         adoptionRequestRepository.delete(adoptionRequest)
     }
