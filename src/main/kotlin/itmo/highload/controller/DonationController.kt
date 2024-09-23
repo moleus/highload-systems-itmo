@@ -7,6 +7,7 @@ import itmo.highload.model.Transaction
 import itmo.highload.model.User
 import itmo.highload.model.enum.Role
 import itmo.highload.service.TransactionService
+import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,10 +36,11 @@ class DonationController(val transactionService: TransactionService) {
         @AuthenticationPrincipal user: User,
         pageable: Pageable
     ): Page<TransactionResponse> {
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = if (user.role == Role.EXPENSE_MANAGER) {
-            transactionService.getAll(isDonation = true, pageable)
+            transactionService.getAll(isDonation = true, limitedPageable)
         } else {
-            transactionService.getAllByUser(isDonation = true, user.id, pageable)
+            transactionService.getAllByUser(isDonation = true, user.id, limitedPageable)
         }
 
         return mapPageToResponse(page)
@@ -50,7 +52,8 @@ class DonationController(val transactionService: TransactionService) {
         @PathVariable customerId: Int,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        val page = transactionService.getAllByUser(isDonation = true, customerId, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        val page = transactionService.getAllByUser(isDonation = true, customerId, limitedPageable)
         return mapPageToResponse(page)
     }
 

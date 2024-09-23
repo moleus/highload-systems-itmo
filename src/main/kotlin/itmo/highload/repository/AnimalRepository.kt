@@ -17,6 +17,6 @@ interface AnimalRepository : JpaRepository<Animal, Int> {
     fun findByGender(gender: Gender, pageable: Pageable): Page<Animal>
 
     @Query("SELECT DISTINCT a.healthStatus FROM Animal a")
-    fun findAllUniqueHealthStatuses(): List<HealthStatus>
+    fun findAllUniqueHealthStatuses(pageable: Pageable): Page<HealthStatus>
 }
 
