@@ -1,6 +1,6 @@
 package itmo.highload.controller
 
-import itmo.highload.service.exception.AdoptionRequestAlreadyExistsException
+import itmo.highload.service.exception.EntityAlreadyExistsException
 import itmo.highload.service.exception.InvalidAdoptionRequestStatusException
 import itmo.highload.service.exception.InvalidAnimalUpdateException
 import itmo.highload.service.exception.NegativeBalanceException
@@ -27,10 +27,10 @@ class ErrorController {
         return e.message
     }
 
-    @ExceptionHandler(AdoptionRequestAlreadyExistsException::class)
+    @ExceptionHandler(EntityAlreadyExistsException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun onAdoptionRequestAlreadyExistsException(e: AdoptionRequestAlreadyExistsException): String? {
+    fun onAdoptionRequestAlreadyExistsException(e: EntityAlreadyExistsException): String? {
         return e.message
     }
 

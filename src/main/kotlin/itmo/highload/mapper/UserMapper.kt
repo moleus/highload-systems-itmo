@@ -1,4 +1,4 @@
-package itmo.highload.service.mapper
+package itmo.highload.mapper
 
 import itmo.highload.dto.response.CustomerResponse
 import itmo.highload.dto.response.UserResponse

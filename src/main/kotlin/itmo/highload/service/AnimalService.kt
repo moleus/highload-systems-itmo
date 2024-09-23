@@ -8,7 +8,7 @@ import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.service.exception.InvalidAnimalUpdateException
-import itmo.highload.service.mapper.AnimalMapper
+import itmo.highload.mapper.AnimalMapper
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
