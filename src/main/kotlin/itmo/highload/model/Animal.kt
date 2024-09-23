@@ -28,11 +28,11 @@ data class Animal(
     @Column(name = "type_of_animal", nullable = false, length = 50)
     @NotBlank(message = "Type of animal is mandatory")
     @Size(max = 50, message = "Type of animal cannot exceed 50 characters")
-    var typeOfAnimal: String,
+    val typeOfAnimal: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var gender: Gender,
+    val gender: Gender,
 
     @Column(name = "is_castrated", nullable = false)
     var isCastrated: Boolean,

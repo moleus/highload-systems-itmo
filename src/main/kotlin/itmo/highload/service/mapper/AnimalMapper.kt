@@ -3,7 +3,6 @@ package itmo.highload.service.mapper
 import itmo.highload.dto.AnimalDto
 import itmo.highload.dto.response.AnimalResponse
 import itmo.highload.model.Animal
-import itmo.highload.model.enum.HealthStatus
 
 object AnimalMapper {
     fun toEntity(animal: AnimalDto): Animal {
@@ -26,5 +25,4 @@ object AnimalMapper {
             healthStatus = entity.healthStatus
         )
     }
-
 }

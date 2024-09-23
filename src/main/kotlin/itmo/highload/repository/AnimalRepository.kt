@@ -6,6 +6,7 @@ import itmo.highload.model.enum.HealthStatus
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -14,4 +15,8 @@ interface AnimalRepository : JpaRepository<Animal, Int> {
     fun findByName(name: String, pageable: Pageable): Page<Animal>
     fun findByHealthStatus(healthStatus: HealthStatus, pageable: Pageable): Page<Animal>
     fun findByGender(gender: Gender, pageable: Pageable): Page<Animal>
+
+    @Query("SELECT DISTINCT a.healthStatus FROM Animal a")
+    fun findAllUniqueHealthStatuses(): List<HealthStatus>
 }
+
