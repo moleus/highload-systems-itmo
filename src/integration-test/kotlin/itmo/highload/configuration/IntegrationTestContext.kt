@@ -7,9 +7,9 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("integration-test")
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [
-        TestcontainersConfiguration::class,
-    ],
+//    classes = [
+//        TestcontainersConfiguration::class,
+//    ],
 )
 @AutoConfigureMockMvc
 @Target(AnnotationTarget.CLASS)

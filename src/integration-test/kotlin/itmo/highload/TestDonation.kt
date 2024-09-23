@@ -22,6 +22,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.utility.DockerImageName
 import java.time.LocalDateTime
 
 val balances = listOf(
@@ -67,6 +72,19 @@ class TestDonation @Autowired constructor(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
 ) {
+    companion object {
+        @Container
+        @JvmStatic
+        val postgres = PostgreSQLContainer(DockerImageName.parse("postgres:15")).apply { start() }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun postgresProperties(registry: DynamicPropertyRegistry) {
+            registry.add("spring.datasource.url", postgres::getJdbcUrl)
+            registry.add("spring.datasource.username", postgres::getUsername)
+            registry.add("spring.datasource.password", postgres::getPassword)
+        }
+    }
 
     @LocalServerPort
     private var port: Int = 0

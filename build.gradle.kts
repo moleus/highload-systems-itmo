@@ -42,12 +42,14 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk:1.12.0")
+
+    implementation("org.testcontainers:testcontainers")
+    implementation("org.testcontainers:postgresql")
 }
 
 kotlin {
@@ -78,6 +80,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-testcontainers")
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework.boot:spring-boot-starter-security")
+                implementation("org.springframework.security:spring-security-test")
                 implementation("org.testcontainers:testcontainers")
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
@@ -111,17 +114,19 @@ fun Test.setupEnvironment() {
     environment("JWT_SECRET_REFRESH", System.getenv("JWT_SECRET_REFRESH"))
     environment("JWT_EXPIRATION_ACCESS", 60)
     environment("JWT_EXPIRATION_REFRESH", 60)
-    environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
+    environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", getDockerPathInsideContainer())
     environment("DOCKER_HOST", getDockerHostLocation())
 }
 
-fun getDockerHostLocation() : String {
-    val dockerHost = System.getenv("DOCKER_HOST")
-    if (dockerHost != null) {
-        return dockerHost
+fun getDockerPathInsideContainer() : String {
+    if ("krot" == System.getenv("USER")) {
+        return "/run/user/501/docker.sock"
     }
-    val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault())
-    if (hostArchitecture == "aarch64") {
+    return "/var/run/docker.sock"
+}
+
+fun getDockerHostLocation() : String {
+    if ("krot" == System.getenv("USER")) {
         return "unix:///${System.getenv("HOME")}/.lima/docker/sock/docker.sock"
     }
     return "unix:///var/run/docker.sock"

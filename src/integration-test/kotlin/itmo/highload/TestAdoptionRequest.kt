@@ -8,10 +8,7 @@ import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.dto.response.AnimalResponse
 import itmo.highload.dto.response.UserResponse
-import itmo.highload.model.AdoptionRequest
-import itmo.highload.model.Animal
-import itmo.highload.model.Customer
-import itmo.highload.model.User
+import itmo.highload.model.*
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
@@ -25,16 +22,23 @@ import itmo.highload.utils.defaultJsonRequestSpec
 import itmo.highload.utils.withJwt
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.utility.DockerImageName
 import java.time.LocalDate
 import java.time.LocalDateTime
+
 
 val animals = listOf(
     Animal(
@@ -79,6 +83,7 @@ val adoptionRequests = listOf(
     )
 )
 
+@Testcontainers
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
@@ -87,6 +92,33 @@ class TestAdoptionRequest @Autowired constructor(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
 ) {
+    companion object {
+        @Container
+        @JvmStatic
+        val postgres = PostgreSQLContainer(DockerImageName.parse("postgres:15"))
+            .withUsername("test").withPassword("test").withDatabaseName("test")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun postgresProperties(registry: DynamicPropertyRegistry) {
+            println("JDBC URL: ${postgres.jdbcUrl}")
+            registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
+            registry.add("spring.datasource.url", postgres::getJdbcUrl)
+            registry.add("spring.datasource.username", postgres::getUsername)
+            registry.add("spring.datasource.password", postgres::getPassword)
+        }
+
+        @BeforeAll
+        @JvmStatic
+        fun pgStart() {
+            postgres.start()
+        }
+        @AfterAll
+        @JvmStatic
+        fun pgStop() {
+            postgres.stop()
+        }
+    }
 
     @LocalServerPort
     private var port: Int = 0
@@ -96,6 +128,7 @@ class TestAdoptionRequest @Autowired constructor(
 
     private fun getAdoptionManagerToken(login: String) =
         jwtProvider.generateAccessToken(login, UserRole.ADOPTION_MANAGER)
+
 
     @BeforeEach
     fun setUp() {
