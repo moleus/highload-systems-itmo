@@ -2,7 +2,7 @@ package itmo.highload.service
 
 import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
-import itmo.highload.model.enum.UserRole
+import itmo.highload.model.enum.Role
 import itmo.highload.repository.UserRepository
 import jakarta.annotation.PostConstruct
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -23,7 +23,7 @@ class UserService(
             val user = User(
                 login = "superuser",
                 password = encoder.encode("123"),
-                role = UserRole.SUPERUSER,
+                role = Role.SUPERUSER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
@@ -32,7 +32,7 @@ class UserService(
             val user = User(
                 login = "customer",
                 password = encoder.encode("123"),
-                role = UserRole.CUSTOMER,
+                role = Role.CUSTOMER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
@@ -41,7 +41,7 @@ class UserService(
             val user = User(
                 login = "emanager",
                 password = encoder.encode("123"),
-                role = UserRole.EXPENSE_MANAGER,
+                role = Role.EXPENSE_MANAGER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
@@ -50,7 +50,7 @@ class UserService(
             val user = User(
                 login = "amanager",
                 password = encoder.encode("123"),
-                role = UserRole.ADOPTION_MANAGER,
+                role = Role.ADOPTION_MANAGER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)

@@ -1,5 +1,8 @@
 package itmo.highload.controller
 
+import itmo.highload.service.exception.EntityAlreadyExistsException
+import itmo.highload.service.exception.InvalidAdoptionRequestStatusException
+import itmo.highload.service.exception.InvalidAnimalUpdateException
 import itmo.highload.service.exception.NegativeBalanceException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
@@ -21,6 +24,27 @@ class ErrorController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     fun onEntityNotFoundException(e: EntityNotFoundException): String? {
+        return e.message
+    }
+
+    @ExceptionHandler(EntityAlreadyExistsException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun onAdoptionRequestAlreadyExistsException(e: EntityAlreadyExistsException): String? {
+        return e.message
+    }
+
+    @ExceptionHandler(InvalidAdoptionRequestStatusException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun onInvalidAdoptionRequestStatusException(e: InvalidAdoptionRequestStatusException): String? {
+        return e.message
+    }
+
+    @ExceptionHandler(InvalidAnimalUpdateException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun onInvalidAnimalUpdateException(e: InvalidAnimalUpdateException): String? {
         return e.message
     }
 }

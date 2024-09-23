@@ -12,6 +12,8 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.EnumType
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
 @Entity
 @Table(name = "animals")
@@ -23,7 +25,7 @@ data class Animal(
     @Column(nullable = false, length = 50)
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name cannot exceed 50 characters")
-    val name: String,
+    var name: String,
 
     @Column(name = "type_of_animal", nullable = false, length = 50)
     @NotBlank(message = "Type of animal is mandatory")
@@ -31,13 +33,15 @@ data class Animal(
     val typeOfAnimal: String,
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(nullable = false)
     val gender: Gender,
 
     @Column(name = "is_castrated", nullable = false)
-    val isCastrated: Boolean,
+    var isCastrated: Boolean,
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(name = "health_status", nullable = false)
-    val healthStatus: HealthStatus
+    var healthStatus: HealthStatus
 )

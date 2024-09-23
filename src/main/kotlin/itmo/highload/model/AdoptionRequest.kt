@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.FetchType
 import jakarta.validation.constraints.NotNull
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import java.time.LocalDateTime
 
 @Entity
@@ -27,8 +29,9 @@ data class AdoptionRequest(
     val dateTime: LocalDateTime,
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(nullable = false)
-    val status: AdoptionStatus,
+    var status: AdoptionStatus,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
@@ -36,7 +39,7 @@ data class AdoptionRequest(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id", nullable = true)
-    val manager: User?,
+    var manager: User? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id", nullable = false)

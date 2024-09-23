@@ -1,6 +1,6 @@
 package itmo.highload.dto.response
 
-import itmo.highload.model.enum.UserRole
+import itmo.highload.model.enum.Role
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
@@ -10,5 +10,5 @@ class JwtResponse(
     @NotBlank
     val refreshToken: String,
     @NotNull
-    val role: UserRole
+    val role: Role
 )

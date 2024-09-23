@@ -1,6 +1,6 @@
 package itmo.highload.model
 
-import itmo.highload.model.enum.UserRole
+import itmo.highload.model.enum.Role
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Size
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
@@ -30,8 +32,9 @@ data class User(
     private val password: String,
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(nullable = false)
-    val role: UserRole,
+    val role: Role,
 
     @Column
     val creationDate: LocalDate
