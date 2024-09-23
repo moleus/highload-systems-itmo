@@ -90,7 +90,9 @@ testing {
             sources {
                 kotlin {
                     srcDir("src/integration-test/kotlin")
+//                    resources.srcDir("src/main/resources")
                 }
+                resources.srcDir("src/integration-test/resources")
             }
 
             // run integration tests after unit tests

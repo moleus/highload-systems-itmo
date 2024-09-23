@@ -29,15 +29,20 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.TestPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 val animals = listOf(
@@ -83,7 +88,9 @@ val adoptionRequests = listOf(
     )
 )
 
-@Testcontainers
+//@Testcontainers
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(value = ["classpath:application-test.properties"] )
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
@@ -93,31 +100,38 @@ class TestAdoptionRequest @Autowired constructor(
     private val jwtProvider: JwtProvider,
 ) {
     companion object {
-        @Container
-        @JvmStatic
-        val postgres = PostgreSQLContainer(DockerImageName.parse("postgres:15"))
-            .withUsername("test").withPassword("test").withDatabaseName("test")
+//        @Container
+//        @JvmStatic
+//        val postgres: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:15"))
+//            .withUsername("test").withPassword("test").withDatabaseName("test")
 
-        @DynamicPropertySource
-        @JvmStatic
-        fun postgresProperties(registry: DynamicPropertyRegistry) {
-            println("JDBC URL: ${postgres.jdbcUrl}")
-            registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
-            registry.add("spring.datasource.url", postgres::getJdbcUrl)
-            registry.add("spring.datasource.username", postgres::getUsername)
-            registry.add("spring.datasource.password", postgres::getPassword)
-        }
+//        @DynamicPropertySource
+//        @JvmStatic
+//        fun postgresProperties(registry: DynamicPropertyRegistry) {
+//            println("JDBC URL: ${postgres.jdbcUrl}")
+////            registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
+//            registry.add("spring.datasource.url", postgres::getJdbcUrl)
+//            registry.add("spring.datasource.username", postgres::getUsername)
+//            registry.add("spring.datasource.password", postgres::getPassword)
+//        }
+//
+//        @BeforeAll
+//        @JvmStatic
+//        fun pgStart() {
+//            postgres.setWaitStrategy(
+//                LogMessageWaitStrategy()
+//                    .withRegEx(".*database system is ready to accept connections.*\\s")
+//                    .withTimes(1)
+//                    .withStartupTimeout(Duration.of(60, ChronoUnit.SECONDS))
+//            )
+//            postgres.start()
+//        }
 
-        @BeforeAll
-        @JvmStatic
-        fun pgStart() {
-            postgres.start()
-        }
-        @AfterAll
-        @JvmStatic
-        fun pgStop() {
-            postgres.stop()
-        }
+//        @AfterAll
+//        @JvmStatic
+//        fun pgStop() {
+//            postgres.stop()
+//        }
     }
 
     @LocalServerPort
