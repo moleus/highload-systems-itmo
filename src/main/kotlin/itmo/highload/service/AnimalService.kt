@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
-class AnimalService (private val animalRepository: AnimalRepository) {
+class AnimalService(private val animalRepository: AnimalRepository) {
     fun get(animalId: Int): Animal {
         return animalRepository.findById(animalId).orElseThrow {
             EntityNotFoundException("Animal with ID $animalId not found")
