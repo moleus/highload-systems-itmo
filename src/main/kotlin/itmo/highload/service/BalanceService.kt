@@ -3,6 +3,7 @@ package itmo.highload.service
 import itmo.highload.mapper.BalanceMapper
 import itmo.highload.model.Balance
 import itmo.highload.repository.BalanceRepository
+import itmo.highload.service.exception.EntityAlreadyExistsException
 import itmo.highload.service.exception.NegativeBalanceException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
@@ -23,7 +24,7 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
 
     fun addPurpose(name: String): Balance {
         if (balanceRepository.findByPurpose(name) != null) {
-            throw EntityNotFoundException("Purpose with name '$name' already exists")
+            throw EntityAlreadyExistsException("Purpose with name '$name' already exists")
         }
         return balanceRepository.save(BalanceMapper.toEntity(name))
     }
