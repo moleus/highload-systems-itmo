@@ -107,19 +107,30 @@ fun Test.setupEnvironment() {
     environment("SPRING_DATASOURCE_URL", System.getenv("SPRING_DATASOURCE_URL"))
     environment("SPRING_DATASOURCE_USERNAME", System.getenv("SPRING_DATASOURCE_USERNAME"))
     environment("SPRING_DATASOURCE_PASSWORD", System.getenv("SPRING_DATASOURCE_PASSWORD"))
+    environment("JWT_SECRET_ACCESS", System.getenv("JWT_SECRET_ACCESS"))
+    environment("JWT_SECRET_REFRESH", System.getenv("JWT_SECRET_REFRESH"))
+    environment("JWT_EXPIRATION_ACCESS", 60)
+    environment("JWT_EXPIRATION_REFRESH", 60)
+    environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
+    environment("DOCKER_HOST", getDockerHostLocation())
+}
+
+fun getDockerHostLocation() : String {
+    val dockerHost = System.getenv("DOCKER_HOST")
+    if (dockerHost != null) {
+        return dockerHost
+    }
+    val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault())
+    if (hostArchitecture == "aarch64") {
+        return "unix:///${System.getenv("HOME")}/.lima/docker/sock/docker.sock"
+    }
+    return "unix:///var/run/docker.sock"
 }
 
 tasks.named("check") {
     dependsOn(testing.suites.named("integrationTest"))
 }
 
-//tasks.withType<Test> {
-//    useJUnitPlatform()
-//    environment("SPRING_DATASOURCE_URL", System.getenv("SPRING_DATASOURCE_URL"))
-//    environment("SPRING_DATASOURCE_USERNAME", System.getenv("SPRING_DATASOURCE_USERNAME"))
-//    environment("SPRING_DATASOURCE_PASSWORD", System.getenv("SPRING_DATASOURCE_PASSWORD"))
-//}
-//
 subprojects {
     apply(plugin = "com.ncorti.ktfmt.gradle")
 

@@ -56,15 +56,15 @@ val animals = listOf(
 
 val users = listOf(
     User(
-        id = 1000, login = "customer", password = "password", role = UserRole.CUSTOMER, createdDate = LocalDate.now()
+        id = 1000, login = "customer", password = "password", role = UserRole.CUSTOMER, creationDate = LocalDate.now()
     ), User(
-        id = 1001, login = "customer2", password = "password", role = UserRole.CUSTOMER, createdDate = LocalDate.now()
+        id = 1001, login = "customer2", password = "password", role = UserRole.CUSTOMER, creationDate = LocalDate.now()
     )
 )
 
 val customers = users.map {
     Customer(
-        id = it.id!!.toInt(), gender = Gender.MALE, phone = "+79991234567", address = "None Avenue"
+        id = it.id, gender = Gender.MALE, phone = "+79991234567", address = "None Avenue"
     )
 }
 
@@ -133,7 +133,7 @@ class TestAdoptionRequest @Autowired constructor(
             id = 2,
             dateTime = LocalDateTime.now(),  // TODO: ignore time, we can't predict it
             status = AdoptionStatus.PENDING,
-            customer = UserResponse(id = user.id!!, login = "customer"),
+            customer = UserResponse(id = user.id, login = "customer"),
             manager = null,
             animal = expectedAnimalResponse
         )
@@ -153,7 +153,7 @@ class TestAdoptionRequest @Autowired constructor(
                 id = it.id,
                 dateTime = it.dateTime,
                 status = it.status,
-                customer = UserResponse(id = user.id!!, login = "customer"),
+                customer = UserResponse(id = user.id, login = "customer"),
                 manager = null,
                 animal = AnimalResponse(
                     id = it.animal.id,

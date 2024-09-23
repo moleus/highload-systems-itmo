@@ -16,8 +16,8 @@ import javax.crypto.SecretKey
 
 @Component
 class JwtProvider(
-    @Value("\${jwt.secret.access}") jwtAccessSecret: String?,
-    @Value("\${jwt.secret.refresh}") jwtRefreshSecret: String?,
+    @Value("\${jwt.secret.access}") jwtAccessSecret: String,
+    @Value("\${jwt.secret.refresh}") jwtRefreshSecret: String,
     @param:Value("\${jwt.expiration.access}") private val jwtAccessExpirationMinutes: Int,
     @param:Value("\${jwt.expiration.refresh}") private val jwtRefreshExpirationDays: Int
 ) {
