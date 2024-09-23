@@ -7,11 +7,10 @@ import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.User
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
-import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.CustomerRepository
-import itmo.highload.service.exception.AdoptionRequestAlreadyExistsException
+import itmo.highload.service.exception.EntityAlreadyExistsException
 import itmo.highload.service.exception.InvalidAdoptionRequestStatusException
-import itmo.highload.service.mapper.AdoptionRequestMapper
+import itmo.highload.mapper.AdoptionRequestMapper
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -25,7 +24,7 @@ class AdoptionRequestService(
 ) {
     fun save(customerId: Int, animalId: Int): AdoptionRequest {
         if (adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) != null) {
-            throw AdoptionRequestAlreadyExistsException(
+            throw EntityAlreadyExistsException(
                 "An adoption request already exists " +
                         "for customer ID: $customerId and animal ID: $animalId"
             )

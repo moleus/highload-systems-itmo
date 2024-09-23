@@ -22,6 +22,9 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
     }
 
     fun addPurpose(name: String): Balance {
+        if (balanceRepository.findByPurpose(name) != null) {
+            throw EntityNotFoundException("Purpose with name '$name' already exists")
+        }
         return balanceRepository.save(BalanceMapper.toEntity(name))
     }
 

@@ -1,4 +1,4 @@
-package itmo.highload.service.mapper
+package itmo.highload.mapper
 
 import itmo.highload.dto.AnimalDto
 import itmo.highload.dto.response.AnimalResponse

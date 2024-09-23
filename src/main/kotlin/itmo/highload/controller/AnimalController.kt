@@ -5,7 +5,7 @@ import itmo.highload.dto.response.AnimalResponse
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.service.AnimalService
-import itmo.highload.service.mapper.AnimalMapper
+import itmo.highload.mapper.AnimalMapper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

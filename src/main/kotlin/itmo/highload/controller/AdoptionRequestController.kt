@@ -6,7 +6,7 @@ import itmo.highload.model.User
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Role
 import itmo.highload.service.AdoptionRequestService
-import itmo.highload.service.mapper.AdoptionRequestMapper
+import itmo.highload.mapper.AdoptionRequestMapper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
