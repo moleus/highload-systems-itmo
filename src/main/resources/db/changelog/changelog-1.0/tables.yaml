@@ -48,7 +48,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: SERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -61,7 +61,7 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: password
-                  type: VARCHAR(50)
+                  type: VARCHAR(200)
                   constraints:
                     nullable: false
               - column:
@@ -69,12 +69,6 @@ databaseChangeLog:
                   type: role
                   constraints:
                       nullable: false
-              - column:
-                  name: name
-                  type: VARCHAR(100)
-                  constraints:
-                    nullable: false
-                    checkConstraint: "name <> ''"
               - column:
                   name: creation_date
                   type: DATE
@@ -90,7 +84,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: SERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -159,7 +153,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: SERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -211,7 +205,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: SERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -238,7 +232,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
+                  type: SERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
