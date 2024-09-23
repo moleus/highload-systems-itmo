@@ -1,14 +1,14 @@
 package itmo.highload.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
-import jakarta.persistence.Id
-import jakarta.persistence.GenerationType
-import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Column
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.JoinColumn
+import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
 import java.time.LocalDateTime
@@ -30,7 +30,7 @@ data class Transaction(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "balance_id", nullable = false)
-    val balancePurpose: Balance,
+    val balance: Balance,
 
     @Column(name = "money_amount", nullable = false)
     @Positive(message = "Money amount must be positive")
