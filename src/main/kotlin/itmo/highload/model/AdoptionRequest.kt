@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.FetchType
 import jakarta.validation.constraints.NotNull
+import org.hibernate.annotations.JdbcType
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import java.time.LocalDateTime
 
 @Entity
@@ -27,6 +29,7 @@ data class AdoptionRequest(
     val dateTime: LocalDateTime,
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(nullable = false)
     val status: AdoptionStatus,
 
