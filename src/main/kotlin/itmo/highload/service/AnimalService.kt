@@ -7,6 +7,7 @@ import itmo.highload.model.Animal
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.repository.AnimalRepository
+import itmo.highload.service.exception.InvalidAnimalUpdateException
 import itmo.highload.service.mapper.AnimalMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -65,9 +66,23 @@ class AnimalService (private val animalRepository: AnimalRepository) {
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {
-        require(existingAnimal.healthStatus != HealthStatus.DEAD) {"Can't update dead animal"}
-        require(existingAnimal.gender == updateAnimal.gender) {"Can't change gender"}
-        require(existingAnimal.typeOfAnimal == updateAnimal.type) {"Can't change type of animal"}
-        require(!(existingAnimal.isCastrated && !updateAnimal.isCastrated)) {"Can't cancel castration of an animal"}
+        val errors = mutableListOf<String>()
+
+        if (existingAnimal.healthStatus == HealthStatus.DEAD) {
+            errors.add("Can't update dead animal")
+        }
+        if (existingAnimal.gender != updateAnimal.gender) {
+            errors.add("Can't change gender")
+        }
+        if (existingAnimal.typeOfAnimal != updateAnimal.type) {
+            errors.add("Can't change type of animal")
+        }
+        if (existingAnimal.isCastrated && !updateAnimal.isCastrated) {
+            errors.add("Can't cancel castration of an animal")
+        }
+
+        if (errors.isNotEmpty()) {
+            throw InvalidAnimalUpdateException(errors.joinToString("; "))
+        }
     }
 }

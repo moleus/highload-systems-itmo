@@ -9,6 +9,8 @@ import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.CustomerRepository
+import itmo.highload.service.exception.AdoptionRequestAlreadyExistsException
+import itmo.highload.service.exception.InvalidAdoptionRequestStatusException
 import itmo.highload.service.mapper.AdoptionRequestMapper
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
@@ -22,8 +24,9 @@ class AdoptionRequestService(
     private val animalRepository: AnimalRepository
 ) {
     fun save(customerId: Int, animalId: Int): AdoptionRequest {
-        require(adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) == null) {
-            "An adoption request already exists for customer ID: $customerId and animal ID: $animalId"
+        if (adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) != null) {
+            throw AdoptionRequestAlreadyExistsException("An adoption request already exists " +
+                    "for customer ID: $customerId and animal ID: $animalId")
         }
         val customer = customerRepository.findById(customerId).orElseThrow()
         val animal = animalRepository.findById(animalId).orElseThrow()
@@ -45,8 +48,9 @@ class AdoptionRequestService(
     fun delete(customerId: Int, animalId: Int) {
         val adoptionRequest = adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
             ?: throw EntityNotFoundException("Adoption request not found")
-        require(adoptionRequest.status == AdoptionStatus.PENDING) {
-            "Cannot delete adoption request with status: ${adoptionRequest.status}"
+        if (adoptionRequest.status != AdoptionStatus.PENDING) {
+            throw InvalidAdoptionRequestStatusException("Cannot delete adoption " +
+                    "request with status: ${adoptionRequest.status}")
         }
         adoptionRequestRepository.delete(adoptionRequest)
     }
