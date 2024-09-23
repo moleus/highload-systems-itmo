@@ -9,6 +9,7 @@ import itmo.highload.model.enum.HealthStatus
 import itmo.highload.service.AnimalService
 import itmo.highload.service.mapper.AnimalMapper
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -29,10 +30,9 @@ class AnimalController(val animalService: AnimalService) {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAllAnimalsPage(pageable: Pageable): List<AnimalResponse> {
+    fun getAllAnimalsPage(pageable: Pageable): Page<AnimalResponse> {
         return animalService.getAll(pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
-            .content
     }
 
     @GetMapping("/scroll")
@@ -40,11 +40,10 @@ class AnimalController(val animalService: AnimalService) {
     fun getAllAnimalsInfiniteScroll(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "limit", defaultValue = "10") limit: Int
-    ): List<AnimalResponse> {
+    ): Page<AnimalResponse> {
         val pageable = Pageable.ofSize(limit).withPage(offset / limit)
         return animalService.getAll(pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
-            .content
     }
 
     @GetMapping("/{animalId}")
@@ -91,10 +90,9 @@ class AnimalController(val animalService: AnimalService) {
     fun getAllAnimalsByType(
         @PathVariable type: String,
         pageable: Pageable
-    ): List<AnimalResponse> {
+    ): Page<AnimalResponse> {
         return animalService.getAllByType(type, pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
-            .content
     }
 
     @GetMapping("/name/{name}")
@@ -102,10 +100,9 @@ class AnimalController(val animalService: AnimalService) {
     fun getAllAnimalsByName(
         @PathVariable name: String,
         pageable: Pageable
-    ): List<AnimalResponse> {
+    ): Page<AnimalResponse> {
         return animalService.getAllByName(name, pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
-            .content
     }
 
     @GetMapping("/health-status/{healthStatus}")
@@ -113,10 +110,9 @@ class AnimalController(val animalService: AnimalService) {
     fun getAllAnimalsByHealthStatus(
         @PathVariable healthStatus: HealthStatus,
         pageable: Pageable
-    ): List<AnimalResponse> {
+    ): Page<AnimalResponse> {
         return animalService.getAllByHealthStatus(healthStatus, pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
-            .content
     }
 
     @GetMapping("/gender/{gender}")
@@ -124,9 +120,8 @@ class AnimalController(val animalService: AnimalService) {
     fun getAllAnimalsByGender(
         @PathVariable gender: Gender,
         pageable: Pageable
-    ): List<AnimalResponse> {
+    ): Page<AnimalResponse> {
         return animalService.getAllByGender(gender, pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
-            .content
     }
 }

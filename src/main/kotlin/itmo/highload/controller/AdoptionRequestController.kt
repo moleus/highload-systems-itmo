@@ -10,6 +10,7 @@ import itmo.highload.model.enum.UserRole
 import itmo.highload.service.AdoptionRequestService
 import itmo.highload.service.mapper.AdoptionRequestMapper
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -33,18 +34,13 @@ class AdoptionRequestController(val adoptionRequestService: AdoptionRequestServi
         @RequestParam(required = false) status: AdoptionStatus,
         @AuthenticationPrincipal user: User,
         pageable: Pageable
-    ): List<AdoptionRequestResponse> {
-        require(user.role == UserRole.ADOPTION_MANAGER || user.role == UserRole.CUSTOMER) {
-            "Invalid user role: ${user.role}"
-        }
+    ): Page<AdoptionRequestResponse> {
         return if (user.role == UserRole.ADOPTION_MANAGER) {
             adoptionRequestService.getAll(status, pageable)
                 .map { AdoptionRequestMapper.toResponse(it) }
-                .content
         } else {
             adoptionRequestService.getAllByCustomer(user.id, pageable)
                 .map { AdoptionRequestMapper.toResponse(it) }
-                .content
         }
     }
 

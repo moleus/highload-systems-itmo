@@ -10,6 +10,7 @@ import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.CustomerRepository
 import itmo.highload.service.mapper.AdoptionRequestMapper
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -43,7 +44,10 @@ class AdoptionRequestService(
 
     fun delete(customerId: Int, animalId: Int) {
         val adoptionRequest = adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
-            ?: throw NoSuchElementException("Adoption request not found")
+            ?: throw EntityNotFoundException("Adoption request not found")
+        require(adoptionRequest.status == AdoptionStatus.PENDING) {
+            "Cannot delete adoption request with status: ${adoptionRequest.status}"
+        }
         adoptionRequestRepository.delete(adoptionRequest)
     }
 
