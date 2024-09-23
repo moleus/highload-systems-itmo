@@ -3,7 +3,7 @@ package itmo.highload.model.enum
 import org.springframework.security.core.GrantedAuthority
 import java.util.*
 
-enum class UserRole : GrantedAuthority {
+enum class Role : GrantedAuthority {
     CUSTOMER,
     EXPENSE_MANAGER,
     ADOPTION_MANAGER,

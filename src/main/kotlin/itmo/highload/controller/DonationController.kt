@@ -5,7 +5,7 @@ import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.mapper.TransactionMapper
 import itmo.highload.model.Transaction
 import itmo.highload.model.User
-import itmo.highload.model.enum.UserRole
+import itmo.highload.model.enum.Role
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -30,13 +30,12 @@ class DonationController(val transactionService: TransactionService) {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER', 'CUSTOMER')")
     fun getAllDonations(
         @AuthenticationPrincipal user: User,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        val page = if (user.role == UserRole.EXPENSE_MANAGER) {
+        val page = if (user.role == Role.EXPENSE_MANAGER) {
             transactionService.getAll(isDonation = true, pageable)
         } else {
             transactionService.getAllByUser(isDonation = true, user.id, pageable)
@@ -46,7 +45,6 @@ class DonationController(val transactionService: TransactionService) {
     }
 
     @GetMapping("/{customerId}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getDonationsByCustomerForManager(
         @PathVariable customerId: Int,

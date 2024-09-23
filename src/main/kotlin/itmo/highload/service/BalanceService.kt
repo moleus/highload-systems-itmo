@@ -13,20 +13,11 @@ import org.springframework.stereotype.Service
 class BalanceService(private val balanceRepository: BalanceRepository) {
 
     fun getById(id: Int): Balance {
-        val balance = balanceRepository.findById(id)
-
-        if (balance.isPresent) {
-            return balance.get()
-        }
-
-        throw EntityNotFoundException("Failed to find Balance with id = $id")
+        return balanceRepository.findById(id)
+            .orElseThrow { EntityNotFoundException("Failed to find Balance with id = $id") }
     }
 
     fun getAll(pageable: Pageable): Page<Balance> {
-        return balanceRepository.findAll(pageable)
-    }
-
-    fun getAllPurposes(pageable: Pageable): Page<Balance> {
         return balanceRepository.findAll(pageable)
     }
 

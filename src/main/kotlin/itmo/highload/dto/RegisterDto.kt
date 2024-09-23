@@ -1,6 +1,6 @@
 package itmo.highload.dto
 
-import itmo.highload.model.enum.UserRole
+import itmo.highload.model.enum.Role
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
@@ -18,5 +18,5 @@ data class RegisterDto(
     val password: String,
 
     @NotNull(message = "Role can't be null")
-    val role: UserRole
+    val role: Role
 )

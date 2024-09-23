@@ -30,10 +30,10 @@ class TransactionService(
     }
 
     @Transactional
-    fun addTransaction(donationDto: TransactionDto, customer: User, isDonation: Boolean): Transaction {
+    fun addTransaction(donationDto: TransactionDto, user: User, isDonation: Boolean): Transaction {
         val balance: Balance = balanceService.getById(donationDto.purposeId)
 
-        val transactionEntity = TransactionMapper.toEntity(donationDto, customer, balance, isDonation)
+        val transactionEntity = TransactionMapper.toEntity(donationDto, user, balance, isDonation)
         val savedTransaction = transactionRepository.save(transactionEntity)
 
         balanceService.changeMoneyAmount(donationDto.purposeId, isDonation, donationDto.moneyAmount)

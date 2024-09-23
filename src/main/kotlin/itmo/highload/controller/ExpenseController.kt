@@ -29,7 +29,6 @@ class ExpenseController(val transactionService: TransactionService) {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllExpenses(pageable: Pageable): Page<TransactionResponse> {
         val page = transactionService.getAll(isDonation = false, pageable)
@@ -37,7 +36,6 @@ class ExpenseController(val transactionService: TransactionService) {
     }
 
     @GetMapping("/{purposeId}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getExpensesByPurpose(
         @PathVariable purposeId: Int,

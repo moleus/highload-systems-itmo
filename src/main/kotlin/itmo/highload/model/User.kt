@@ -1,6 +1,6 @@
 package itmo.highload.model
 
-import itmo.highload.model.enum.UserRole
+import itmo.highload.model.enum.Role
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
 
 @Entity
-@Table(name = "app_users")
+@Table(name = "users")
 data class User(
 
     @Id
@@ -31,7 +31,7 @@ data class User(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val role: UserRole,
+    val role: Role,
 
     @Column
     val creationDate: LocalDate
