@@ -4,8 +4,12 @@ package itmo.highload.controller
 
 import itmo.highload.dto.AnimalDto
 import itmo.highload.dto.response.AnimalResponse
+import itmo.highload.model.enum.Gender
+import itmo.highload.model.enum.HealthStatus
 import itmo.highload.service.AnimalService
+import itmo.highload.service.mapper.AnimalMapper
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -26,8 +30,9 @@ class AnimalController(val animalService: AnimalService) {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAllAnimalsPage(pageable: Pageable): List<AnimalResponse> {
-        return listOf()
+    fun getAllAnimalsPage(pageable: Pageable): Page<AnimalResponse> {
+        return animalService.getAll(pageable)
+            .map { AnimalMapper.toAnimalResponse(it) }
     }
 
     @GetMapping("/scroll")
@@ -35,28 +40,32 @@ class AnimalController(val animalService: AnimalService) {
     fun getAllAnimalsInfiniteScroll(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "limit", defaultValue = "10") limit: Int
-    ): List<AnimalResponse> {
-        return listOf()
+    ): Page<AnimalResponse> {
+        val pageable = Pageable.ofSize(limit).withPage(offset / limit)
+        return animalService.getAll(pageable)
+            .map { AnimalMapper.toAnimalResponse(it) }
     }
 
     @GetMapping("/{animalId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAnimal(@PathVariable animalId: Int): AnimalResponse {
-        return animalService.get(animalId)
+        val animal = animalService.get(animalId)
+        return AnimalMapper.toAnimalResponse(animal)
     }
 
     @GetMapping("/health-statuses")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getAllHealthStatuses(pageable: Pageable)/*: List<HealthStatus>*/ {
-        return
+    fun getAllHealthStatuses(): List<HealthStatus> {
+        return animalService.getAllHealthStatus()
     }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun addAnimal(@RequestBody @Valid request: AnimalDto): AnimalResponse {
-        return animalService.save(request)
+        return AnimalMapper.toAnimalResponse(animalService.save(request))
     }
 
     @PutMapping("/{animalId}")
@@ -66,7 +75,7 @@ class AnimalController(val animalService: AnimalService) {
         @PathVariable animalId: Int,
         @RequestBody @Valid request: AnimalDto
     ): AnimalResponse {
-        return animalService.update(animalId, request)
+        return AnimalMapper.toAnimalResponse(animalService.update(animalId, request))
     }
 
     @DeleteMapping("/{animalId}")
@@ -74,5 +83,45 @@ class AnimalController(val animalService: AnimalService) {
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun deleteAnimal(@PathVariable animalId: Int) {
         animalService.delete(animalId)
+    }
+
+    @GetMapping("/type/{type}")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    fun getAllAnimalsByType(
+        @PathVariable type: String,
+        pageable: Pageable
+    ): Page<AnimalResponse> {
+        return animalService.getAllByType(type, pageable)
+            .map { AnimalMapper.toAnimalResponse(it) }
+    }
+
+    @GetMapping("/name/{name}")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    fun getAllAnimalsByName(
+        @PathVariable name: String,
+        pageable: Pageable
+    ): Page<AnimalResponse> {
+        return animalService.getAllByName(name, pageable)
+            .map { AnimalMapper.toAnimalResponse(it) }
+    }
+
+    @GetMapping("/health-status/{healthStatus}")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    fun getAllAnimalsByHealthStatus(
+        @PathVariable healthStatus: HealthStatus,
+        pageable: Pageable
+    ): Page<AnimalResponse> {
+        return animalService.getAllByHealthStatus(healthStatus, pageable)
+            .map { AnimalMapper.toAnimalResponse(it) }
+    }
+
+    @GetMapping("/gender/{gender}")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    fun getAllAnimalsByGender(
+        @PathVariable gender: Gender,
+        pageable: Pageable
+    ): Page<AnimalResponse> {
+        return animalService.getAllByGender(gender, pageable)
+            .map { AnimalMapper.toAnimalResponse(it) }
     }
 }

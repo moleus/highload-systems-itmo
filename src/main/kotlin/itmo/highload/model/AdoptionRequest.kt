@@ -31,7 +31,7 @@ data class AdoptionRequest(
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType::class)
     @Column(nullable = false)
-    val status: AdoptionStatus,
+    var status: AdoptionStatus,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
@@ -39,7 +39,7 @@ data class AdoptionRequest(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id", nullable = true)
-    val manager: User,
+    var manager: User? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id", nullable = false)
