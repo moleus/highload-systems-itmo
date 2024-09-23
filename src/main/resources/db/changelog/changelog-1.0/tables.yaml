@@ -68,7 +68,7 @@ databaseChangeLog:
                   name: role
                   type: role
                   constraints:
-                      nullable: false
+                    nullable: false
               - column:
                   name: creation_date
                   type: DATE
@@ -167,7 +167,7 @@ databaseChangeLog:
                   name: status
                   type: adoption_statuses
                   constraints:
-                      nullable: false
+                    nullable: false
               - column:
                   name: customer_id
                   type: INT

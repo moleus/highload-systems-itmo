@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
 class AdoptionRequestService(
     private val adoptionRequestRepository: AdoptionRequestRepository,
     private val customerRepository: CustomerRepository,
-    private val animalRepository: AnimalRepository
+    private val animalService: AnimalService
 ) {
     fun save(customerId: Int, animalId: Int): AdoptionRequest {
         if (adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) != null) {
@@ -33,9 +33,7 @@ class AdoptionRequestService(
         val customer = customerRepository.findById(customerId).orElseThrow {
             EntityNotFoundException("Customer not found")
         }
-        val animal = animalRepository.findById(animalId).orElseThrow {
-            EntityNotFoundException("Animal not found")
-        }
+        val animal = animalService.get(animalId)
 
         val adoptionRequest = AdoptionRequestMapper.toEntity(customer, animal, AdoptionStatus.PENDING)
 
