@@ -47,5 +47,4 @@ class ErrorController {
     fun onInvalidAnimalUpdateException(e: InvalidAnimalUpdateException): String? {
         return e.message
     }
-
 }
