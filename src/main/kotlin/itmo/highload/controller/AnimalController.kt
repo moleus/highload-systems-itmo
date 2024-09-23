@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
+    private val MAX_PAGE_SIZE = 50
+
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsPage(pageable: Pageable): Page<AnimalResponse> {
@@ -41,7 +43,7 @@ class AnimalController(val animalService: AnimalService) {
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "limit", defaultValue = "10") limit: Int
     ): Page<AnimalResponse> {
-        val effectiveLimit = if (limit > 50) 50 else limit
+        val effectiveLimit = if (limit > MAX_PAGE_SIZE) MAX_PAGE_SIZE else limit
         val pageable = Pageable.ofSize(limit).withPage(offset / effectiveLimit)
         return animalService.getAll(pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
