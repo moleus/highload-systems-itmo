@@ -37,10 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.data.domain.Pageable
-import org.springframework.test.context.TestPropertySource
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 
 val animals = listOf(
@@ -77,20 +75,7 @@ val customers = users.mapIndexed { index, user ->
     )
 }
 
-val adoptionRequests = listOf(
-    AdoptionRequest(
-        status = AdoptionStatus.PENDING,
-        customer = customers[0],
-        animal = animals[0],
-        dateTime = LocalDateTime.now(),
-        manager = null,
-    )
-)
-
-//@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-@TestPropertySource(value = ["classpath:application-test.properties"])
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
