@@ -63,8 +63,8 @@ class AnimalService(private val animalRepository: AnimalRepository) {
         return animalRepository.findByGender(gender, pageable)
     }
 
-    fun getAllHealthStatus(): List<HealthStatus> {
-        return animalRepository.findAllUniqueHealthStatuses()
+    fun getAllHealthStatus(pageable: Pageable): List<HealthStatus> {
+        return animalRepository.findAllUniqueHealthStatuses(pageable).content
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

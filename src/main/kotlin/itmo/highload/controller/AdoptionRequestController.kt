@@ -7,6 +7,7 @@ import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Role
 import itmo.highload.service.AdoptionRequestService
 import itmo.highload.mapper.AdoptionRequestMapper
+import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,11 +36,12 @@ class AdoptionRequestController(val adoptionRequestService: AdoptionRequestServi
         @AuthenticationPrincipal user: User,
         pageable: Pageable
     ): List<AdoptionRequestResponse> {
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         return if (user.role == Role.ADOPTION_MANAGER) {
-            adoptionRequestService.getAll(status, pageable)
+            adoptionRequestService.getAll(status, limitedPageable)
                 .map { AdoptionRequestMapper.toResponse(it) }.content
         } else {
-            adoptionRequestService.getAllByCustomer(user.id, pageable)
+            adoptionRequestService.getAllByCustomer(user.id, limitedPageable)
                 .map { AdoptionRequestMapper.toResponse(it) }.content
         }
     }
