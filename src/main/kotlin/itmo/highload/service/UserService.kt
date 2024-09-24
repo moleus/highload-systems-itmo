@@ -19,7 +19,7 @@ class UserService(
 
     @PostConstruct
     fun initializeUsers() {
-        // FIXME: из-за этого ломаются sequence-ы в тестах - id customer и user не совпадают
+        // из-за этого ломаются sequence-ы в тестах - id customer и user не совпадают
 //        if (!checkIfExists("superuser")) {
 //            val user = User(
 //                login = "superuser",
