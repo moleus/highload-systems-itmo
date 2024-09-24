@@ -1,0 +1,86 @@
+POST http://localhost:8080/api/v1/animals
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "MALE",
+  "isCastrated": true,
+  "healthStatus": "HEALTHY"
+}
+
+###
+GET http://localhost:8080/api/v1/animals
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+
+###
+
+GET http://localhost:8080/api/v1/animals/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+
+###
+
+PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "MALE",
+  "isCastrated": true,
+  "healthStatus": "SICK"
+}
+
+###
+
+PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "FEMALE",
+  "isCastrated": true,
+  "healthStatus": "SICK"
+}
+
+###
+
+PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "MALE",
+  "isCastrated": false,
+  "healthStatus": "SICK"
+}
+
+###
+
+PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+Content-Type: application/json
+
+{
+  "name": "Матвей",
+  "type": "Крыса",
+  "gender": "MALE",
+  "isCastrated": false,
+  "healthStatus": "SICK"
+}
+
+###
+
+DELETE http://localhost:8080/api/v1/animals/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
+
+###
+
+DELETE http://localhost:8080/api/v1/animals/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE2ODUxM30.lfgs7EeT0uarhyEHWwq8WP6Nwi4tvZ2tGemaBL1i716Tr5a9f6W8ioVJXMZGikzuqXW0LpyJLQ4gPrY6TU5V7Q
