@@ -56,7 +56,7 @@ class BalanceController(val balanceService: BalanceService) {
         pageable: Pageable
     ): ResponseEntity<List<PurposeResponse>> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        val page = balanceService.getAll(limitedPageable).content
+        val page = balanceService.getAll(limitedPageable)
 
         if (hasHeaders) {
             return PaginationResponseHelper.createPaginatedResponseWithHeaders(mapPageToPurposeResponse(page))
