@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/v1/transactions/donations
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImV4cCI6MTcyNzE3MjMzNn0.OyGKNXEbCXEy5O8WmuWyPLotQq3Uclz93ulnrQ5hTed2rf4fsjKUVnnnFxU1WU71K98LhGWwbjw2hhFJJhCq9w
+Content-Type: application/json
+
+{
+  "purposeId": 1,
+  "moneyAmount": 100
+}

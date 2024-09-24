@@ -18,8 +18,8 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType
 @Entity
 @Table(name = "customers")
 data class Customer(
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     val id: Int = 0,
 
     @Column(nullable = false, unique = true, length = 20)
