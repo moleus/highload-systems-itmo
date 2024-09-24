@@ -19,15 +19,16 @@ class UserService(
 
     @PostConstruct
     fun initializeUsers() {
-        if (!checkIfExists("superuser")) {
-            val user = User(
-                login = "superuser",
-                password = encoder.encode("123"),
-                role = Role.SUPERUSER,
-                creationDate = LocalDate.now()
-            )
-            userRepository.save(user)
-        }
+        // FIXME: из-за этого ломаются sequence-ы в тестах - id customer и user не совпадают
+//        if (!checkIfExists("superuser")) {
+//            val user = User(
+//                login = "superuser",
+//                password = encoder.encode("123"),
+//                role = Role.SUPERUSER,
+//                creationDate = LocalDate.now()
+//            )
+//            userRepository.save(user)
+//        }
         if (!checkIfExists("customer")) {
             val user = User(
                 login = "customer",
@@ -37,24 +38,24 @@ class UserService(
             )
             userRepository.save(user)
         }
-        if (!checkIfExists("emanager")) {
-            val user = User(
-                login = "emanager",
-                password = encoder.encode("123"),
-                role = Role.EXPENSE_MANAGER,
-                creationDate = LocalDate.now()
-            )
-            userRepository.save(user)
-        }
-        if (!checkIfExists("amanager")) {
-            val user = User(
-                login = "amanager",
-                password = encoder.encode("123"),
-                role = Role.ADOPTION_MANAGER,
-                creationDate = LocalDate.now()
-            )
-            userRepository.save(user)
-        }
+//        if (!checkIfExists("emanager")) {
+//            val user = User(
+//                login = "emanager",
+//                password = encoder.encode("123"),
+//                role = Role.EXPENSE_MANAGER,
+//                creationDate = LocalDate.now()
+//            )
+//            userRepository.save(user)
+//        }
+//        if (!checkIfExists("amanager")) {
+//            val user = User(
+//                login = "amanager",
+//                password = encoder.encode("123"),
+//                role = Role.ADOPTION_MANAGER,
+//                creationDate = LocalDate.now()
+//            )
+//            userRepository.save(user)
+//        }
     }
 
     @Throws(UsernameNotFoundException::class)

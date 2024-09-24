@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.springframework.boot.gradle.tasks.run.BootRun
 import java.util.*
 
 plugins {
@@ -136,6 +137,16 @@ fun getDockerHostLocation() : String {
 
 tasks.named("check") {
     dependsOn(testing.suites.named("integrationTest"))
+}
+
+tasks.getByName<BootRun>("bootRun") {
+    systemProperty("jwt.secret.access", "0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==" )
+    systemProperty("jwt.secret.refresh", "0LfQsNGH0LXQvCDRgtGLINGN0YLQviDRh9C40YLQsNC10YjRjCDRjdGC0L4g0LLQvtC+0LHRidC1INGC0L4g0KHQldCa0KDQldCi")
+    systemProperty("jwt.expiration.access", "60")
+    systemProperty("jwt.expiration.refresh", "60")
+    systemProperty("spring.datasource.url", "jdbc:postgresql://localhost:15432/postgres")
+    systemProperty("spring.datasource.username", "postgres")
+    systemProperty("spring.datasource.password", "postgres")
 }
 
 subprojects {
