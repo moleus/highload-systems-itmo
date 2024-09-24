@@ -19,8 +19,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType
 @Table(name = "customers")
 data class Customer(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
+    val id: Int,
 
     @Column(nullable = false, unique = true, length = 20)
     @NotBlank(message = "Phone is mandatory")
