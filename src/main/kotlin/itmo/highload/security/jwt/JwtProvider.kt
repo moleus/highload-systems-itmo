@@ -32,8 +32,9 @@ class JwtProvider(
             .toInstant()
         val accessExpiration = Date.from(accessExpirationInstant)
         return Jwts.builder()
-            .setSubject(login)
+            .setClaims(mapOf("role" to role))
             .setExpiration(accessExpiration)
+            .setSubject(login)
             .signWith(jwtAccessSecret)
             .compact()
     }
