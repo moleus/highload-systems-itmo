@@ -6,6 +6,7 @@ import itmo.highload.mapper.TransactionMapper
 import itmo.highload.model.Transaction
 import itmo.highload.model.User
 import itmo.highload.service.TransactionService
+import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -31,7 +32,8 @@ class ExpenseController(val transactionService: TransactionService) {
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllExpenses(pageable: Pageable): Page<TransactionResponse> {
-        val page = transactionService.getAll(isDonation = false, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        val page = transactionService.getAll(isDonation = false, limitedPageable)
         return mapPageToResponse(page)
     }
 
@@ -41,7 +43,8 @@ class ExpenseController(val transactionService: TransactionService) {
         @PathVariable purposeId: Int,
         pageable: Pageable
     ): Page<TransactionResponse> {
-        val page = transactionService.getAllByPurpose(isDonation = false, purposeId, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        val page = transactionService.getAllByPurpose(isDonation = false, purposeId, limitedPageable)
         return mapPageToResponse(page)
     }
 

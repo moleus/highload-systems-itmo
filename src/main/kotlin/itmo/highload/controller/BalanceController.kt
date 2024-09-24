@@ -37,7 +37,8 @@ class BalanceController(val balanceService: BalanceService) {
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllBalances(pageable: Pageable): Page<BalanceResponse> {
-        val page = balanceService.getAll(pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        val page = balanceService.getAll(limitedPageable)
         return mapPageToBalanceResponse(page)
     }
 
@@ -54,7 +55,8 @@ class BalanceController(val balanceService: BalanceService) {
         @RequestParam(required = false) hasHeaders: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<PurposeResponse>> {
-        val page = balanceService.getAll(pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        val page = balanceService.getAll(limitedPageable)
 
         if (hasHeaders) {
             return PaginationResponseHelper.createPaginatedResponseWithHeaders(mapPageToPurposeResponse(page))

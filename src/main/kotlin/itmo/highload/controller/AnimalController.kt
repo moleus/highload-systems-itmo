@@ -6,6 +6,7 @@ import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.service.AnimalService
 import itmo.highload.mapper.AnimalMapper
+import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -26,10 +27,16 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
+    companion object {
+        private const val MAX_PAGE_SIZE = 50
+    }
+
+
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsPage(pageable: Pageable): Page<AnimalResponse> {
-        return animalService.getAll(pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        return animalService.getAll(limitedPageable)
             .map { AnimalMapper.toAnimalResponse(it) }
     }
 
@@ -39,7 +46,8 @@ class AnimalController(val animalService: AnimalService) {
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "limit", defaultValue = "10") limit: Int
     ): Page<AnimalResponse> {
-        val pageable = Pageable.ofSize(limit).withPage(offset / limit)
+        val effectiveLimit = if (limit > MAX_PAGE_SIZE) MAX_PAGE_SIZE else limit
+        val pageable = Pageable.ofSize(limit).withPage(offset / effectiveLimit)
         return animalService.getAll(pageable)
             .map { AnimalMapper.toAnimalResponse(it) }
     }
@@ -53,8 +61,9 @@ class AnimalController(val animalService: AnimalService) {
 
     @GetMapping("/health-statuses")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getAllHealthStatuses(): List<HealthStatus> {
-        return animalService.getAllHealthStatus()
+    fun getAllHealthStatuses(pageable: Pageable): List<HealthStatus> {
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        return animalService.getAllHealthStatus(limitedPageable)
     }
 
 
@@ -87,7 +96,8 @@ class AnimalController(val animalService: AnimalService) {
         @PathVariable type: String,
         pageable: Pageable
     ): Page<AnimalResponse> {
-        return animalService.getAllByType(type, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        return animalService.getAllByType(type, limitedPageable)
             .map { AnimalMapper.toAnimalResponse(it) }
     }
 
@@ -97,7 +107,8 @@ class AnimalController(val animalService: AnimalService) {
         @PathVariable name: String,
         pageable: Pageable
     ): Page<AnimalResponse> {
-        return animalService.getAllByName(name, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        return animalService.getAllByName(name, limitedPageable)
             .map { AnimalMapper.toAnimalResponse(it) }
     }
 
@@ -107,7 +118,8 @@ class AnimalController(val animalService: AnimalService) {
         @PathVariable healthStatus: HealthStatus,
         pageable: Pageable
     ): Page<AnimalResponse> {
-        return animalService.getAllByHealthStatus(healthStatus, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        return animalService.getAllByHealthStatus(healthStatus, limitedPageable)
             .map { AnimalMapper.toAnimalResponse(it) }
     }
 
@@ -117,7 +129,8 @@ class AnimalController(val animalService: AnimalService) {
         @PathVariable gender: Gender,
         pageable: Pageable
     ): Page<AnimalResponse> {
-        return animalService.getAllByGender(gender, pageable)
+        val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
+        return animalService.getAllByGender(gender, limitedPageable)
             .map { AnimalMapper.toAnimalResponse(it) }
     }
 }
