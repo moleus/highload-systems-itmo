@@ -10,7 +10,6 @@ import itmo.highload.dto.response.TransactionResponse
 import itmo.highload.dto.response.UserResponse
 import itmo.highload.model.Balance
 import itmo.highload.model.Transaction
-import itmo.highload.model.enum.Role
 import itmo.highload.repository.TransactionRepository
 import itmo.highload.repository.UserRepository
 import itmo.highload.security.jwt.JwtProvider
@@ -90,10 +89,10 @@ class TestDonation @Autowired constructor(
     private var port: Int = 0
     private val apiUrlBasePath = "/api/v1/transactions/donations"
 
-    private fun getCustomerToken(login: String) = jwtProvider.generateAccessToken(login, Role.CUSTOMER)
+    private fun getCustomerToken(login: String) = jwtProvider.generateAccessToken(login)
 
     private fun getExpenseManagerToken(login: String) =
-        jwtProvider.generateAccessToken(login, Role.EXPENSE_MANAGER)
+        jwtProvider.generateAccessToken(login)
 
     @BeforeEach
     fun setUp() {

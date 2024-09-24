@@ -29,15 +29,15 @@ class UserService(
 //            )
 //            userRepository.save(user)
 //        }
-        if (!checkIfExists("customer")) {
-            val user = User(
-                login = "customer",
-                password = encoder.encode("123"),
-                role = Role.CUSTOMER,
-                creationDate = LocalDate.now()
-            )
-            userRepository.save(user)
-        }
+//        if (!checkIfExists("customer")) {
+//            val user = User(
+//                login = "customer",
+//                password = encoder.encode("123"),
+//                role = Role.CUSTOMER,
+//                creationDate = LocalDate.now()
+//            )
+//            userRepository.save(user)
+//        }
 //        if (!checkIfExists("emanager")) {
 //            val user = User(
 //                login = "emanager",

@@ -86,6 +86,8 @@ testing {
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
                 implementation("io.rest-assured:rest-assured")
+                // gson
+                implementation("com.google.code.gson:gson:2.8.8")
             }
 
             sources {

@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import itmo.highload.model.enum.Role
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.security.Key
@@ -24,7 +23,7 @@ class JwtProvider(
     private val jwtAccessSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
     private val jwtRefreshSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret))
 
-    fun generateAccessToken(login: String, role: Role): String {
+    fun generateAccessToken(login: String): String {
         val now = LocalDateTime.now()
         val accessExpirationInstant = now
             .plusMinutes(jwtAccessExpirationMinutes.toLong())
@@ -32,14 +31,13 @@ class JwtProvider(
             .toInstant()
         val accessExpiration = Date.from(accessExpirationInstant)
         return Jwts.builder()
-            .setClaims(mapOf("role" to role))
             .setExpiration(accessExpiration)
             .setSubject(login)
             .signWith(jwtAccessSecret)
             .compact()
     }
 
-    fun generateRefreshToken(login: String, role: Role): String {
+    fun generateRefreshToken(login: String): String {
         val now = LocalDateTime.now()
         val refreshExpirationInstant = now
             .plusDays(jwtRefreshExpirationDays.toLong())
@@ -47,8 +45,8 @@ class JwtProvider(
             .toInstant()
         val refreshExpiration = Date.from(refreshExpirationInstant)
         return Jwts.builder()
-            .setSubject(login)
             .setExpiration(refreshExpiration)
+            .setSubject(login)
             .signWith(jwtRefreshSecret)
             .compact()
     }

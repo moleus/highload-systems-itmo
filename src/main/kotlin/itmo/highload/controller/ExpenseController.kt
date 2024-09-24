@@ -42,9 +42,9 @@ class ExpenseController(val transactionService: TransactionService) {
     fun getExpensesByPurpose(
         @PathVariable purposeId: Int,
         pageable: Pageable
-    ): Page<TransactionResponse> {
+    ): List<TransactionResponse> {
         val page = transactionService.getAllByPurpose(isDonation = false, purposeId, pageable)
-        return mapPageToResponse(page)
+        return mapPageToResponse(page).content
     }
 
     @PostMapping
