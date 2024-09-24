@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+// TODO: deprecated annotation subst
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig {
 
@@ -28,6 +29,7 @@ class WebSecurityConfig {
     fun securityFilterChain(http: HttpSecurity, jwtFilter: JwtFilter?): SecurityFilterChain {
         http
             .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
+            // TODO: remove if unnecessary
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

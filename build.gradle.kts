@@ -48,13 +48,11 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk:1.12.0")
-
-    implementation("org.testcontainers:testcontainers")
-    implementation("org.testcontainers:postgresql")
 }
 
 kotlin {
     compilerOptions {
+        // TODO: разобраться
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }

@@ -8,7 +8,6 @@ import itmo.highload.service.AnimalService
 import itmo.highload.mapper.AnimalMapper
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+// TODO: path in resources
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
@@ -39,6 +39,7 @@ class AnimalController(val animalService: AnimalService) {
         return animalService.getAll(limitedPageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
+    // TODO: remove infinite scroll
     @GetMapping("/scroll")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsInfiniteScroll(
@@ -50,10 +51,10 @@ class AnimalController(val animalService: AnimalService) {
         return animalService.getAll(pageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
-    @GetMapping("/{animalId}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAnimal(@PathVariable animalId: Int): AnimalResponse {
-        val animal = animalService.get(animalId)
+    fun getAnimal(@PathVariable id: Int): AnimalResponse {
+        val animal = animalService.get(id)
         return AnimalMapper.toAnimalResponse(animal)
     }
 
@@ -87,6 +88,7 @@ class AnimalController(val animalService: AnimalService) {
         animalService.delete(animalId)
     }
 
+    // TODO: type-type
     @GetMapping("/type/{type}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsByType(

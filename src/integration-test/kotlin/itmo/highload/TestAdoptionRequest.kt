@@ -121,6 +121,7 @@ class TestAdoptionRequest @Autowired constructor(
     }
 
     @Test
+    // TODO: очередность не нужна
     @Order(1)
     fun `test add adoption request`() {
         val animal = animalRepository.findByName("Buddy", Pageable.unpaged()).first()
