@@ -1,3 +1,14 @@
-POST http://localhost:8080/api/v1/adoption-requests/4
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImV4cCI6MTcyNzE3MDI0OX0.YVqFZ2yacfgJaaTqfYpolyMc15wIm0MTOE3ZvxFeVODhpLUhS7NFQ6VMjBx8yblaXQkkv727cWFQ1TzwNCRSpA
+POST http://localhost:8080/api/v1/adoption-requests/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImV4cCI6MTcyNzE3ODk5NX0.Q0vsrcY0duhxeIAkHiWORlqT2rj84jc3N5usdzvlj8dYQGXptmf9gtr3XW8WjjvkO8EGRmiHuGxD2XNBZKBm-w
 Content-Type: application/json
+
+###
+
+PATCH http://localhost:8080/api/v1/adoption-requests
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjcxNzk1NzQsInN1YiI6ImFtYW5hZ2VyIn0.0G7YYftHaUYlE1TLTsGKlF6u5YmqtbwHgpQQY97btW4CW4Ay-MxwLvbWQ44M2bwE_6_KoLZTIiLkRA5pLSo9Pw
+Content-Type: application/json
+
+{
+  "id": 1,
+  "status": "DENIED"
+}

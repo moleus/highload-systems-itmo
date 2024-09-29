@@ -40,6 +40,37 @@ databaseChangeLog:
             sql: DROP TYPE health_statuses;
 
   - changeSet:
+      id: create-customers
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: phone
+                  type: VARCHAR(15)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: gender
+                  type: genders
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+
+  - changeSet:
       id: create-users
       author: Moleus
       changes:
@@ -130,7 +161,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
                     foreignKeyName: fk_ownerships_customer
-                    references: users(id)
+                    references: customers(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:
@@ -174,14 +205,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_adoption_requests_customer
-                    references: users(id)
+                    references: customers(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:
                   name: manager_id
                   type: INT
                   constraints:
-                    nullable: false
+                    nullable: true
                     foreignKeyName: fk_adoption_requests_manager
                     references: users(id)
                     deleteCascade: true

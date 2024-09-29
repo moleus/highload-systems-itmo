@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
+// TODO: path in resources
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
     @GetMapping

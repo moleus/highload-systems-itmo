@@ -29,8 +29,8 @@ class AuthService(
                 throw AuthException("Wrong password")
             }
 
-            val accessToken: String = jwtProvider.generateAccessToken(user)
-            val refreshToken: String = jwtProvider.generateRefreshToken(user)
+            val accessToken: String = jwtProvider.generateAccessToken(user.login)
+            val refreshToken: String = jwtProvider.generateRefreshToken(user.login)
             return JwtResponse(accessToken, refreshToken, user.role)
 
         } catch (e: UsernameNotFoundException) {
@@ -48,7 +48,7 @@ class AuthService(
             jwtProvider.validateRefreshToken(refreshToken)
             val username: String = jwtProvider.getRefreshClaims(refreshToken).subject
             val dbUser: User = userService.getByLogin(username)
-            val newAccessToken: String = jwtProvider.generateAccessToken(dbUser)
+            val newAccessToken: String = jwtProvider.generateAccessToken(dbUser.login)
             return JwtResponse(newAccessToken, refreshToken, dbUser.role)
 
         } catch (e: JwtException) {
@@ -62,8 +62,8 @@ class AuthService(
             jwtProvider.validateRefreshToken(refreshToken)
             val username: String = jwtProvider.getRefreshClaims(refreshToken).subject
             val dbUser: User = userService.getByLogin(username)
-            val newAccessToken: String = jwtProvider.generateAccessToken(dbUser)
-            val newRefreshToken: String = jwtProvider.generateRefreshToken(dbUser)
+            val newAccessToken: String = jwtProvider.generateAccessToken(dbUser.login)
+            val newRefreshToken: String = jwtProvider.generateRefreshToken(dbUser.login)
             return JwtResponse(newAccessToken, newRefreshToken, dbUser.role)
 
         } catch (e: JwtException) {

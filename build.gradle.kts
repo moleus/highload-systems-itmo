@@ -1,3 +1,6 @@
+@file:Suppress("UnstableApiUsage")
+
+import org.springframework.boot.gradle.tasks.run.BootRun
 import java.util.*
 
 plugins {
@@ -9,6 +12,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
+    `jvm-test-suite`
 }
 
 group = "ru.itmo"
@@ -26,7 +30,6 @@ repositories {
 }
 
 dependencies {
-
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -40,7 +43,6 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
@@ -50,15 +52,101 @@ dependencies {
 
 kotlin {
     compilerOptions {
+        // TODO: разобраться
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            targets.all {
+                testTask.configure {
+                    setupEnvironment()
+                }
+            }
+        }
+
+        register<JvmTestSuite>("integrationTest") {
+            useJUnitJupiter()
+            testType.set(TestSuiteType.INTEGRATION_TEST)
+
+            dependencies {
+                implementation(project())
+                implementation("org.springframework.boot:spring-boot-starter-test")
+                implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework.boot:spring-boot-testcontainers")
+                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+                implementation("org.springframework.boot:spring-boot-starter-security")
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.testcontainers:testcontainers")
+                implementation("org.testcontainers:postgresql")
+                implementation("org.testcontainers:junit-jupiter")
+                implementation("io.rest-assured:rest-assured")
+                // gson
+                implementation("com.google.code.gson:gson:2.8.8")
+            }
+
+            sources {
+                kotlin {
+                    srcDir("src/integration-test/kotlin")
+//                    resources.srcDir("src/main/resources")
+                }
+                resources.srcDir("src/integration-test/resources")
+            }
+
+            // run integration tests after unit tests
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                        setupEnvironment()
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun Test.setupEnvironment() {
     environment("SPRING_DATASOURCE_URL", System.getenv("SPRING_DATASOURCE_URL"))
     environment("SPRING_DATASOURCE_USERNAME", System.getenv("SPRING_DATASOURCE_USERNAME"))
     environment("SPRING_DATASOURCE_PASSWORD", System.getenv("SPRING_DATASOURCE_PASSWORD"))
+    environment("JWT_SECRET_ACCESS", System.getenv("JWT_SECRET_ACCESS"))
+    environment("JWT_SECRET_REFRESH", System.getenv("JWT_SECRET_REFRESH"))
+    environment("JWT_EXPIRATION_ACCESS", 60)
+    environment("JWT_EXPIRATION_REFRESH", 60)
+    environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", getDockerPathInsideContainer())
+    environment("DOCKER_HOST", getDockerHostLocation())
+}
+
+fun getDockerPathInsideContainer() : String {
+    if ("krot" == System.getenv("USER")) {
+        return "/run/user/501/docker.sock"
+    }
+    return "/var/run/docker.sock"
+}
+
+fun getDockerHostLocation() : String {
+    if ("krot" == System.getenv("USER")) {
+        return "unix:///${System.getenv("HOME")}/.lima/docker/sock/docker.sock"
+    }
+    return "unix:///var/run/docker.sock"
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
+}
+
+tasks.getByName<BootRun>("bootRun") {
+    systemProperty("jwt.secret.access", "0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==" )
+    systemProperty("jwt.secret.refresh", "0LfQsNGH0LXQvCDRgtGLINGN0YLQviDRh9C40YLQsNC10YjRjCDRjdGC0L4g0LLQvtC+0LHRidC1INGC0L4g0KHQldCa0KDQldCi")
+    systemProperty("jwt.expiration.access", "60")
+    systemProperty("jwt.expiration.refresh", "60")
+    systemProperty("spring.datasource.url", "jdbc:postgresql://localhost:15432/postgres")
+    systemProperty("spring.datasource.username", "postgres")
+    systemProperty("spring.datasource.password", "postgres")
 }
 
 subprojects {
@@ -85,8 +173,8 @@ var hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
 if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
 }
-jib {
 
+jib {
     from {
         image = "openjdk:$jdkVersion-jdk-slim"
         platforms {
