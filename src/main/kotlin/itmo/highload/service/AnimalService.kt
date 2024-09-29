@@ -3,12 +3,11 @@
 package itmo.highload.service
 
 import itmo.highload.dto.AnimalDto
+import itmo.highload.mapper.AnimalMapper
 import itmo.highload.model.Animal
-import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.service.exception.InvalidAnimalUpdateException
-import itmo.highload.mapper.AnimalMapper
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -43,28 +42,11 @@ class AnimalService(private val animalRepository: AnimalRepository) {
         animalRepository.delete(existingAnimal)
     }
 
-    fun getAll(pageable: Pageable): Page<Animal> {
+    fun getAll(name: String?, pageable: Pageable): Page<Animal> {
+        if (name != null) {
+            return animalRepository.findByName(name, pageable)
+        }
         return animalRepository.findAll(pageable)
-    }
-
-    fun getAllByType(typeOfAnimal: String, pageable: Pageable): Page<Animal> {
-        return animalRepository.findByTypeOfAnimal(typeOfAnimal, pageable)
-    }
-
-    fun getAllByName(name: String, pageable: Pageable): Page<Animal> {
-        return animalRepository.findByName(name, pageable)
-    }
-
-    fun getAllByHealthStatus(healthStatus: HealthStatus, pageable: Pageable): Page<Animal> {
-        return animalRepository.findByHealthStatus(healthStatus, pageable)
-    }
-
-    fun getAllByGender(gender: Gender, pageable: Pageable): Page<Animal> {
-        return animalRepository.findByGender(gender, pageable)
-    }
-
-    fun getAllHealthStatus(pageable: Pageable): List<HealthStatus> {
-        return animalRepository.findAllUniqueHealthStatuses(pageable).content
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

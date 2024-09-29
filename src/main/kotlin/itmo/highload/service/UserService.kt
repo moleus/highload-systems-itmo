@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.*
 
+const val DEMO_SUPERUSER_LOGIN = "superuser"
+const val DEMO_CUSTOMER_LOGIN = "customer"
+const val DEMO_EXPENSE_MANAGER_LOGIN = "emanager"
+const val DEMO_ADOPTION_MANAGER_LOGIN = "amanager"
+const val DEMO_PASSWORD = "123"
+
 @Service
 class UserService(
     private val userRepository: UserRepository,
@@ -19,37 +25,37 @@ class UserService(
 
     @PostConstruct
     fun initializeUsers() {
-        if (!checkIfExists("superuser")) {
+        if (!checkIfExists(DEMO_SUPERUSER_LOGIN)) {
             val user = User(
-                login = "superuser",
-                password = encoder.encode("123"),
+                login = DEMO_SUPERUSER_LOGIN,
+                password = encoder.encode(DEMO_PASSWORD),
                 role = Role.SUPERUSER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
         }
-        if (!checkIfExists("customer")) {
+        if (!checkIfExists(DEMO_CUSTOMER_LOGIN)) {
             val user = User(
-                login = "customer",
-                password = encoder.encode("123"),
+                login = DEMO_CUSTOMER_LOGIN,
+                password = encoder.encode(DEMO_PASSWORD),
                 role = Role.CUSTOMER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
         }
-        if (!checkIfExists("emanager")) {
+        if (!checkIfExists(DEMO_EXPENSE_MANAGER_LOGIN)) {
             val user = User(
-                login = "emanager",
-                password = encoder.encode("123"),
+                login = DEMO_EXPENSE_MANAGER_LOGIN,
+                password = encoder.encode(DEMO_PASSWORD),
                 role = Role.EXPENSE_MANAGER,
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
         }
-        if (!checkIfExists("amanager")) {
+        if (!checkIfExists(DEMO_ADOPTION_MANAGER_LOGIN)) {
             val user = User(
-                login = "amanager",
-                password = encoder.encode("123"),
+                login = DEMO_ADOPTION_MANAGER_LOGIN,
+                password = encoder.encode(DEMO_PASSWORD),
                 role = Role.ADOPTION_MANAGER,
                 creationDate = LocalDate.now()
             )

@@ -1,83 +1,62 @@
-package itmo.highload.controller
+import itmo.highload.service.DEMO_ADOPTION_MANAGER_LOGIN
+import itmo.highload.service.DEMO_CUSTOMER_LOGIN
 
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.dto.response.AdoptionRequestResponse
-import itmo.highload.model.User
-import itmo.highload.model.enum.AdoptionStatus
-import itmo.highload.model.enum.Role
-import itmo.highload.service.AdoptionRequestService
 import itmo.highload.mapper.AdoptionRequestMapper
+import itmo.highload.model.enum.AdoptionStatus
+import itmo.highload.service.AdoptionRequestService
+import itmo.highload.service.UserService
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/adoption-requests")
-class AdoptionRequestController(val adoptionRequestService: AdoptionRequestService) {
+class AdoptionRequestController(
+    val adoptionRequestService: AdoptionRequestService,
+    private val userService: UserService
+) {
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAdoptionRequests(
-        @RequestParam(required = false) status: AdoptionStatus,
-        @AuthenticationPrincipal user: User,
-        pageable: Pageable
+        @RequestParam(required = false) status: AdoptionStatus, pageable: Pageable
     ): Page<AdoptionRequestResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return if (user.role == Role.ADOPTION_MANAGER) {
-            adoptionRequestService.getAll(status, limitedPageable)
-                .map { AdoptionRequestMapper.toResponse(it) }
-        } else {
-            adoptionRequestService.getAllByCustomer(user.id, limitedPageable)
-                .map { AdoptionRequestMapper.toResponse(it) }
-        }
+        return adoptionRequestService.getAll(status, limitedPageable).map { AdoptionRequestMapper.toResponse(it) }
     }
 
     @GetMapping("/statuses")
-    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun getAllStatuses(): List<AdoptionStatus> {
         return adoptionRequestService.getAllStatuses()
     }
 
     @PostMapping("/{animalId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('CUSTOMER')")
     fun addAdoptionRequest(
         @PathVariable animalId: Int,
-        @AuthenticationPrincipal customer: User
     ): AdoptionRequestResponse {
-        return AdoptionRequestMapper.toResponse(adoptionRequestService.save(customer.id, animalId))
+        val demoCustomer = userService.getByLogin(DEMO_CUSTOMER_LOGIN)
+        return AdoptionRequestMapper.toResponse(adoptionRequestService.save(demoCustomer.id, animalId))
     }
 
     @PatchMapping
-    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAdoptionRequest(
         @RequestBody @Valid request: UpdateAdoptionRequestStatusDto,
-        @AuthenticationPrincipal manager: User
     ): AdoptionRequestResponse {
-        return AdoptionRequestMapper.toResponse(adoptionRequestService.update(manager, request))
+        val demoManager = userService.getByLogin(DEMO_ADOPTION_MANAGER_LOGIN)
+        return AdoptionRequestMapper.toResponse(adoptionRequestService.update(demoManager, request))
     }
 
     @DeleteMapping("/{animalId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('CUSTOMER')")
     fun deleteAdoptionRequest(
-        @PathVariable animalId: Int,
-        @AuthenticationPrincipal customer: User
+        @PathVariable animalId: Int
     ) {
-        adoptionRequestService.delete(customer.id, animalId)
+        val demoCustomer = userService.getByLogin(DEMO_CUSTOMER_LOGIN)
+        adoptionRequestService.delete(demoCustomer.id, animalId)
     }
 }
