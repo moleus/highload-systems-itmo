@@ -1,11 +1,10 @@
-import itmo.highload.service.DEMO_ADOPTION_MANAGER_LOGIN
-import itmo.highload.service.DEMO_CUSTOMER_LOGIN
-
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.mapper.AdoptionRequestMapper
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.service.AdoptionRequestService
+import itmo.highload.service.DEMO_ADOPTION_MANAGER_LOGIN
+import itmo.highload.service.DEMO_CUSTOMER_LOGIN
 import itmo.highload.service.UserService
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
@@ -22,10 +21,12 @@ class AdoptionRequestController(
 
     @GetMapping
     fun getAllAdoptionRequests(
-        @RequestParam(required = false) status: AdoptionStatus, pageable: Pageable
+        @RequestParam(required = false) status: AdoptionStatus,
+        pageable: Pageable
     ): List<AdoptionRequestResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return adoptionRequestService.getAll(status, limitedPageable).map { AdoptionRequestMapper.toResponse(it) }.content
+        return adoptionRequestService.getAll(status, limitedPageable)
+            .map { AdoptionRequestMapper.toResponse(it) }.content
     }
 
     @GetMapping("/statuses")
