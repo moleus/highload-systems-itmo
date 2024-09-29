@@ -27,15 +27,15 @@ class DonationController(
     private val userService: UserService
 ) {
 
-    private fun mapPageToResponse(page: Page<Transaction>): Page<TransactionResponse> {
-        return page.map { transaction -> TransactionMapper.toResponse(transaction) }
+    private fun mapPageToResponse(page: Page<Transaction>): List<TransactionResponse> {
+        return page.map { transaction -> TransactionMapper.toResponse(transaction) }.content
     }
 
     @GetMapping
 
     fun getAllDonations(
         pageable: Pageable
-    ): Page<TransactionResponse> {
+    ): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = transactionService.getAll(isDonation = true, limitedPageable)
 
@@ -46,7 +46,7 @@ class DonationController(
 
     fun getDonationsByCustomerForManager(
         @PathVariable customerId: Int, pageable: Pageable
-    ): Page<TransactionResponse> {
+    ): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = transactionService.getAllByUser(isDonation = true, customerId, limitedPageable)
         return mapPageToResponse(page)

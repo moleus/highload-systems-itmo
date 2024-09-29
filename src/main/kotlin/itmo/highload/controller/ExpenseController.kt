@@ -27,12 +27,12 @@ class ExpenseController(
     private val userService: UserService
 ) {
 
-    private fun mapPageToResponse(page: Page<Transaction>): Page<TransactionResponse> {
-        return page.map { transaction -> TransactionMapper.toResponse(transaction) }
+    private fun mapPageToResponse(page: Page<Transaction>): List<TransactionResponse> {
+        return page.map { transaction -> TransactionMapper.toResponse(transaction) }.content
     }
 
     @GetMapping
-    fun getAllExpenses(pageable: Pageable): Page<TransactionResponse> {
+    fun getAllExpenses(pageable: Pageable): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = transactionService.getAll(isDonation = false, limitedPageable)
         return mapPageToResponse(page)
@@ -41,7 +41,7 @@ class ExpenseController(
     @GetMapping("/{purposeId}")
     fun getExpensesByPurpose(
         @PathVariable purposeId: Int, pageable: Pageable
-    ): Page<TransactionResponse> {
+    ): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = transactionService.getAllByPurpose(isDonation = false, purposeId, limitedPageable)
         return mapPageToResponse(page)

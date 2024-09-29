@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/balances")
 class BalanceController(val balanceService: BalanceService) {
 
-    private fun mapPageToBalanceResponse(page: Page<Balance>): Page<BalanceResponse> {
-        return page.map { balance -> BalanceMapper.toBalanceResponse(balance) }
+    private fun mapPageToBalanceResponse(page: Page<Balance>): List<BalanceResponse> {
+        return page.map { balance -> BalanceMapper.toBalanceResponse(balance) }.content
     }
 
     private fun mapPageToPurposeResponse(page: Page<Balance>): Page<PurposeResponse> {
@@ -27,7 +27,7 @@ class BalanceController(val balanceService: BalanceService) {
     }
 
     @GetMapping
-    fun getAllBalances(pageable: Pageable): Page<BalanceResponse> {
+    fun getAllBalances(pageable: Pageable): List<BalanceResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = balanceService.getAll(limitedPageable)
         return mapPageToBalanceResponse(page)
@@ -42,7 +42,7 @@ class BalanceController(val balanceService: BalanceService) {
     @GetMapping("/purposes")
     fun getAllPurposes(
         @RequestParam(required = false) hasHeaders: Boolean, pageable: Pageable
-    ): ResponseEntity<Page<PurposeResponse>> {
+    ): ResponseEntity<List<PurposeResponse>> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = balanceService.getAll(limitedPageable)
 
@@ -50,7 +50,7 @@ class BalanceController(val balanceService: BalanceService) {
             return PaginationResponseHelper.createPaginatedResponseWithHeaders(mapPageToPurposeResponse(page))
         }
 
-        return ResponseEntity.ok(mapPageToPurposeResponse(page))
+        return ResponseEntity.ok(mapPageToPurposeResponse(page).content)
     }
 
     @PostMapping("/purposes")

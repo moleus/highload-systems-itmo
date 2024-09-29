@@ -9,7 +9,6 @@ import itmo.highload.service.AdoptionRequestService
 import itmo.highload.service.UserService
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -24,9 +23,9 @@ class AdoptionRequestController(
     @GetMapping
     fun getAllAdoptionRequests(
         @RequestParam(required = false) status: AdoptionStatus, pageable: Pageable
-    ): Page<AdoptionRequestResponse> {
+    ): List<AdoptionRequestResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return adoptionRequestService.getAll(status, limitedPageable).map { AdoptionRequestMapper.toResponse(it) }
+        return adoptionRequestService.getAll(status, limitedPageable).map { AdoptionRequestMapper.toResponse(it) }.content
     }
 
     @GetMapping("/statuses")

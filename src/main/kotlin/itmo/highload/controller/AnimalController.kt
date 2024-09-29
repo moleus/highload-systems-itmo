@@ -6,21 +6,19 @@ import itmo.highload.mapper.AnimalMapper
 import itmo.highload.service.AnimalService
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-// TODO: path in resources
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
     @GetMapping
     fun getAll(
         @RequestParam(required = false) name: String?, pageable: Pageable
-    ): Page<AnimalResponse> {
+    ): List<AnimalResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return animalService.getAll(name, limitedPageable).map { AnimalMapper.toAnimalResponse(it) }
+        return animalService.getAll(name, limitedPageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
     @GetMapping("/{id}")
