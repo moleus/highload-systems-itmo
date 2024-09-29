@@ -8,7 +8,6 @@ import itmo.highload.service.AnimalService
 import itmo.highload.mapper.AnimalMapper
 import itmo.highload.utils.PaginationResponseHelper
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+// TODO: path in resources
 @RequestMapping("/api/v1/animals")
 class AnimalController(val animalService: AnimalService) {
 
@@ -34,28 +34,27 @@ class AnimalController(val animalService: AnimalService) {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAllAnimalsPage(pageable: Pageable): Page<AnimalResponse> {
+    fun getAllAnimalsPage(pageable: Pageable): List<AnimalResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return animalService.getAll(limitedPageable)
-            .map { AnimalMapper.toAnimalResponse(it) }
+        return animalService.getAll(limitedPageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
+    // TODO: remove infinite scroll
     @GetMapping("/scroll")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsInfiniteScroll(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "limit", defaultValue = "10") limit: Int
-    ): Page<AnimalResponse> {
+    ): List<AnimalResponse> {
         val effectiveLimit = if (limit > MAX_PAGE_SIZE) MAX_PAGE_SIZE else limit
         val pageable = Pageable.ofSize(limit).withPage(offset / effectiveLimit)
-        return animalService.getAll(pageable)
-            .map { AnimalMapper.toAnimalResponse(it) }
+        return animalService.getAll(pageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
-    @GetMapping("/{animalId}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAnimal(@PathVariable animalId: Int): AnimalResponse {
-        val animal = animalService.get(animalId)
+    fun getAnimal(@PathVariable id: Int): AnimalResponse {
+        val animal = animalService.get(id)
         return AnimalMapper.toAnimalResponse(animal)
     }
 
@@ -77,8 +76,7 @@ class AnimalController(val animalService: AnimalService) {
     @PutMapping("/{animalId}")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAnimal(
-        @PathVariable animalId: Int,
-        @RequestBody @Valid request: AnimalDto
+        @PathVariable animalId: Int, @RequestBody @Valid request: AnimalDto
     ): AnimalResponse {
         return AnimalMapper.toAnimalResponse(animalService.update(animalId, request))
     }
@@ -90,47 +88,41 @@ class AnimalController(val animalService: AnimalService) {
         animalService.delete(animalId)
     }
 
+    // TODO: type-type
     @GetMapping("/type/{type}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsByType(
-        @PathVariable type: String,
-        pageable: Pageable
-    ): Page<AnimalResponse> {
+        @PathVariable type: String, pageable: Pageable
+    ): List<AnimalResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return animalService.getAllByType(type, limitedPageable)
-            .map { AnimalMapper.toAnimalResponse(it) }
+        return animalService.getAllByType(type, limitedPageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
     @GetMapping("/name/{name}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsByName(
-        @PathVariable name: String,
-        pageable: Pageable
-    ): Page<AnimalResponse> {
+        @PathVariable name: String, pageable: Pageable
+    ): List<AnimalResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return animalService.getAllByName(name, limitedPageable)
-            .map { AnimalMapper.toAnimalResponse(it) }
+        return animalService.getAllByName(name, limitedPageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
     @GetMapping("/health-status/{healthStatus}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsByHealthStatus(
-        @PathVariable healthStatus: HealthStatus,
-        pageable: Pageable
-    ): Page<AnimalResponse> {
+        @PathVariable healthStatus: HealthStatus, pageable: Pageable
+    ): List<AnimalResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         return animalService.getAllByHealthStatus(healthStatus, limitedPageable)
-            .map { AnimalMapper.toAnimalResponse(it) }
+            .map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
     @GetMapping("/gender/{gender}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAnimalsByGender(
-        @PathVariable gender: Gender,
-        pageable: Pageable
-    ): Page<AnimalResponse> {
+        @PathVariable gender: Gender, pageable: Pageable
+    ): List<AnimalResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        return animalService.getAllByGender(gender, limitedPageable)
-            .map { AnimalMapper.toAnimalResponse(it) }
+        return animalService.getAllByGender(gender, limitedPageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 }

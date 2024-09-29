@@ -29,9 +29,9 @@ object PaginationResponseHelper {
 
     fun <T> createPaginatedResponseWithHeaders(
         entityPage: Page<T>
-    ): ResponseEntity<Page<T>> {
+    ): ResponseEntity<List<T>> {
         val responseHeaders: HttpHeaders = createPaginationHeaders(entityPage)
-        return ResponseEntity.ok().headers(responseHeaders).body(entityPage)
+        return ResponseEntity.ok().headers(responseHeaders).body(entityPage.content)
     }
 
     fun limitPageSize(pageable: Pageable): Pageable {

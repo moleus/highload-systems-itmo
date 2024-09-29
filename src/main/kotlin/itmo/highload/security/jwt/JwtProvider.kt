@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.time.LocalDateTime
@@ -15,8 +14,8 @@ import javax.crypto.SecretKey
 
 @Component
 class JwtProvider(
-    @Value("\${jwt.secret.access}") jwtAccessSecret: String?,
-    @Value("\${jwt.secret.refresh}") jwtRefreshSecret: String?,
+    @Value("\${jwt.secret.access}") jwtAccessSecret: String,
+    @Value("\${jwt.secret.refresh}") jwtRefreshSecret: String,
     @param:Value("\${jwt.expiration.access}") private val jwtAccessExpirationMinutes: Int,
     @param:Value("\${jwt.expiration.refresh}") private val jwtRefreshExpirationDays: Int
 ) {
@@ -24,7 +23,7 @@ class JwtProvider(
     private val jwtAccessSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
     private val jwtRefreshSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret))
 
-    fun generateAccessToken(user: UserDetails): String {
+    fun generateAccessToken(login: String): String {
         val now = LocalDateTime.now()
         val accessExpirationInstant = now
             .plusMinutes(jwtAccessExpirationMinutes.toLong())
@@ -32,13 +31,13 @@ class JwtProvider(
             .toInstant()
         val accessExpiration = Date.from(accessExpirationInstant)
         return Jwts.builder()
-            .setSubject(user.username)
             .setExpiration(accessExpiration)
+            .setSubject(login)
             .signWith(jwtAccessSecret)
             .compact()
     }
 
-    fun generateRefreshToken(user: UserDetails): String {
+    fun generateRefreshToken(login: String): String {
         val now = LocalDateTime.now()
         val refreshExpirationInstant = now
             .plusDays(jwtRefreshExpirationDays.toLong())
@@ -46,8 +45,8 @@ class JwtProvider(
             .toInstant()
         val refreshExpiration = Date.from(refreshExpirationInstant)
         return Jwts.builder()
-            .setSubject(user.username)
             .setExpiration(refreshExpiration)
+            .setSubject(login)
             .signWith(jwtRefreshSecret)
             .compact()
     }

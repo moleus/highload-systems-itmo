@@ -31,10 +31,10 @@ class ExpenseController(val transactionService: TransactionService) {
 
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun getAllExpenses(pageable: Pageable): Page<TransactionResponse> {
+    fun getAllExpenses(pageable: Pageable): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = transactionService.getAll(isDonation = false, limitedPageable)
-        return mapPageToResponse(page)
+        return mapPageToResponse(page).content
     }
 
     @GetMapping("/{purposeId}")
@@ -42,10 +42,10 @@ class ExpenseController(val transactionService: TransactionService) {
     fun getExpensesByPurpose(
         @PathVariable purposeId: Int,
         pageable: Pageable
-    ): Page<TransactionResponse> {
+    ): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         val page = transactionService.getAllByPurpose(isDonation = false, purposeId, limitedPageable)
-        return mapPageToResponse(page)
+        return mapPageToResponse(page).content
     }
 
     @PostMapping

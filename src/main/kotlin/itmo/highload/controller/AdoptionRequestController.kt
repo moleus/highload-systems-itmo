@@ -32,17 +32,17 @@ class AdoptionRequestController(val adoptionRequestService: AdoptionRequestServi
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllAdoptionRequests(
-        @RequestParam(required = false) status: AdoptionStatus,
+        @RequestParam(required = false) status: AdoptionStatus?,
         @AuthenticationPrincipal user: User,
         pageable: Pageable
-    ): Page<AdoptionRequestResponse> {
+    ): List<AdoptionRequestResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
         return if (user.role == Role.ADOPTION_MANAGER) {
             adoptionRequestService.getAll(status, limitedPageable)
-                .map { AdoptionRequestMapper.toResponse(it) }
+                .map { AdoptionRequestMapper.toResponse(it) }.content
         } else {
             adoptionRequestService.getAllByCustomer(user.id, limitedPageable)
-                .map { AdoptionRequestMapper.toResponse(it) }
+                .map { AdoptionRequestMapper.toResponse(it) }.content
         }
     }
 

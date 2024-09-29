@@ -2,7 +2,9 @@ package itmo.highload.service
 
 import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
+import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.Role
+import itmo.highload.repository.CustomerRepository
 import itmo.highload.repository.UserRepository
 import jakarta.annotation.PostConstruct
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -14,11 +16,13 @@ import java.util.*
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val encoder: PasswordEncoder
+    private val encoder: PasswordEncoder,
+    private val customerRepository: CustomerRepository
 ) {
 
     @PostConstruct
     fun initializeUsers() {
+        // из-за этого ломаются sequence-ы в тестах - id customer и user не совпадают
         if (!checkIfExists("superuser")) {
             val user = User(
                 login = "superuser",
@@ -27,6 +31,12 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(itmo.highload.model.Customer(
+                id = user.id,
+                phone = "79123456778",
+                gender = Gender.MALE,
+                address = "Moscow",
+            ))
         }
         if (!checkIfExists("customer")) {
             val user = User(
@@ -36,6 +46,12 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(itmo.highload.model.Customer(
+                id = user.id,
+                phone = "74123456778",
+                gender = Gender.MALE,
+                address = "Moscow",
+            ))
         }
         if (!checkIfExists("emanager")) {
             val user = User(
@@ -45,6 +61,12 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(itmo.highload.model.Customer(
+                id = user.id,
+                phone = "73123456778",
+                gender = Gender.MALE,
+                address = "Moscow",
+            ))
         }
         if (!checkIfExists("amanager")) {
             val user = User(
@@ -54,6 +76,12 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(itmo.highload.model.Customer(
+                id = user.id,
+                phone = "71123456778",
+                gender = Gender.FEMALE,
+                address = "Moscow",
+            ))
         }
     }
 

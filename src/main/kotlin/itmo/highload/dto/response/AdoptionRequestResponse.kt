@@ -3,7 +3,7 @@ package itmo.highload.dto.response
 import itmo.highload.model.enum.AdoptionStatus
 import java.time.LocalDateTime
 
-class AdoptionRequestResponse(
+data class AdoptionRequestResponse(
     val id: Int,
     val dateTime: LocalDateTime,
     val status: AdoptionStatus,

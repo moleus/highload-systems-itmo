@@ -1,5 +1,5 @@
 POST http://localhost:8080/api/v1/balances/purposes
-Authorization: Bearer {{$auth.token("AUTH_EMANAGER_TOKEN")}}
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3ODU4OH0.jBDR4NVoKozg59D3sz1NeMf38qESH3uoeq38e9NXZODqGUa0-Em2iV2XI7mM1cFryzV0RRi8XiN8TUs1OZKa2g
 Content-Type: application/json
 
 {
@@ -8,15 +8,15 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/api/v1/balances/purposes
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3MTIzMn0.5EJHcw9NB6ybQWQ6sDZAZlI09Z9YUCaj7N3O-HZQWEuIsNFSCXLYoRp-VZy7FfqNnOOs0evx18utkxqF9jKTcg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3ODU4OH0.jBDR4NVoKozg59D3sz1NeMf38qESH3uoeq38e9NXZODqGUa0-Em2iV2XI7mM1cFryzV0RRi8XiN8TUs1OZKa2g
 Content-Type: application/json
 
 ###
 GET http://localhost:8080/api/v1/balances
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3MTIzMn0.5EJHcw9NB6ybQWQ6sDZAZlI09Z9YUCaj7N3O-HZQWEuIsNFSCXLYoRp-VZy7FfqNnOOs0evx18utkxqF9jKTcg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3ODU4OH0.jBDR4NVoKozg59D3sz1NeMf38qESH3uoeq38e9NXZODqGUa0-Em2iV2XI7mM1cFryzV0RRi8XiN8TUs1OZKa2g
 Content-Type: application/json
 
 ###
 GET http://localhost:8080/api/v1/balances/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3MTIzMn0.5EJHcw9NB6ybQWQ6sDZAZlI09Z9YUCaj7N3O-HZQWEuIsNFSCXLYoRp-VZy7FfqNnOOs0evx18utkxqF9jKTcg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWFuYWdlciIsImV4cCI6MTcyNzE3ODU4OH0.jBDR4NVoKozg59D3sz1NeMf38qESH3uoeq38e9NXZODqGUa0-Em2iV2XI7mM1cFryzV0RRi8XiN8TUs1OZKa2g
 Content-Type: application/json

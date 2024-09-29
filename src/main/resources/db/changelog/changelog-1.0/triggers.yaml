@@ -12,12 +12,12 @@ databaseChangeLog:
               CREATE OR REPLACE FUNCTION check_adoption_requests()
               RETURNS TRIGGER AS $$
                       BEGIN
-                        IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.customer_id AND role = 'customer') THEN
-                          RAISE EXCEPTION 'customer_id must reference a user with role customer';
+                        IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.customer_id AND role = 'CUSTOMER') THEN
+                          RAISE EXCEPTION 'only user with role CUSTOMER can make adoption requests';
                         END IF;
                         IF NEW.manager_id IS NOT NULL THEN
-                          IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.manager_id AND role = 'adoption manager') THEN
-                            RAISE EXCEPTION 'manager_id must reference a user with role adoption manager';
+                          IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.manager_id AND role = 'ADOPTION_MANAGER') THEN
+                            RAISE EXCEPTION 'only user with role ADOPTION_MANAGER can approve or deny adoption requests';
                           END IF;
                         END IF;
                 RETURN NEW;
@@ -42,12 +42,12 @@ databaseChangeLog:
               RETURNS TRIGGER AS $$
                           BEGIN
                             IF NEW.is_donation THEN
-                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'customer') THEN
-                                RAISE EXCEPTION 'user_id must reference a user with role customer when is_donation is true';
+                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'CUSTOMER') THEN
+                                RAISE EXCEPTION 'only user with role CUSTOMER can make donations';
                               END IF;
                             ELSE
-                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'expense manager') THEN
-                                RAISE EXCEPTION 'user_id must reference a user with role expense manager when is_donation is false';
+                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'EXPENSE_MANAGER') THEN
+                                RAISE EXCEPTION 'only user with role EXPENSE_MANAGER can make expenses';
                               END IF;
                             END IF;
                 RETURN NEW;
