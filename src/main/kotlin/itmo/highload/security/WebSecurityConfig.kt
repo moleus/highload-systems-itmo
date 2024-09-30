@@ -55,7 +55,8 @@ class DisableSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http.authorizeHttpRequests { requests -> requests.requestMatchers( "/**").permitAll() }
+        http.authorizeHttpRequests { requests -> requests.requestMatchers("/**").permitAll() }
+            .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
         return http.build()
     }
 }
