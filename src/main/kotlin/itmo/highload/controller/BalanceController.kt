@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/balances")
+@RequestMapping("\${app.base-url}/balances")
 class BalanceController(val balanceService: BalanceService) {
 
     private fun mapPageToBalanceResponse(page: Page<Balance>): List<BalanceResponse> {
@@ -33,9 +33,9 @@ class BalanceController(val balanceService: BalanceService) {
         return mapPageToBalanceResponse(page)
     }
 
-    @GetMapping("/{balanceId}")
-    fun getBalanceById(@PathVariable balanceId: Int): BalanceResponse {
-        val balance = balanceService.getById(balanceId)
+    @GetMapping("/{id}")
+    fun getBalanceById(@PathVariable id: Int): BalanceResponse {
+        val balance = balanceService.getById(id)
         return BalanceMapper.toBalanceResponse(balance)
     }
 

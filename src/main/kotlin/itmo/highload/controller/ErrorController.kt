@@ -30,7 +30,7 @@ class ErrorController {
     @ExceptionHandler(EntityAlreadyExistsException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun onAdoptionRequestAlreadyExistsException(e: EntityAlreadyExistsException): String? {
+    fun onEntityAlreadyExistsException(e: EntityAlreadyExistsException): String? {
         return e.message
     }
 
