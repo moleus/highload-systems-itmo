@@ -8,14 +8,15 @@ import itmo.highload.security.AuthService
 import jakarta.security.auth.message.AuthException
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@Profile("security")
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(private val authService: AuthService) {
@@ -31,7 +32,6 @@ class AuthController(private val authService: AuthService) {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasAuthority('SUPERUSER')")
     fun register(@RequestBody @Valid request: RegisterDto): ResponseEntity<String> {
         if (authService.checkIfUserExists(request.login)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exist")

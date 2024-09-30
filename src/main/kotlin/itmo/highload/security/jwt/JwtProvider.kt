@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.time.LocalDateTime
@@ -12,6 +13,7 @@ import java.time.ZoneId
 import java.util.*
 import javax.crypto.SecretKey
 
+@Profile("security")
 @Component
 class JwtProvider(
     @Value("\${jwt.secret.access}") jwtAccessSecret: String,

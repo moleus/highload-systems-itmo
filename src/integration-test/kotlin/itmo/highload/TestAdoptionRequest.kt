@@ -25,7 +25,6 @@ import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.CustomerRepository
 import itmo.highload.repository.UserRepository
-import itmo.highload.security.jwt.JwtProvider
 import itmo.highload.service.UserService
 import itmo.highload.utils.defaultJsonRequestSpec
 import itmo.highload.utils.withJwt
@@ -82,7 +81,6 @@ class TestAdoptionRequest @Autowired constructor(
     private val animalRepository: AnimalRepository,
     private val customerRepository: CustomerRepository,
     private val userRepository: UserRepository,
-    private val jwtProvider: JwtProvider,
     private val userService: UserService,
 
     ) {
@@ -100,7 +98,7 @@ class TestAdoptionRequest @Autowired constructor(
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
-        RestAssured.defaultParser = Parser.JSON;
+        RestAssured.defaultParser = Parser.JSON
 
         userRepository.deleteAll()
         users.map { u -> userService.addUser(RegisterDto(login = u.login, password = u.password, role = u.role)) }
@@ -121,7 +119,6 @@ class TestAdoptionRequest @Autowired constructor(
     }
 
     @Test
-    // TODO: очередность не нужна
     @Order(1)
     fun `test add adoption request`() {
         val animal = animalRepository.findByName("Buddy", Pageable.unpaged()).first()
@@ -233,8 +230,7 @@ class TestAdoptionRequest @Autowired constructor(
             return
         }
         val animalId = animalRepository.findByName("Buddy", Pageable.unpaged()).first().id
-        val otherRoleToken = jwtProvider.generateAccessToken(login)
-        val response: Response = defaultJsonRequestSpec().withJwt(otherRoleToken).delete("$apiUrlBasePath/$animalId")
+        val response: Response = defaultJsonRequestSpec().delete("$apiUrlBasePath/$animalId")
 
         response.then().log().ifValidationFails(LogDetail.BODY)
             .statusCode(403) // Adjust based on expected status code for forbidden access

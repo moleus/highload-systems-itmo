@@ -5,7 +5,8 @@ package itmo.highload.security
 import itmo.highload.security.jwt.JwtFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.context.annotation.Profile
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer
@@ -13,15 +14,13 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
+@Profile("security")
 @Configuration
 @EnableWebSecurity
-// TODO: deprecated annotation subst
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 class WebSecurityConfig {
 
     @Bean
@@ -29,7 +28,6 @@ class WebSecurityConfig {
     fun securityFilterChain(http: HttpSecurity, jwtFilter: JwtFilter?): SecurityFilterChain {
         http
             .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
-            // TODO: remove if unnecessary
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -48,8 +46,4 @@ class WebSecurityConfig {
         return http.build()
     }
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
 }

@@ -27,7 +27,6 @@ data class Animal(
     @Size(max = 50, message = "Name cannot exceed 50 characters")
     var name: String,
 
-    // TODO: column names redundancy
     @Column(name = "type_of_animal", nullable = false, length = 50)
     @NotBlank(message = "Type of animal is mandatory")
     @Size(max = 50, message = "Type of animal cannot exceed 50 characters")

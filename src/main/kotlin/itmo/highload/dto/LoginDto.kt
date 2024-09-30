@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
-// TODO: json naming strategy
 data class LoginDto(
     @NotBlank(message = "Login can't be blank")
     @Size(min = 4, max = 50)
