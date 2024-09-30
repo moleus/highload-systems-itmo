@@ -11,20 +11,20 @@ import jakarta.validation.constraints.Size
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class AnimalDto(
 
-    @Size(min = 1, max = 50)
-    @NotBlank
+    @field:Size(min = 1, max = 50)
+    @field:NotBlank
     val name: String,
 
-    @Size(min = 1, max = 50)
-    @NotBlank
+    @field:Size(min = 1, max = 50)
+    @field:NotBlank
     val type: String,
 
-    @NotNull
+    @field:NotNull
     val gender: Gender,
 
-    @NotNull
-    val isCastrated: Boolean,
+    @field:NotNull
+    val isCastrated: Boolean?,
 
-    @NotNull
+    @field:NotNull
     val healthStatus: HealthStatus
 )

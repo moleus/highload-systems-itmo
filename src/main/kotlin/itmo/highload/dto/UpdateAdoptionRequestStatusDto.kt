@@ -7,8 +7,10 @@ import jakarta.validation.constraints.NotNull
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class UpdateAdoptionRequestStatusDto(
-    @NotNull
-    val id: Int,
-    @NotNull
+
+    @field:NotNull
+    val id: Int?,
+
+    @field:NotNull
     val status: AdoptionStatus
 )

@@ -46,7 +46,7 @@ class AdoptionRequestService(
 
     @Transactional
     fun update(manager: User, request: UpdateAdoptionRequestStatusDto): AdoptionRequest {
-        val adoptionRequest = adoptionRequestRepository.findById(request.id).orElseThrow {
+        val adoptionRequest = adoptionRequestRepository.findById(request.id!!).orElseThrow {
             EntityNotFoundException("Adoption request not found")
         }
 

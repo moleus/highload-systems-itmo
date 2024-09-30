@@ -10,7 +10,7 @@ object AnimalMapper {
             name = animal.name,
             typeOfAnimal = animal.type,
             gender = animal.gender,
-            isCastrated = animal.isCastrated,
+            isCastrated = animal.isCastrated!!,
             healthStatus = animal.healthStatus
         )
     }
