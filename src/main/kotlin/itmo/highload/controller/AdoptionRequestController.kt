@@ -1,3 +1,5 @@
+package itmo.highload.controller
+
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.mapper.AdoptionRequestMapper
@@ -13,9 +15,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("\${app.base-url}/adoption-requests")
+@RequestMapping("\${app.base-url}/adoptions")
 class AdoptionRequestController(
-    val adoptionRequestService: AdoptionRequestService,
+    private val adoptionRequestService: AdoptionRequestService,
     private val userService: UserService
 ) {
     @GetMapping
