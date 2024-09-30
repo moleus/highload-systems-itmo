@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
@@ -110,7 +111,7 @@ class TestDonation @Autowired constructor(
 
         val response: Response = defaultJsonRequestSpec().body(transactionDto).post(apiUrlBasePath)
 
-        response.then().statusCode(201).body("moneyAmount", equalTo(200))
+        response.then().statusCode(HttpStatus.CREATED.value()).body("moneyAmount", equalTo(200))
     }
 
     @Test

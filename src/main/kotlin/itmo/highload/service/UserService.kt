@@ -1,8 +1,11 @@
 package itmo.highload.service
 
 import itmo.highload.dto.RegisterDto
+import itmo.highload.model.Customer
 import itmo.highload.model.User
+import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.Role
+import itmo.highload.repository.CustomerRepository
 import itmo.highload.repository.UserRepository
 import jakarta.annotation.PostConstruct
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -20,7 +23,8 @@ const val DEMO_PASSWORD = "123"
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val encoder: PasswordEncoder
+    private val encoder: PasswordEncoder,
+    private val customerRepository: CustomerRepository
 ) {
 
     @PostConstruct
@@ -33,6 +37,7 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(Customer(gender = Gender.MALE, address = "Moscow", phone = "+79444333141"))
         }
         if (!checkIfExists(DEMO_CUSTOMER_LOGIN)) {
             val user = User(
@@ -42,6 +47,7 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(Customer(gender = Gender.MALE, address = "Moscow", phone = "+79444333111"))
         }
         if (!checkIfExists(DEMO_EXPENSE_MANAGER_LOGIN)) {
             val user = User(
@@ -51,6 +57,7 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(Customer(gender = Gender.MALE, address = "Moscow", phone = "+79444333112"))
         }
         if (!checkIfExists(DEMO_ADOPTION_MANAGER_LOGIN)) {
             val user = User(
@@ -60,6 +67,7 @@ class UserService(
                 creationDate = LocalDate.now()
             )
             userRepository.save(user)
+            customerRepository.save(Customer(gender = Gender.MALE, address = "Moscow", phone = "+79444333131"))
         }
     }
 

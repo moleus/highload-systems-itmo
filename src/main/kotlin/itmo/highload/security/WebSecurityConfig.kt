@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer
@@ -18,7 +16,6 @@ import org.springframework.security.config.annotation.web.configurers.SessionMan
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 
 @Profile("security")
@@ -30,8 +27,7 @@ class WebSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity, jwtFilter: JwtFilter?): SecurityFilterChain {
-        http
-            .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
+        http.httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -54,12 +50,12 @@ class WebSecurityConfig {
 
 @Profile("lab1")
 @Configuration
-class ApplicationNoSecurity {
+@EnableWebSecurity
+class DisableSecurityConfig {
     @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers(AntPathRequestMatcher("/**"))
-        }
+    @Throws(Exception::class)
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http.authorizeHttpRequests { requests -> requests.requestMatchers( "/**").permitAll() }
+        return http.build()
     }
 }

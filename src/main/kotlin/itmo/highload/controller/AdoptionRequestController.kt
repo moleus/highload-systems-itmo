@@ -18,10 +18,9 @@ class AdoptionRequestController(
     val adoptionRequestService: AdoptionRequestService,
     private val userService: UserService
 ) {
-
     @GetMapping
-    fun getAllAdoptionRequests(
-        @RequestParam(required = false) status: AdoptionStatus,
+    fun getAll(
+        @RequestParam(required = false) status: AdoptionStatus?,
         pageable: Pageable
     ): List<AdoptionRequestResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)

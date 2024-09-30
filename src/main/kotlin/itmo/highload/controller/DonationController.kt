@@ -32,7 +32,6 @@ class DonationController(
     }
 
     @GetMapping
-
     fun getAllDonations(
         pageable: Pageable
     ): List<TransactionResponse> {
@@ -43,7 +42,6 @@ class DonationController(
     }
 
     @GetMapping("/{customerId}")
-
     fun getDonationsByCustomerForManager(
         @PathVariable customerId: Int, pageable: Pageable
     ): List<TransactionResponse> {
@@ -54,7 +52,6 @@ class DonationController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-
     fun addDonation(
         @RequestBody @Valid donationDto: TransactionDto
     ): TransactionResponse {

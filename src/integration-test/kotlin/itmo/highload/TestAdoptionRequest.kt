@@ -54,7 +54,7 @@ class TestAdoptionRequest @Autowired constructor(
     private val animalRepository: AnimalRepository,
     private val customerRepository: CustomerRepository,
     private val userRepository: UserRepository,
-    ) {
+) {
     @LocalServerPort
     private var port: Int = 0
     private val apiUrlBasePath = "/api/v1/adoption-requests"
@@ -102,8 +102,10 @@ class TestAdoptionRequest @Autowired constructor(
 
         val response: Response = defaultJsonRequestSpec().post("$apiUrlBasePath/${animal2.id}")
 
-        val actualResponse = response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract().body()
-            .`as`(AdoptionRequestResponse::class.java)
+        val actualResponse =
+            response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract()
+                .body()
+                .`as`(AdoptionRequestResponse::class.java)
         Assertions.assertEquals(expectedAdoptionRequestResponse.id, actualResponse.id)
         Assertions.assertEquals(expectedAdoptionRequestResponse.status, actualResponse.status)
         Assertions.assertEquals(expectedAdoptionRequestResponse.customer, actualResponse.customer)
@@ -125,7 +127,7 @@ class TestAdoptionRequest @Autowired constructor(
 
         val response =
             defaultJsonRequestSpec().get(apiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
-                .statusCode(200).extract()
+                .statusCode(HttpStatus.OK.value()).extract()
         val jsonPathEvaluator: JsonPath = response.jsonPath()
         val adoptions: List<AdoptionRequestResponse> =
             jsonPathEvaluator.getList("", AdoptionRequestResponse::class.java)
