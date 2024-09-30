@@ -30,16 +30,23 @@ class WebSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity, jwtFilter: JwtFilter?): SecurityFilterChain {
-        http.httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
+        http
+            .httpBasic { obj: HttpBasicConfigurer<HttpSecurity> -> obj.disable() }
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .sessionManagement { management: SessionManagementConfigurer<HttpSecurity?> ->
                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authorizeHttpRequests { requests: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
-                requests.requestMatchers(
-                        "/api/v1/auth/login", "/api/v1/auth/token", "/api/v1/auth/refresh", "/error"
-                    ).permitAll().anyRequest().authenticated()
-            }.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+                requests
+                    .requestMatchers(
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/token",
+                        "/api/v1/auth/refresh",
+                        "/error"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+            }
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 
@@ -51,7 +58,8 @@ class ApplicationNoSecurity {
     @Bean
     fun webSecurityCustomizer(): WebSecurityCustomizer {
         return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring().requestMatchers(AntPathRequestMatcher("/**"))
+            web.ignoring()
+                .requestMatchers(AntPathRequestMatcher("/**"))
         }
     }
 }
