@@ -31,7 +31,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
         validateAnimal(existingAnimal, request)
 
         existingAnimal.name = request.name
-        existingAnimal.isCastrated = request.isCastrated
+        existingAnimal.isCastrated = request.isCastrated!!
         existingAnimal.healthStatus = request.healthStatus
 
         return animalRepository.save(existingAnimal)
@@ -61,7 +61,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
         if (existingAnimal.typeOfAnimal != updateAnimal.type) {
             errors.add("Can't change type of animal")
         }
-        if (existingAnimal.isCastrated && !updateAnimal.isCastrated) {
+        if (existingAnimal.isCastrated && !updateAnimal.isCastrated!!) {
             errors.add("Can't cancel castration of an animal")
         }
 

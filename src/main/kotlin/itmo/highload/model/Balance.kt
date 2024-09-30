@@ -22,7 +22,7 @@ data class Balance(
     @Size(max = 50, message = "Purpose cannot exceed 50 characters")
     val purpose: String,
 
-    @Column(name = "money_amount", nullable = false)
+    @Column(nullable = false)
     @PositiveOrZero(message = "Money amount cannot be negative")
     var moneyAmount: Int
 )

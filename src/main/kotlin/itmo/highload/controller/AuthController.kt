@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Profile("security")
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("\${app.base-url}/auth")
 class AuthController(private val authService: AuthService) {
 
     @PostMapping("/login")

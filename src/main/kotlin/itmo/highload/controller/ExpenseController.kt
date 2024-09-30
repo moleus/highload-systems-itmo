@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/transactions/expenses")
+@RequestMapping("\${app.base-url}/transactions/expenses")
 class ExpenseController(
     val transactionService: TransactionService,
     private val userService: UserService

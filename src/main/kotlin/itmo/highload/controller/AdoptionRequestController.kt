@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/adoption-requests")
+@RequestMapping("\${app.base-url}/adoption-requests")
 class AdoptionRequestController(
     val adoptionRequestService: AdoptionRequestService,
     private val userService: UserService

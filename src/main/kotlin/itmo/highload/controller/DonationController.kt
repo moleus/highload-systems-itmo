@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/transactions/donations")
+@RequestMapping("\${app.base-url}/transactions/donations")
 class DonationController(
     val transactionService: TransactionService,
     private val userService: UserService
