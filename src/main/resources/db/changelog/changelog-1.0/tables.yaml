@@ -6,7 +6,9 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             sql: CREATE TYPE genders AS ENUM ('FEMALE', 'MALE');
-          rollback:
+      rollback:
+        - sql:
+            dbms: postgresql
             sql: DROP TYPE genders;
 
   - changeSet:
@@ -16,7 +18,9 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             sql: CREATE TYPE role AS ENUM ('CUSTOMER', 'EXPENSE_MANAGER', 'ADOPTION_MANAGER', 'SUPERUSER');
-          rollback:
+      rollback:
+        - sql:
+            dbms: postgresql
             sql: DROP TYPE role;
 
   - changeSet:
@@ -26,7 +30,9 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             sql: CREATE TYPE adoption_statuses AS ENUM ('PENDING', 'APPROVED', 'DENIED');
-          rollback:
+      rollback:
+        - sql:
+            dbms: postgresql
             sql: DROP TYPE adoption_statuses;
 
   - changeSet:
@@ -36,7 +42,9 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             sql: CREATE TYPE health_statuses AS ENUM ('HEALTHY', 'INJURY', 'SICK', 'RECOVERING', 'DEAD');
-          rollback:
+      rollback:
+        - sql:
+            dbms: postgresql
             sql: DROP TYPE health_statuses;
 
   - changeSet:
@@ -48,11 +56,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: SERIAL
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: ALWAYS
                   constraints:
                     primaryKey: true
                     nullable: false
-                    autoIncrement: true
               - column:
                   name: phone
                   type: VARCHAR(15)
@@ -79,11 +88,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: SERIAL
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: ALWAYS
                   constraints:
                     primaryKey: true
                     nullable: false
-                    autoIncrement: true
               - column:
                   name: login
                   type: VARCHAR(50)
@@ -115,11 +125,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: SERIAL
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: ALWAYS
                   constraints:
                     primaryKey: true
                     nullable: false
-                    autoIncrement: true
               - column:
                   name: name
                   type: VARCHAR(50)
@@ -184,11 +195,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: SERIAL
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: ALWAYS
                   constraints:
                     primaryKey: true
                     nullable: false
-                    autoIncrement: true
               - column:
                   name: date_time
                   type: DATETIME
@@ -236,11 +248,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: SERIAL
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: ALWAYS
                   constraints:
                     primaryKey: true
                     nullable: false
-                    autoIncrement: true
               - column:
                   name: purpose
                   type: VARCHAR(50)
@@ -263,11 +276,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: SERIAL
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: ALWAYS
                   constraints:
                     primaryKey: true
                     nullable: false
-                    autoIncrement: true
               - column:
                   name: date_time
                   type: DATETIME
