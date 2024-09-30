@@ -20,7 +20,7 @@ data class Transaction(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
-    @Column(name = "date_time", nullable = false)
+    @Column(nullable = false)
     @NotNull(message = "Date and time is mandatory")
     val dateTime: LocalDateTime,
 
@@ -32,10 +32,10 @@ data class Transaction(
     @JoinColumn(name = "balance_id", nullable = false)
     val balance: Balance,
 
-    @Column(name = "money_amount", nullable = false)
+    @Column(nullable = false)
     @Positive(message = "Money amount must be positive")
     val moneyAmount: Int,
 
-    @Column(name = "is_donation", nullable = false)
+    @Column(nullable = false)
     val isDonation: Boolean
 )

@@ -27,7 +27,7 @@ data class Animal(
     @Size(max = 50, message = "Name cannot exceed 50 characters")
     var name: String,
 
-    @Column(name = "type_of_animal", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     @NotBlank(message = "Type of animal is mandatory")
     @Size(max = 50, message = "Type of animal cannot exceed 50 characters")
     val typeOfAnimal: String,
@@ -37,11 +37,11 @@ data class Animal(
     @Column(nullable = false)
     val gender: Gender,
 
-    @Column(name = "is_castrated", nullable = false)
+    @Column(nullable = false)
     var isCastrated: Boolean,
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType::class)
-    @Column(name = "health_status", nullable = false)
+    @Column(nullable = false)
     var healthStatus: HealthStatus
 )

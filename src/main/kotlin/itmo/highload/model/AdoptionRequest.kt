@@ -24,7 +24,7 @@ data class AdoptionRequest(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
-    @Column(name = "date_time", nullable = false)
+    @Column(nullable = false)
     @NotNull(message = "Date and time is mandatory")
     val dateTime: LocalDateTime,
 
