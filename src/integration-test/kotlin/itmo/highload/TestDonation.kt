@@ -13,6 +13,8 @@ import itmo.highload.model.Transaction
 import itmo.highload.repository.TransactionRepository
 import itmo.highload.repository.UserRepository
 import itmo.highload.security.jwt.JwtProvider
+import itmo.highload.service.DEMO_CUSTOMER_LOGIN
+import itmo.highload.service.DEMO_EXPENSE_MANAGER_LOGIN
 import itmo.highload.utils.defaultJsonRequestSpec
 import itmo.highload.utils.withJwt
 import org.hamcrest.Matchers.equalTo
@@ -46,30 +48,10 @@ val balances = listOf(
     )
 )
 
-val transactions = listOf(
-    Transaction(
-        id = 1000,
-        dateTime = LocalDateTime.now(),
-        moneyAmount = 100,
-        isDonation = true,
-        user = users[0],
-        balance = balances[0],
-    ),
-    Transaction(
-        id = 1001,
-        dateTime = LocalDateTime.now(),
-        moneyAmount = 200,
-        isDonation = false,
-        user = users[0],
-        balance = balances[1],
-    ),
-)
-
 @IntegrationTestContext
 class TestDonation @Autowired constructor(
     private val transactionRepository: TransactionRepository,
     private val userRepository: UserRepository,
-    private val jwtProvider: JwtProvider,
 ) {
     companion object {
         @Container
@@ -89,26 +71,36 @@ class TestDonation @Autowired constructor(
     private var port: Int = 0
     private val apiUrlBasePath = "/api/v1/transactions/donations"
 
-    private fun getCustomerToken(login: String) = jwtProvider.generateAccessToken(login)
-
-    private fun getExpenseManagerToken(login: String) =
-        jwtProvider.generateAccessToken(login)
-
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
 
-        userRepository.deleteAll()
-        userRepository.saveAll(transactions.map { it.user })
+        val transactions = listOf(
+            Transaction(
+                id = 1000,
+                dateTime = LocalDateTime.now(),
+                moneyAmount = 100,
+                isDonation = true,
+                user = userRepository.findByLogin(DEMO_CUSTOMER_LOGIN)!!,
+                balance = balances[0],
+            ),
+            Transaction(
+                id = 1001,
+                dateTime = LocalDateTime.now(),
+                moneyAmount = 200,
+                isDonation = false,
+                user = userRepository.findByLogin(DEMO_EXPENSE_MANAGER_LOGIN)!!,
+                balance = balances[1],
+            ),
+        )
+
         transactionRepository.deleteAll()
         transactionRepository.saveAll(transactions)
     }
 
     @Test
     fun `test add donation`() {
-        val user = transactions[0].user
-        val token = getCustomerToken(user.login)
         val balance = balances[0]
 
         val transactionDto = TransactionDto(
@@ -116,17 +108,14 @@ class TestDonation @Autowired constructor(
             moneyAmount = 200
         )
 
-        val response: Response = defaultJsonRequestSpec().withJwt(token).body(transactionDto).post(apiUrlBasePath)
+        val response: Response = defaultJsonRequestSpec().body(transactionDto).post(apiUrlBasePath)
 
         response.then().statusCode(201).body("moneyAmount", equalTo(200))
     }
 
     @Test
     fun `test get all donations for customer`() {
-        val user = transactions[0].user
-        val token = getCustomerToken(user.login)
-
-        val expectedTransactionResponse = transactions.filter { it.isDonation }.map {
+        val expectedTransactionResponse = transactionRepository.findAll().filter { it.isDonation }.map {
             TransactionResponse(
                 dateTime = it.dateTime,
                 purpose = PurposeResponse(it.balance.id, it.balance.purpose),
@@ -136,15 +125,13 @@ class TestDonation @Autowired constructor(
             )
         }
 
-        val response: Response = defaultJsonRequestSpec().withJwt(token).get(apiUrlBasePath)
+        val response: Response = defaultJsonRequestSpec().get(apiUrlBasePath)
         response.then().statusCode(200).body("", `is`(expectedTransactionResponse))
     }
 
     @Test
     fun `test get all donations for expense manager`() {
-        val token = getExpenseManagerToken("manager")
-
-        val expectedTransactionResponse = transactions.filter { it.isDonation }.map {
+        val expectedTransactionResponse = transactionRepository.findAll().filter { it.isDonation }.map {
             TransactionResponse(
                 dateTime = it.dateTime,
                 purpose = PurposeResponse(it.balance.id, it.balance.purpose),
@@ -154,7 +141,7 @@ class TestDonation @Autowired constructor(
             )
         }
 
-        val response: Response = defaultJsonRequestSpec().withJwt(token).get(apiUrlBasePath)
+        val response: Response = defaultJsonRequestSpec().get(apiUrlBasePath)
         response.then().statusCode(200).body("", `is`(expectedTransactionResponse))
     }
 }

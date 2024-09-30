@@ -12,7 +12,6 @@ import org.springframework.test.context.TestPropertySource
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestPropertySource(value = ["classpath:application-test.properties"])
 @Target(AnnotationTarget.CLASS)
 annotation class IntegrationTestContext
