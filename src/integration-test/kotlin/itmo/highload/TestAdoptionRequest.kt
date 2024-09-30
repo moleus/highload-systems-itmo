@@ -9,11 +9,7 @@ import itmo.highload.configuration.IntegrationTestContext
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.mapper.AnimalMapper
 import itmo.highload.mapper.UserMapper
-import itmo.highload.model.AdoptionRequest
-import itmo.highload.model.Animal
 import itmo.highload.model.enum.AdoptionStatus
-import itmo.highload.model.enum.Gender
-import itmo.highload.model.enum.HealthStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.CustomerRepository
@@ -31,22 +27,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-val animals = listOf(
-    Animal(
-        name = "Buddy",
-        typeOfAnimal = "Dog",
-        gender = Gender.MALE,
-        isCastrated = true,
-        healthStatus = HealthStatus.HEALTHY
-    ), Animal(
-        name = "Molly",
-        typeOfAnimal = "Cat",
-        gender = Gender.FEMALE,
-        isCastrated = false,
-        healthStatus = HealthStatus.SICK
-    )
-)
-
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
@@ -57,25 +37,12 @@ class TestAdoptionRequest @Autowired constructor(
 ) {
     @LocalServerPort
     private var port: Int = 0
-    private val apiUrlBasePath = "/api/v1/adoption-requests"
+    private val apiUrlBasePath = "/api/v1/adoptions"
 
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
-
-        animalRepository.deleteAll()
-        animalRepository.saveAllAndFlush(animals)
-        adoptionRequestRepository.deleteAll()
-        animalRepository.findByName("Buddy", Pageable.unpaged()).map { animal ->
-            AdoptionRequest(
-                status = AdoptionStatus.PENDING,
-                customer = customerRepository.findById(userRepository.findByLogin(DEMO_CUSTOMER_LOGIN)!!.id).get(),
-                animal = animal,
-                dateTime = LocalDateTime.now(),
-                manager = null,
-            )
-        }.let { adoptionRequests -> adoptionRequestRepository.saveAllAndFlush(adoptionRequests) }
     }
 
     @Test
@@ -84,9 +51,10 @@ class TestAdoptionRequest @Autowired constructor(
         val animalId = animal.id
         val user = userRepository.findByLogin(DEMO_CUSTOMER_LOGIN) ?: throw IllegalArgumentException("User not found")
 
-        val expectedMessage = "An adoption request already exists for customer ID: 1 and animal ID: 1"
-        defaultJsonRequestSpec().post("$apiUrlBasePath/$animalId").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(`is`(expectedMessage))
+        val expectedMessage = "An adoption request already exists for customer ID: 2 and animal ID: 1"
+        defaultJsonRequestSpec().post("$apiUrlBasePath/$animalId").then()
+            .log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
+            .body(`is`(expectedMessage))
 
         val animal2 = animalRepository.findByName("Molly", Pageable.unpaged()).first()
 
