@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/animals")
+@RequestMapping("\${app.base-url}/animals")
 class AnimalController(val animalService: AnimalService) {
     @GetMapping
     fun getAll(

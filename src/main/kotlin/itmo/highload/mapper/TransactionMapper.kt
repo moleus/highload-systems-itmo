@@ -16,7 +16,7 @@ object TransactionMapper {
             dateTime = LocalDateTime.now(),
             user = user,
             balance = balance,
-            moneyAmount = dto.moneyAmount,
+            moneyAmount = dto.moneyAmount!!,
             isDonation = isDonation
         )
     }
