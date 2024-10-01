@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain
 @Profile("lab1")
 @Configuration
 @EnableWebSecurity
-class DisableSecurityConfig {
+class WebSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
