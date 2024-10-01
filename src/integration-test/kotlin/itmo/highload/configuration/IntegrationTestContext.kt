@@ -1,8 +1,6 @@
 package itmo.highload.configuration
 
-import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.TestMethodOrder
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
@@ -11,7 +9,7 @@ import org.springframework.test.context.TestPropertySource
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@AutoConfigureMockMvc
+@AutoConfigureWebMvc
 @TestPropertySource(value = ["classpath:application-test.properties"])
 @Target(AnnotationTarget.CLASS)
 annotation class IntegrationTestContext

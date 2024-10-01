@@ -13,11 +13,9 @@ import itmo.highload.utils.defaultJsonRequestSpec
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @IntegrationTestContext
 class TestErrorHandling {
 
@@ -45,7 +43,8 @@ class TestErrorHandling {
     fun `should return BAD_REQUEST when delete non-pending adoption-request`() {
         val animalId = 2
         val requestId = defaultJsonRequestSpec().post("/api/v1/adoptions/$animalId")
-            .then().statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
 
         defaultJsonRequestSpec().body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
             .patch("/api/v1/adoptions")

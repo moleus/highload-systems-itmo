@@ -3,8 +3,6 @@ package itmo.highload
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
-import io.restassured.path.json.JsonPath
-import io.restassured.response.Response
 import itmo.highload.configuration.IntegrationTestContext
 import itmo.highload.dto.response.AdoptionRequestResponse
 import itmo.highload.mapper.AnimalMapper
@@ -28,7 +26,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
@@ -70,7 +67,8 @@ class TestAdoptionRequest @Autowired constructor(
         )
 
         val actualResponse =
-            defaultJsonRequestSpec().post("$apiUrlBasePath/${animal2.id}").then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract()
+            defaultJsonRequestSpec().post("$apiUrlBasePath/${animal2.id}").then().log()
+                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract()
                 .body()
                 .`as`(AdoptionRequestResponse::class.java)
         Assertions.assertEquals(expectedAdoptionRequestResponse.id, actualResponse.id)
@@ -93,17 +91,18 @@ class TestAdoptionRequest @Autowired constructor(
         }
 
         val result = defaultJsonRequestSpec().get(apiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.OK.value()).extract()
-                .body().`as`(Array<AdoptionRequestResponse>::class.java).toList()
+            .statusCode(HttpStatus.OK.value()).extract()
+            .body().`as`(Array<AdoptionRequestResponse>::class.java).toList()
         assertThat(result).containsExactlyInAnyOrderElementsOf(expectedAdoptionRequestResponse)
     }
 
     @Test
     fun `should return list of statuses`() {
         val expectedStatuses = listOf(AdoptionStatus.PENDING, AdoptionStatus.APPROVED, AdoptionStatus.DENIED)
-        val response = defaultJsonRequestSpec().get("$apiUrlBasePath/statuses").then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.OK.value()).extract()
-            .body().`as`(Array<AdoptionStatus>::class.java).toList()
+        val response =
+            defaultJsonRequestSpec().get("$apiUrlBasePath/statuses").then().log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value()).extract()
+                .body().`as`(Array<AdoptionStatus>::class.java).toList()
 
         assertThat(response).containsExactlyInAnyOrderElementsOf(expectedStatuses)
     }
