@@ -92,6 +92,6 @@ class AdoptionRequestService(
     }
 
     fun getAllStatuses(): List<AdoptionStatus> {
-        return adoptionRequestRepository.findAllUniqueAdoptionStatuses()
+        return AdoptionStatus.entries
     }
 }

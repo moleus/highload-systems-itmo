@@ -1,5 +1,4 @@
 POST http://localhost:8080/api/v1/animals
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbWFuYWdlciIsImV4cCI6MTcyNzE3ODQ2NX0.a-1fnpItLFPEgnDDaWT72SG9sd06IMu7vs7vOGmIrlv8F-fAcFJiCWNdqs1Jq6B_WYjtn_OrzoEDu_-ufdP5cg
 Content-Type: application/json
 
 {
@@ -12,7 +11,6 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/api/v1/animals
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImV4cCI6MTcyNzE3ODM1NH0.b73ZZd_tzMF2Y-PL8NoRX05VDrVLoXmj3Ei4LCDwF_YQIVu39j6pMoi4MXlj8TQxRgC2rNdAql-vgznzMZWgNw
 
 ###
 
