@@ -45,11 +45,13 @@ class TestErrorHandling {
     fun `should return BAD_REQUEST when delete non-pending adoption-request`() {
         val animalId = 2
         val requestId = defaultJsonRequestSpec().post("/api/v1/adoptions/$animalId")
-            .then().statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
 
         defaultJsonRequestSpec().body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
             .patch("/api/v1/adoptions")
-            .then().statusCode(HttpStatus.OK.value())
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.OK.value())
 
         RestAssured.delete("/api/v1/adoptions/$animalId")
             .then().log().ifValidationFails(LogDetail.BODY)
