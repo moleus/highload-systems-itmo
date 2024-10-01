@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-class JwtResponse(
+data class JwtResponse(
     @NotBlank
     val accessToken: String,
     @NotBlank

@@ -21,3 +21,6 @@ INSERT INTO customers (gender, address, phone) VALUES ('MALE', 'Moscow', '+79444
 
 -- Adoption requests
 INSERT INTO adoption_requests (customer_id, animal_id, status, date_time) VALUES (2, 1, 'PENDING', '2023-01-01');
+
+-- Donations
+INSERT INTO test.public.transactions (date_time, user_id, balance_id, money_amount, is_donation) VALUES ('2023-01-01', 2, 1, 100, true);
