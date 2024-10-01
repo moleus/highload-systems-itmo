@@ -83,8 +83,6 @@ testing {
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
                 implementation("io.rest-assured:rest-assured")
-                // gson
-                implementation("com.google.code.gson:gson:2.8.8")
             }
 
             sources {
@@ -139,8 +137,8 @@ tasks.named("check") {
 }
 
 tasks.getByName<BootRun>("bootRun") {
-    systemProperty("jwt.secret.access", "0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==" )
-    systemProperty("jwt.secret.refresh", "0LfQsNGH0LXQvCDRgtGLINGN0YLQviDRh9C40YLQsNC10YjRjCDRjdGC0L4g0LLQvtC+0LHRidC1INGC0L4g0KHQldCa0KDQldCi")
+    systemProperty("jwt.secret.access", System.getenv("JWT_SECRET_ACCESS") )
+    systemProperty("jwt.secret.refresh", System.getenv("JWT_SECRET_REFRESH"))
     systemProperty("jwt.expiration.access", "60")
     systemProperty("jwt.expiration.refresh", "60")
     systemProperty("spring.datasource.url", "jdbc:postgresql://localhost:15432/postgres")

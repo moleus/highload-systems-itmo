@@ -86,11 +86,6 @@ class AdoptionRequestService(
         return requestsPage
     }
 
-    fun getAllByCustomer(customerId: Int, pageable: Pageable): Page<AdoptionRequest> {
-        val requestsPage = adoptionRequestRepository.findByCustomerId(customerId, pageable)
-        return requestsPage
-    }
-
     fun getAllStatuses(): List<AdoptionStatus> {
         return AdoptionStatus.entries
     }
