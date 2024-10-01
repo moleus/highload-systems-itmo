@@ -29,10 +29,10 @@ jobs:
     - name: Run detekt
       uses: gradle/actions/setup-gradle@v3
       with:
-        arguments: --no-daemon detekt
+        arguments: detekt --no-daemon
         gradle-version: ${{ env.GRADLE_VERSION }}
     - name: Run unit & e2e tests
       uses: gradle/actions/setup-gradle@v3
       with:
-        arguments: --no-daemon check
+        arguments: check --no-daemon
         gradle-version: ${{ env.GRADLE_VERSION }}
