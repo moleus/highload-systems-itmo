@@ -16,6 +16,7 @@ import itmo.highload.repository.CustomerRepository
 import itmo.highload.repository.UserRepository
 import itmo.highload.service.DEMO_CUSTOMER_LOGIN
 import itmo.highload.utils.defaultJsonRequestSpec
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -68,10 +69,8 @@ class TestAdoptionRequest @Autowired constructor(
             manager = null
         )
 
-        val response: Response = defaultJsonRequestSpec().post("$apiUrlBasePath/${animal2.id}")
-
         val actualResponse =
-            response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract()
+            defaultJsonRequestSpec().post("$apiUrlBasePath/${animal2.id}").then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract()
                 .body()
                 .`as`(AdoptionRequestResponse::class.java)
         Assertions.assertEquals(expectedAdoptionRequestResponse.id, actualResponse.id)
@@ -93,12 +92,19 @@ class TestAdoptionRequest @Autowired constructor(
             )
         }
 
-        val response =
-            defaultJsonRequestSpec().get(apiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
+        val result = defaultJsonRequestSpec().get(apiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.OK.value()).extract()
-        val jsonPathEvaluator: JsonPath = response.jsonPath()
-        val adoptions: List<AdoptionRequestResponse> =
-            jsonPathEvaluator.getList("", AdoptionRequestResponse::class.java)
-        Assertions.assertEquals(expectedAdoptionRequestResponse, adoptions)
+                .body().`as`(Array<AdoptionRequestResponse>::class.java).toList()
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedAdoptionRequestResponse)
+    }
+
+    @Test
+    fun `should return list of statuses`() {
+        val expectedStatuses = listOf(AdoptionStatus.PENDING, AdoptionStatus.APPROVED, AdoptionStatus.DENIED)
+        val response = defaultJsonRequestSpec().get("$apiUrlBasePath/statuses").then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.OK.value()).extract()
+            .body().`as`(Array<AdoptionStatus>::class.java).toList()
+
+        assertThat(response).containsExactlyInAnyOrderElementsOf(expectedStatuses)
     }
 }
