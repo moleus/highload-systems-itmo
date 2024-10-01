@@ -26,13 +26,11 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ env.JDK_VERSION }}
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: ${{ env.GRADLE_VERSION }}
     - name: Run detekt
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        arguments: detekt --no-daemon
-        gradle-version: ${{ env.GRADLE_VERSION }}
+      run: detekt
     - name: Run unit & e2e tests
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        arguments: check --no-daemon
-        gradle-version: ${{ env.GRADLE_VERSION }}
+      run: check
