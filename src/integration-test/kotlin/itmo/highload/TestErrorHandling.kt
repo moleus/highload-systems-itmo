@@ -6,7 +6,6 @@ import io.restassured.parsing.Parser
 import itmo.highload.configuration.IntegrationTestContext
 import itmo.highload.dto.AnimalDto
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
-import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
@@ -33,6 +32,7 @@ class TestErrorHandling {
 
     @Test
     fun `test entity not found exception`() {
+        @Suppress("MagicNumber")
         val invalidId = 9999
 
         RestAssured.get("/api/v1/animals/$invalidId")
@@ -49,7 +49,8 @@ class TestErrorHandling {
 
         defaultJsonRequestSpec().body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
             .patch("/api/v1/adoptions")
-            .then().statusCode(HttpStatus.OK.value())
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.OK.value())
 
         RestAssured.delete("/api/v1/adoptions/$animalId")
             .then().log().ifValidationFails(LogDetail.BODY)
