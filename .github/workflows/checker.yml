@@ -31,6 +31,6 @@ jobs:
       with:
         gradle-version: ${{ env.GRADLE_VERSION }}
     - name: Run detekt
-      run: detekt
+      run: ./gradlew detekt
     - name: Run unit & e2e tests
-      run: check
+      run: ./gradlew check
