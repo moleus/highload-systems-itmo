@@ -16,7 +16,7 @@ env:
   PGOPTIONS: '--client-min-messages=warning'
 
 jobs:
-  detekt:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -31,36 +31,8 @@ jobs:
       with:
         arguments: --no-daemon detekt
         gradle-version: ${{ env.GRADLE_VERSION }}
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-          distribution: 'temurin'
-          java-version: ${{ env.JDK_VERSION }}
-    - name: Build docker image
+    - name: Run unit & e2e tests
       uses: gradle/actions/setup-gradle@v3
       with:
-        arguments: --no-daemon jibDockerBuild
+        arguments: --no-daemon check
         gradle-version: ${{ env.GRADLE_VERSION }}
-    - name: Run application and database
-      run: | 
-        docker compose up -d
-        docker compose ps
-        while ! pg_isready -h localhost -p 15432 -U runner -d postgres; do
-          sleep 1
-        done
-        if [ "$(docker inspect -f '{{.State.Running}}' $(docker compose ps -q) | grep -c 'true')" -ne 2 ]; then
-          echo "Docker containers failed to start"
-          exit 1
-        fi
-        docker compose down
-    # - name: Run integration tests
-    #   uses: gradle/actions/setup-gradle@v3
-    #   with:
-    #     # TODO: Separate the integration tests from the unit tests in future
-    #     arguments: --no-daemon test
-    #     gradle-version: ${{ env.GRADLE_VERSION }}
