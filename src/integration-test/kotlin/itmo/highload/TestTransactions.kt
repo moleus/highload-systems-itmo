@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @IntegrationTestContext
 class TestTransactions @Autowired constructor(
     private val transactionRepository: TransactionRepository, private val balanceRepository: BalanceRepository

@@ -2,9 +2,7 @@ package itmo.highload.service
 
 import itmo.highload.model.User
 import itmo.highload.repository.UserRepository
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import java.util.*
 
 const val DEMO_SUPERUSER_LOGIN = "superuser"
 const val DEMO_CUSTOMER_LOGIN = "customer"
@@ -16,8 +14,7 @@ class UserService(
     private val userRepository: UserRepository
 ) {
 
-    @Throws(UsernameNotFoundException::class)
     fun getByLogin(login: String): User {
-        return userRepository.findByLogin(login) ?: throw UsernameNotFoundException("User not found")
+        return userRepository.findByLogin(login) ?: throw NoSuchElementException("User with login $login not found")
     }
 }

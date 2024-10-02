@@ -1,19 +1,11 @@
+@file:Suppress("WildcardImport")
 package itmo.highload.model
 
 import itmo.highload.model.enum.Role
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import jakarta.validation.constraints.Size
 import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
 
 @Entity
@@ -38,34 +30,5 @@ data class User(
 
     @Column
     val creationDate: LocalDate
+)
 
-) : UserDetails {
-
-    override fun getAuthorities(): List<GrantedAuthority?> {
-        return listOf(role)
-    }
-
-    override fun getUsername(): String {
-        return login
-    }
-
-    override fun getPassword(): String {
-        return password
-    }
-
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
-
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
-
-    override fun isEnabled(): Boolean {
-        return true
-    }
-}
