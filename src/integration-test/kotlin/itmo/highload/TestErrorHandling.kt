@@ -9,17 +9,21 @@ import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.model.enum.Gender
 import itmo.highload.model.enum.HealthStatus
+import itmo.highload.repository.AnimalRepository
 import itmo.highload.utils.defaultJsonRequestSpec
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
 @IntegrationTestContext
-class TestErrorHandling {
+class TestErrorHandling @Autowired constructor(
+    private val animalRepository: AnimalRepository
+){
 
     @LocalServerPort
     private var port: Int = 0
@@ -43,9 +47,10 @@ class TestErrorHandling {
 
     @Test
     fun `should return BAD_REQUEST when delete non-pending adoption-request`() {
-        val animalId = 2
+        val animalId = animalRepository.findByName("Molly", Pageable.unpaged()).first().id
         val requestId = defaultJsonRequestSpec().post("/api/v1/adoptions/$animalId")
-            .then().statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
 
         defaultJsonRequestSpec().body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
             .patch("/api/v1/adoptions")
@@ -60,7 +65,7 @@ class TestErrorHandling {
 
     @Test
     fun `test invalid animal update exception`() {
-        val animalId = 1
+        val animalId = animalRepository.findByName("Buddy", Pageable.unpaged()).first().id
         val invalidUpdateDto = AnimalDto(
             name = "Updated Animal",
             type = "Cat",
