@@ -1,5 +1,3 @@
-@file:Suppress("UnusedParameter")
-
 package itmo.highload.service
 
 import itmo.highload.dto.AnimalDto
@@ -15,7 +13,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class AnimalService(private val animalRepository: AnimalRepository) {
-    fun get(animalId: Int): Animal {
+
+    fun getById(animalId: Int): Animal {
         return animalRepository.findById(animalId).orElseThrow {
             EntityNotFoundException("Animal with ID $animalId not found")
         }
@@ -27,7 +26,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
     }
 
     fun update(animalId: Int, request: AnimalDto): Animal {
-        val existingAnimal = get(animalId)
+        val existingAnimal = getById(animalId)
         validateAnimal(existingAnimal, request)
 
         existingAnimal.name = request.name
@@ -38,7 +37,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
     }
 
     fun delete(animalId: Int) {
-        val existingAnimal = get(animalId)
+        val existingAnimal = getById(animalId)
         animalRepository.delete(existingAnimal)
     }
 
