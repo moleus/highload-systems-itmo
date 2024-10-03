@@ -1,5 +1,3 @@
-@file:Suppress("UnusedParameter")
-
 package itmo.highload.service
 
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
@@ -37,7 +35,7 @@ class AdoptionRequestService(
         val customer = customerRepository.findById(customerId).orElseThrow {
             EntityNotFoundException("Customer not found")
         }
-        val animal = animalService.get(animalId)
+        val animal = animalService.getById(animalId)
 
         val adoptionRequest = AdoptionRequestMapper.toEntity(customer, animal, AdoptionStatus.PENDING)
 
@@ -68,6 +66,7 @@ class AdoptionRequestService(
     fun delete(customerId: Int, animalId: Int) {
         val adoptionRequest = adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
             ?: throw EntityNotFoundException("Adoption request not found")
+
         if (adoptionRequest.status != AdoptionStatus.PENDING) {
             throw InvalidAdoptionRequestStatusException(
                 "Cannot delete adoption " +
@@ -77,17 +76,13 @@ class AdoptionRequestService(
         adoptionRequestRepository.delete(adoptionRequest)
     }
 
+
     fun getAll(status: AdoptionStatus?, pageable: Pageable): Page<AdoptionRequest> {
         val requestsPage = if (status != null) {
             adoptionRequestRepository.findAllByStatus(status, pageable)
         } else {
             adoptionRequestRepository.findAll(pageable)
         }
-        return requestsPage
-    }
-
-    fun getAllByCustomer(customerId: Int, pageable: Pageable): Page<AdoptionRequest> {
-        val requestsPage = adoptionRequestRepository.findByCustomerId(customerId, pageable)
         return requestsPage
     }
 

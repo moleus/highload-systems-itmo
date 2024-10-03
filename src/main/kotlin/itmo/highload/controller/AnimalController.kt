@@ -23,7 +23,7 @@ class AnimalController(val animalService: AnimalService) {
 
     @GetMapping("/{id}")
     fun getAnimal(@PathVariable id: Int): AnimalResponse {
-        return AnimalMapper.toAnimalResponse(animalService.get(id))
+        return AnimalMapper.toAnimalResponse(animalService.getById(id))
     }
 
     @PostMapping

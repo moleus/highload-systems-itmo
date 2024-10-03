@@ -29,7 +29,7 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
         return balanceRepository.save(BalanceMapper.toEntity(name))
     }
 
-    fun changeMoneyAmount(id: Int, isDonation: Boolean, moneyAmount: Int) {
+    fun changeMoneyAmount(id: Int, isDonation: Boolean, moneyAmount: Int): Balance {
         val balance = getById(id)
 
         if (isDonation) {
@@ -41,6 +41,7 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
         if (balance.moneyAmount < 0) {
             throw NegativeBalanceException("Insufficient funds to complete the transaction")
         }
-        balanceRepository.save(balance)
+
+        return balanceRepository.save(balance)
     }
 }
