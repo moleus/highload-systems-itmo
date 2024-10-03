@@ -104,9 +104,6 @@ testing {
 }
 
 fun Test.setupEnvironment() {
-    environment("SPRING_DATASOURCE_URL", System.getenv("SPRING_DATASOURCE_URL"))
-    environment("SPRING_DATASOURCE_USERNAME", System.getenv("SPRING_DATASOURCE_USERNAME"))
-    environment("SPRING_DATASOURCE_PASSWORD", System.getenv("SPRING_DATASOURCE_PASSWORD"))
     environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", getDockerPathInsideContainer())
     environment("DOCKER_HOST", getDockerHostLocation())
 }
