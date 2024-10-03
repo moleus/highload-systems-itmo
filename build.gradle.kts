@@ -6,8 +6,9 @@ import java.util.*
 plugins {
     id("org.springframework.boot") version "3.3.2"
     id("io.spring.dependency-management") version "1.1.6"
-    id("io.gitlab.arturbosch.detekt") version("1.23.6")
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
     id("com.google.cloud.tools.jib") version "3.4.2"
+    id("org.jetbrains.kotlinx.kover") version "0.9.0-RC"
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
@@ -136,6 +137,16 @@ tasks.getByName<BootRun>("bootRun") {
 
 detekt {
     config.setFrom("detekt.yml")
+}
+
+kover {
+    reports {
+        total {
+            xml {
+                onCheck = true
+            }
+        }
+    }
 }
 
 configurations.matching { it.name == "detekt" }.all {

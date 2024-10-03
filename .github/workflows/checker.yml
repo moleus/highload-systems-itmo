@@ -37,3 +37,14 @@ jobs:
       run: ./gradlew detekt --configuration-cache
     - name: Run unit & e2e tests
       run: ./gradlew check --configuration-cache
+    - name: Generate kover coverage report
+      run: ./gradlew koverXmlReport
+    - name: Add coverage report to PR
+      uses: mi-kas/kover-report@5f58465b6f395c8fa3adc2665e27250bad87de50  # v1
+      with:
+        path: ${{ github.workspace }}/build/reports/kover/report.xml
+        title: Code Coverage
+        update-comment: true
+        min-coverage-overall: 70
+        min-coverage-changed-files: 70
+        coverage-counter-type: LINE
