@@ -38,22 +38,33 @@ class AdoptionRequestServiceTest {
         adoptionRequestRepository, customerRepository, animalService, ownershipRepository
     )
 
+    private val customer = Customer(
+        id = 1,
+        phone = "71234567890",
+        gender = Gender.MALE,
+        address = "123 Main St, City, Country"
+    )
+
+    private val animal = Animal(
+        id = 1,
+        name = "Buddy",
+        typeOfAnimal = "Dog",
+        gender = Gender.MALE,
+        isCastrated = true,
+        healthStatus = HealthStatus.HEALTHY
+    )
+
+    private val manager = User(
+        id = 1,
+        login = "manager",
+        password = "123",
+        role = Role.ADOPTION_MANAGER,
+        creationDate = LocalDate.now()
+    )
+
     @Test
     fun `should save adoption request if no existing request found`() {
-        val customer = Customer(
-            id = 1,
-            phone = "71234567890",
-            gender = Gender.MALE,
-            address = "123 Main St, City, Country"
-        )
-        val animal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val adoptionRequest = AdoptionRequest(
             dateTime = LocalDateTime.now(),
             customer = customer,
@@ -74,20 +85,7 @@ class AdoptionRequestServiceTest {
 
     @Test
     fun `should throw EntityAlreadyExistsException if adoption request already exists`() {
-        val customer = Customer(
-            id = 1,
-            phone = "71234567890",
-            gender = Gender.MALE,
-            address = "123 Main St, City, Country"
-        )
-        val animal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val existingRequest = AdoptionRequest(
             dateTime = LocalDateTime.now(),
             customer = customer,
@@ -121,27 +119,7 @@ class AdoptionRequestServiceTest {
 
     @Test
     fun `should update adoption request status to DENIED without creating ownership`() {
-        val manager = User(
-            id = 1,
-            login = "manager",
-            password = "123",
-            role = Role.ADOPTION_MANAGER,
-            creationDate = LocalDate.now()
-        )
-        val customer = Customer(
-            id = 1,
-            phone = "71234567890",
-            gender = Gender.MALE,
-            address = "123 Main St, City, Country"
-        )
-        val animal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val adoptionRequest = AdoptionRequest(
             id = 1,
             dateTime = LocalDateTime.now(),
@@ -163,27 +141,7 @@ class AdoptionRequestServiceTest {
 
     @Test
     fun `should create ownership when adoption request is approved`() {
-        val manager = User(
-            id = 1,
-            login = "manager",
-            password = "123",
-            role = Role.ADOPTION_MANAGER,
-            creationDate = LocalDate.now()
-        )
-        val customer = Customer(
-            id = 1,
-            phone = "71234567890",
-            gender = Gender.MALE,
-            address = "123 Main St, City, Country"
-        )
-        val animal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val adoptionRequest = AdoptionRequest(
             id = 1,
             dateTime = LocalDateTime.now(),
@@ -206,13 +164,7 @@ class AdoptionRequestServiceTest {
 
     @Test
     fun `should throw EntityNotFoundException when adoption request is not found`() {
-        val manager = User(
-            id = 1,
-            login = "manager",
-            password = "123",
-            role = Role.ADOPTION_MANAGER,
-            creationDate = LocalDate.now()
-        )
+
         val requestDto = UpdateAdoptionRequestStatusDto(id = 1, status = AdoptionStatus.APPROVED)
 
         every { adoptionRequestRepository.findById(1) } returns Optional.empty()
@@ -228,20 +180,7 @@ class AdoptionRequestServiceTest {
 
     @Test
     fun `should delete adoption request if status is PENDING`() {
-        val customer = Customer(
-            id = 1,
-            phone = "71234567890",
-            gender = Gender.MALE,
-            address = "123 Main St, City, Country"
-        )
-        val animal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val adoptionRequest = AdoptionRequest(
             id = 1,
             dateTime = LocalDateTime.now(),
@@ -272,20 +211,7 @@ class AdoptionRequestServiceTest {
 
     @Test
     fun `should throw InvalidAdoptionRequestStatusException if status is not PENDING`() {
-        val customer = Customer(
-            id = 1,
-            phone = "71234567890",
-            gender = Gender.MALE,
-            address = "123 Main St, City, Country"
-        )
-        val animal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val adoptionRequest = AdoptionRequest(
             id = 1,
             dateTime = LocalDateTime.now(),

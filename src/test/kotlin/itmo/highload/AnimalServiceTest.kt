@@ -21,16 +21,18 @@ class AnimalServiceTest {
     private val animalRepository: AnimalRepository = mockk()
     private val animalService = AnimalService(animalRepository)
 
+    private val existingAnimal = Animal(
+        id = 1,
+        name = "Buddy",
+        typeOfAnimal = "Dog",
+        gender = Gender.MALE,
+        isCastrated = false,
+        healthStatus = HealthStatus.HEALTHY
+    )
+
     @Test
     fun `should update animal when valid`() {
-        val existingAnimal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val request = AnimalDto(
             name = "Bobik",
             type = "Dog",
@@ -51,14 +53,8 @@ class AnimalServiceTest {
 
     @Test
     fun `should throw InvalidAnimalUpdateException when updating dead animal`() {
-        val existingAnimal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.DEAD
-        )
+        existingAnimal.healthStatus = HealthStatus.DEAD
+
         val request = AnimalDto(
             name = "Buddy",
             type = "Dog",
@@ -79,14 +75,7 @@ class AnimalServiceTest {
 
     @Test
     fun `should throw InvalidAnimalUpdateException when changing gender`() {
-        val existingAnimal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val request = AnimalDto(
             name = "Buddy",
             type = "Dog",
@@ -107,14 +96,7 @@ class AnimalServiceTest {
 
     @Test
     fun `should throw InvalidAnimalUpdateException when changing type of animal`() {
-        val existingAnimal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+
         val request = AnimalDto(
             name = "Buddy",
             type = "Cat",
@@ -135,14 +117,8 @@ class AnimalServiceTest {
 
     @Test
     fun `should throw InvalidAnimalUpdateException when cancelling castration`() {
-        val existingAnimal = Animal(
-            id = 1,
-            name = "Buddy",
-            typeOfAnimal = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+        existingAnimal.isCastrated = true
+
         val request = AnimalDto(
             name = "Buddy",
             type = "Dog",

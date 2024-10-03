@@ -26,69 +26,74 @@ class TransactionServiceTest {
     private val balanceService: BalanceService = mockk()
     private val transactionService = TransactionService(transactionRepository, balanceService)
 
+    private val user = User(
+        id = 1,
+        login = "customer",
+        password = "123",
+        role = Role.CUSTOMER,
+        creationDate = LocalDate.now()
+    )
+
+    private val balance = Balance(
+        id = 1,
+        purpose = "food",
+        moneyAmount = 200
+    )
+
+    private val transactionDto = TransactionDto(
+        purposeId = 1,
+        moneyAmount = 100
+    )
+
     @Test
     fun `should add transaction and update balance successfully`() {
-        val user = User(
-            id = 1,
-            login = "customer",
-            password = "123",
-            role = Role.CUSTOMER,
-            creationDate = LocalDate.now()
-        )
-        val balance = Balance(id = 1, purpose = "food", moneyAmount = 200)
+
         val transaction = Transaction(
             id = 1,
             LocalDateTime.now(),
             user,
             balance,
-            moneyAmount = 1,
-            isDonation = true)
-        val donationDto = TransactionDto(purposeId = 1, moneyAmount = 100)
+            moneyAmount = 100,
+            isDonation = true
+        )
 
-        every { balanceService.getById(donationDto.purposeId!!) } returns balance
+        every { balanceService.getById(transactionDto.purposeId!!) } returns balance
         every { transactionRepository.save(any()) } returns transaction
         every { balanceService.changeMoneyAmount(
-            donationDto.purposeId!!,
+            transactionDto.purposeId!!,
             true,
-            donationDto.moneyAmount!!)
+            transactionDto.moneyAmount!!)
         } returns balance
 
-        val result = transactionService.addTransaction(donationDto, user, isDonation = true)
+        val result = transactionService.addTransaction(transactionDto, user, isDonation = true)
 
         assertNotNull(result)
         verify { transactionRepository.save(any()) }
-        verify { balanceService.changeMoneyAmount(donationDto.purposeId!!, true, donationDto.moneyAmount!!) }
+        verify { balanceService.changeMoneyAmount(transactionDto.purposeId!!, true, transactionDto.moneyAmount!!) }
     }
 
     @Test
     fun `should throw NegativeBalanceException when balance becomes negative`() {
-        val user = User(
-            id = 1,
-            login = "customer",
-            password = "123",
-            role = Role.CUSTOMER,
-            creationDate = LocalDate.now()
-        )
-        val balance = Balance(id = 1, purpose = "food", moneyAmount = 200)
+
         val transaction = Transaction(
             id = 1,
             LocalDateTime.now(),
             user,
             balance,
-            moneyAmount = 1,
-            isDonation = true)
-        val donationDto = TransactionDto(purposeId = 1, moneyAmount = 300)
+            moneyAmount = 100,
+            isDonation = false
+        )
 
-        every { balanceService.getById(donationDto.purposeId!!) } returns balance
+        every { balanceService.getById(transactionDto.purposeId!!) } returns balance
         every { transactionRepository.save(any()) } returns transaction
         every { balanceService.changeMoneyAmount(
-            donationDto.purposeId!!,
+            transactionDto.purposeId!!,
             false,
-            donationDto.moneyAmount!!)
+            transactionDto.moneyAmount!!)
         } throws NegativeBalanceException("Insufficient funds to complete the transaction")
 
         val exception = assertThrows<NegativeBalanceException> {
-            transactionService.addTransaction(donationDto, user, isDonation = false)
+            transactionService.addTransaction(transactionDto, user, isDonation = false)
         }
 
         assertEquals("Insufficient funds to complete the transaction", exception.message)
@@ -97,23 +102,15 @@ class TransactionServiceTest {
 
     @Test
     fun `should throw EntityNotFoundException when balance is not found`() {
-        val donationDto = TransactionDto(purposeId = 1, moneyAmount = 100)
-        val user = User(
-            id = 1,
-            login = "customer",
-            password = "123",
-            role = Role.CUSTOMER,
-            creationDate = LocalDate.now()
-        )
 
-        every { balanceService.getById(donationDto.purposeId!!)
-        } throws EntityNotFoundException("Failed to find Balance with id = ${donationDto.purposeId}")
+        every { balanceService.getById(transactionDto.purposeId!!)
+        } throws EntityNotFoundException("Failed to find Balance with id = ${transactionDto.purposeId}")
 
         val exception = assertThrows<EntityNotFoundException> {
-            transactionService.addTransaction(donationDto, user, isDonation = true)
+            transactionService.addTransaction(transactionDto, user, isDonation = true)
         }
 
-        assertEquals("Failed to find Balance with id = ${donationDto.purposeId}", exception.message)
+        assertEquals("Failed to find Balance with id = ${transactionDto.purposeId}", exception.message)
         verify(exactly = 0) { transactionRepository.save(any()) }
     }
 }
