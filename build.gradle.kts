@@ -73,14 +73,11 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-testcontainers")
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.springframework.boot:spring-boot-starter-security")
-                implementation("org.springframework.security:spring-security-test")
+                implementation("org.springframework.boot:spring-boot-starter-web")
                 implementation("org.testcontainers:testcontainers")
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
                 implementation("io.rest-assured:rest-assured")
-                // gson
-                implementation("com.google.code.gson:gson:2.8.8")
             }
 
             sources {
