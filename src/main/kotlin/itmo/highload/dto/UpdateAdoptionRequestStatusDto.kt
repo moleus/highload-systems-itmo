@@ -12,5 +12,5 @@ data class UpdateAdoptionRequestStatusDto(
     val id: Int?,
 
     @field:NotNull
-    val status: AdoptionStatus
+    val status: AdoptionStatus?
 )

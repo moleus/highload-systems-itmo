@@ -9,9 +9,9 @@ object AnimalMapper {
         return Animal(
             name = animal.name,
             typeOfAnimal = animal.type,
-            gender = animal.gender,
+            gender = animal.gender!!,
             isCastrated = animal.isCastrated!!,
-            healthStatus = animal.healthStatus
+            healthStatus = animal.healthStatus!!
         )
     }
 

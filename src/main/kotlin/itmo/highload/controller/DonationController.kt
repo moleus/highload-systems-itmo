@@ -12,19 +12,12 @@ import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("\${app.base-url}/transactions/donations")
 class DonationController(
-    val transactionService: TransactionService,
-    private val userService: UserService
+    val transactionService: TransactionService, private val userService: UserService
 ) {
 
     private fun mapPageToResponse(page: Page<Transaction>): List<TransactionResponse> {
@@ -32,13 +25,11 @@ class DonationController(
     }
 
     @GetMapping
-    fun getAllDonations(
-        pageable: Pageable
+    fun getDonations(
+        @RequestParam(required = false) purposeId: Int?, pageable: Pageable
     ): List<TransactionResponse> {
         val limitedPageable = PaginationResponseHelper.limitPageSize(pageable)
-        val page = transactionService.getAll(isDonation = true, limitedPageable)
-
-        return mapPageToResponse(page)
+        return mapPageToResponse(transactionService.getDonations(purposeId, limitedPageable))
     }
 
     @GetMapping("/{customerId}")

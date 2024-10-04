@@ -20,11 +20,11 @@ data class AnimalDto(
     val type: String,
 
     @field:NotNull
-    val gender: Gender,
+    val gender: Gender?,
 
     @field:NotNull
     val isCastrated: Boolean?,
 
     @field:NotNull
-    val healthStatus: HealthStatus
+    val healthStatus: HealthStatus?
 )
