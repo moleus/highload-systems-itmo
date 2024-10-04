@@ -18,8 +18,8 @@ env:
   PGPASSWORD: postgres
   PGUSER: runner
   PGOPTIONS: '--client-min-messages=warning'
-  GRADLE_OPTS: -Xmx4096M
-  JAVA_OPTS: -Xmx4096M
+  GRADLE_OPTS: -Xmx2048M
+  JAVA_OPTS: -Xmx2048M
 
 jobs:
   lint-and-test:
@@ -40,6 +40,8 @@ jobs:
         build-scan-publish: true
         build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
         build-scan-terms-of-use-agree: "yes"
+    - name: Envs
+      run: env
     - name: Run detekt
       run: ./gradlew detekt --configuration-cache
     - name: Run unit & e2e tests
