@@ -18,6 +18,7 @@ env:
   PGPASSWORD: postgres
   PGUSER: runner
   PGOPTIONS: '--client-min-messages=warning'
+  GRADLE_OPTS: -Xmx4096M
 
 jobs:
   lint-and-test:
