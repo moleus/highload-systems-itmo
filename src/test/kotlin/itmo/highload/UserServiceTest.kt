@@ -1,3 +1,5 @@
+package itmo.highload
+
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -5,11 +7,10 @@ import itmo.highload.model.User
 import itmo.highload.model.enum.Role
 import itmo.highload.repository.UserRepository
 import itmo.highload.service.UserService
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
-import java.util.NoSuchElementException
 
 class UserServiceTest {
 
