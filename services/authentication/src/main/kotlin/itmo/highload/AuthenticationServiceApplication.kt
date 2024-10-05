@@ -9,5 +9,5 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
 class AuthenticationServiceApplication
 @Suppress("SpreadOperator")
 fun main(args: Array<String>) {
-    runApplication<AdoptionServiceApplication>(*args)
+    runApplication<AuthenticationServiceApplication>(*args)
 }
