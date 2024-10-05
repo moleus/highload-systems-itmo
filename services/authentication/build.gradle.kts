@@ -28,6 +28,6 @@ jib {
         }
     }
     to {
-        image = "moleus/highload/adoption-service:dev"
+        image = "moleus/highload/authentication-service:dev"
     }
 }

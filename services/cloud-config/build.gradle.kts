@@ -1,15 +1,12 @@
 import java.util.*
 
 plugins {
-    id("highload.db-conventions")
     id("highload.web-conventions")
     id("highload.lint-conventions")
-    id("highload.e2e-test-conventions")
 }
 
 group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
-
 
 var jdkVersion = 21
 var hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault())
@@ -28,6 +25,6 @@ jib {
         }
     }
     to {
-        image = "moleus/highload/adoption-service:dev"
+        image = "moleus/highload/cloud-config:dev"
     }
 }
