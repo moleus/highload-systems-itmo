@@ -8,7 +8,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
     id("com.google.cloud.tools.jib") version "3.4.2"
-    id("org.jetbrains.kotlinx.kover") version "0.9.0-RC"
+    id("org.jetbrains.kotlinx.kover") version "0.8.3"
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"

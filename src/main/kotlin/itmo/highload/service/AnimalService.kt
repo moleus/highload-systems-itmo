@@ -31,7 +31,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
 
         existingAnimal.name = request.name
         existingAnimal.isCastrated = request.isCastrated!!
-        existingAnimal.healthStatus = request.healthStatus
+        existingAnimal.healthStatus = request.healthStatus!!
 
         return animalRepository.save(existingAnimal)
     }

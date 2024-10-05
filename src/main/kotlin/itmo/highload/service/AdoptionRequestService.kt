@@ -1,16 +1,16 @@
 package itmo.highload.service
 
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
+import itmo.highload.mapper.AdoptionRequestMapper
 import itmo.highload.model.AdoptionRequest
+import itmo.highload.model.Ownership
 import itmo.highload.model.User
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.CustomerRepository
+import itmo.highload.repository.OwnershipRepository
 import itmo.highload.service.exception.EntityAlreadyExistsException
 import itmo.highload.service.exception.InvalidAdoptionRequestStatusException
-import itmo.highload.mapper.AdoptionRequestMapper
-import itmo.highload.model.Ownership
-import itmo.highload.repository.OwnershipRepository
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
@@ -48,7 +48,7 @@ class AdoptionRequestService(
             EntityNotFoundException("Adoption request not found")
         }
 
-        adoptionRequest.status = request.status
+        adoptionRequest.status = request.status!!
         adoptionRequest.manager = manager
 
         if (request.status == AdoptionStatus.APPROVED) {

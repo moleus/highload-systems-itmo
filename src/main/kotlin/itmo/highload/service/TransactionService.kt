@@ -17,16 +17,22 @@ class TransactionService(
     private val balanceService: BalanceService
 ) {
 
-    fun getAll(isDonation: Boolean, pageable: Pageable): Page<Transaction> {
-        return transactionRepository.findByIsDonation(isDonation, pageable)
+    fun getExpenses(purposeId: Int?, pageable: Pageable): Page<Transaction> {
+        if (purposeId != null) {
+            return transactionRepository.findByIsDonationAndBalanceId(false, purposeId, pageable)
+        }
+        return transactionRepository.findByIsDonation(false, pageable)
+    }
+
+    fun getDonations(purposeId: Int?, pageable: Pageable): Page<Transaction> {
+        if (purposeId != null) {
+            return transactionRepository.findByIsDonationAndBalanceId(true, purposeId, pageable)
+        }
+        return transactionRepository.findByIsDonation(true, pageable)
     }
 
     fun getAllByUser(isDonation: Boolean, userId: Int, pageable: Pageable): Page<Transaction> {
         return transactionRepository.findByIsDonationAndUserId(isDonation, userId, pageable)
-    }
-
-    fun getAllByPurpose(isDonation: Boolean, purposeId: Int, pageable: Pageable): Page<Transaction> {
-        return transactionRepository.findByIsDonationAndBalanceId(isDonation, purposeId, pageable)
     }
 
     @Transactional

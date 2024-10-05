@@ -1,0 +1,120 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: moleus
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: superuser
+              - column:
+                  name: password
+                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+              - column:
+                  name: role
+                  value: SUPERUSER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: customer
+              - column:
+                  name: password
+                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+              - column:
+                  name: role
+                  value: CUSTOMER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: emanager
+              - column:
+                  name: password
+                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+              - column:
+                  name: role
+                  value: EXPENSE_MANAGER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: amanager
+              - column:
+                  name: password
+                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+              - column:
+                  name: role
+                  value: ADOPTION_MANAGER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: gender
+                  value: MALE
+              - column:
+                  name: address
+                  value: Moscow
+              - column:
+                  name: phone
+                  value: "+79444333141"
+
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: gender
+                  value: MALE
+              - column:
+                  name: address
+                  value: Moscow
+              - column:
+                  name: phone
+                  value: "+79444333111"
+
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: gender
+                  value: MALE
+              - column:
+                  name: address
+                  value: Moscow
+              - column:
+                  name: phone
+                  value: "+79444333112"
+
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: gender
+                  value: MALE
+              - column:
+                  name: address
+                  value: Moscow
+              - column:
+                  name: phone
+                  value: "+79444333131"
