@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     kotlin("jvm")
     `jvm-test-suite`
@@ -5,6 +7,14 @@ plugins {
 
 group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
+
+dependencies {
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.mockk:mockk:1.12.0")
+}
 
 testing {
     suites {

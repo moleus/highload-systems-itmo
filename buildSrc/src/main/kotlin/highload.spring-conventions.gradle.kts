@@ -1,22 +1,19 @@
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    id("com.google.cloud.tools.jib")
     kotlin("plugin.jpa")
     kotlin("jvm")
     kotlin("plugin.spring")
     `jvm-test-suite`
 }
 
-group = "ru.itmo"
-version = "0.0.1-SNAPSHOT"
-
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
+repositories {
+    mavenCentral()
 }
 
-var jdkVersion = 21
+group = "ru.itmo"
+version = "0.0.1-SNAPSHOT"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -25,7 +22,6 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.liquibase:liquibase-core")
 }
 
 kotlin {

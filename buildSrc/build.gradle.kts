@@ -1,9 +1,15 @@
+// this script builds plugins in buildSrc
+
 plugins {
     `kotlin-dsl`
 }
 
 repositories {
-    mavenCentral()
+    repositories {
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+    }
 }
 
 dependencies {
@@ -15,8 +21,9 @@ dependencies {
 
     // spring-conventions
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.2")
-    // jpa")
+    // kotlin("jpa")
     implementation("org.jetbrains.kotlin:kotlin-noarg:1.9.24")
     // kotlin("spring")
     implementation("org.jetbrains.kotlin:kotlin-allopen:1.9.24")
+    implementation("com.google.cloud.tools:jib-gradle-plugin:3.4.2")
 }
