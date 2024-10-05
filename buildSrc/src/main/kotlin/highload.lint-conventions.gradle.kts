@@ -11,7 +11,7 @@ group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
 
 detekt {
-    config.setFrom("detekt.yml")
+    config.setFrom(rootDir.absolutePath + "/detekt.yml")
 }
 
 kover {
@@ -27,6 +27,7 @@ kover {
 configurations.matching { it.name == "detekt" }.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
+            @Suppress("UnstableApiUsage")
             useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
         }
     }

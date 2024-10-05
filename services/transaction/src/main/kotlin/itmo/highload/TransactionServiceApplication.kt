@@ -7,7 +7,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 @SpringBootApplication
 class TransactionServiceApplication
-
+@Suppress("SpreadOperator")
 fun main(args: Array<String>) {
     runApplication<TransactionServiceApplication>(*args)
 }
