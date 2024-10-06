@@ -1,0 +1,17 @@
+spring:
+application:
+  name: cloud-config
+
+cloud:
+  config:
+    server:
+      native:
+        search-locations: file://${CONFIG_PATH}
+
+profiles:
+  group:
+    lab2: security
+#    active: lab2
+
+server:
+  port: 8888
