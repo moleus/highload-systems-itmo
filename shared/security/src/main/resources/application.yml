@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: shared-security
+  profiles:
+    group:
+      lab2: security
+    active: lab2

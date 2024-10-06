@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cloud-config
+
+  profiles:
+    group:
+      lab2: security
+    active: lab2

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: highload
+  profiles:
+    group:
+      lab2: security
+    active: lab2
+  jpa:
+    show-sql: true
+    # https://stackoverflow.com/questions/30549489/what-is-this-spring-jpa-open-in-view-true-property-in-spring-boot
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    show-summary-output: all
+    change-log: classpath:db/changelog/changelog-root.yaml
+
+app:
+  base-url: /api/v1
+
+#logging:
+#  level:
+#    web: TRACE
+#    org.springframework.web: TRACE
