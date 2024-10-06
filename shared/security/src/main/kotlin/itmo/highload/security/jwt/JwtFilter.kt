@@ -14,23 +14,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.web.servlet.HandlerExceptionResolver
 import java.io.IOException
 
 @Profile("security")
 @Component
 class JwtFilter(
     private val jwtProvider: TokenUtils,
-    private val exceptionResolver: HandlerExceptionResolver
+//    private val exceptionResolver: HandlerExceptionResolver
 ) : OncePerRequestFilter() {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        filterChain: FilterChain
+        request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
     ) {
         val jwtToken = getTokenFromRequest(request)
         if (jwtToken == null) {
@@ -40,16 +37,16 @@ class JwtFilter(
         try {
             jwtProvider.validateAccessToken(jwtToken)
             val claims: Claims = jwtProvider.getAccessClaims(jwtToken)
-            val authorities = claims["roles"] as List<*>
+            val authorities = listOf(SimpleGrantedAuthority(claims["role"].toString()))
             val authentication = UsernamePasswordAuthenticationToken(
                 claims.subject,
                 null,
-                authorities.map { SimpleGrantedAuthority(it.toString()) }
+                authorities,
             )
             SecurityContextHolder.getContext().authentication = authentication
         } catch (e: JwtException) {
             log.warn("Failed to validate access token: {}", e.message)
-            exceptionResolver.resolveException(request, response, null, e)
+//            exceptionResolver.resolveException(request, response, null, e)
         }
     }
 

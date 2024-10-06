@@ -23,12 +23,12 @@ class TokenUtils(
 
     private val jwtAccessSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
 
-    fun generateAccessToken(login: String, roles: List<Role>): String {
+    fun generateAccessToken(login: String, role: Role): String {
         val now = LocalDateTime.now()
         val accessExpirationInstant =
             now.plusMinutes(accessTokenExpirationTimeMinutes.toLong()).atZone(ZoneId.systemDefault()).toInstant()
         val accessExpiration = Date.from(accessExpirationInstant)
-        val claims = mapOf("roles" to roles)
+        val claims = mapOf("role" to role)
         return Jwts.builder()
             .expiration(accessExpiration)
             .subject(login)
