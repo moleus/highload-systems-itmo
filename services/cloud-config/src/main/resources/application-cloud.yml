@@ -6,7 +6,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/moleus/highload-systems-itmo.git
+          uri: git@github.com:moleus/highload-systems-itmo.git
           clone-on-start: true
           default-label: add-config-server
           search-paths:
@@ -15,7 +15,7 @@ spring:
   profiles:
     group:
       lab2: security
-    active: lab2
+#    active: lab2
 
 server:
   port: 8888
