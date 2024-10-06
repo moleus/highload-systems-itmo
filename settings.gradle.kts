@@ -8,4 +8,5 @@ include(
     "services:eureka-server",
     "services:notification",
     "services:transaction",
+    "shared:security",
 )
