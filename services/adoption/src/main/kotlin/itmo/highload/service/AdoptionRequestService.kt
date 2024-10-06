@@ -11,6 +11,7 @@ import itmo.highload.repository.OwnershipRepository
 import itmo.highload.service.exception.EntityAlreadyExistsException
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -20,15 +21,18 @@ class AdoptionRequestService(
     private val adoptionRequestRepository: AdoptionRequestRepository,
     private val ownershipRepository: OwnershipRepository
 ) {
+    private val logger = LoggerFactory.getLogger(AdoptionRequestService::class.java)
 
     fun save(customerId: Int, animalId: Int): AdoptionRequest {
         if (adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId) != null) {
+            logger.error("Adoption request already exists for customer ID: $customerId and animal ID: $animalId")
             throw EntityAlreadyExistsException(
                 "An adoption request already exists " +
                         "for customer ID: $customerId and animal ID: $animalId"
             )
         }
         val adoptionRequest = AdoptionRequestMapper.toEntity(customerId, animalId, AdoptionStatus.PENDING)
+        logger.error("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
 
         return adoptionRequestRepository.save(adoptionRequest)
     }

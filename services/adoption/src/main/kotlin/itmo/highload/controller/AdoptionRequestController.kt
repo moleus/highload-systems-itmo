@@ -8,6 +8,7 @@ import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -19,6 +20,8 @@ class AdoptionRequestController(
     private val adoptionRequestService: AdoptionRequestService,
     private val jwtUtils: JwtUtils,
 ) {
+    private val logger = LoggerFactory.getLogger(AdoptionRequestController::class.java)
+
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAll(
@@ -49,6 +52,7 @@ class AdoptionRequestController(
         @PathVariable animalId: Int, @RequestHeader("Authorization") token: String
     ): AdoptionRequestResponse {
         val userId = jwtUtils.extractUserId(token)
+        logger.error("User $userId is trying to adopt animal $animalId")
         return AdoptionRequestMapper.toResponse(adoptionRequestService.save(userId, animalId))
     }
 

@@ -23,8 +23,8 @@ testing {
     suites {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(project(":services:animal"))
-                implementation(project(":services:authentication")) // for userRepository
+                implementation(project(":services:animal:repositories"))
+                implementation(project(":services:authentication:auth-repositories")) // for userRepository
             }
         }
     }
@@ -33,9 +33,11 @@ testing {
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
+    implementation(project(":services:authentication:auth-repositories")) // for userRepository
 
     implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+    implementation("org.springframework.boot:spring-boot-starter-logging:2.6.3")
 }
 
 jib {

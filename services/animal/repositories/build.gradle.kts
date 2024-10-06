@@ -6,7 +6,6 @@ plugins {
     id("highload.db-conventions")
     id("highload.web-conventions")
     id("highload.lint-conventions")
-    id("highload.e2e-test-conventions")
 }
 
 group = "ru.itmo"
@@ -23,9 +22,6 @@ dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
     implementation(project(":shared:db"))
-    implementation(project(":services:animal:repositories"))
-
-    implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
 }
 
