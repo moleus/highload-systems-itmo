@@ -1,55 +1,19 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.springframework.boot.gradle.tasks.run.BootRun
-import java.util.*
-
 plugins {
-    id("org.springframework.boot") version "3.3.2"
-    id("io.spring.dependency-management") version "1.1.6"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
-    id("com.google.cloud.tools.jib") version "3.4.2"
-    id("org.jetbrains.kotlinx.kover") version "0.8.3"
-    kotlin("plugin.jpa") version "1.9.24"
-    kotlin("jvm") version "1.9.24"
-    kotlin("plugin.spring") version "1.9.24"
+    kotlin("jvm")
     `jvm-test-suite`
 }
 
 group = "ru.itmo"
 version = "0.0.1-SNAPSHOT"
-var jdkVersion = 21
-
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.slf4j:slf4j-api")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.liquibase:liquibase-core")
-    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk:1.12.0")
-}
-
-kotlin {
-    compilerOptions {
-        // infer Kotlin types from Spring API taking into account nullability
-        freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
 }
 
 testing {
@@ -121,52 +85,4 @@ fun getDockerHostLocation() : String {
 
 tasks.named("check") {
     dependsOn(testing.suites.named("integrationTest"))
-}
-
-tasks.getByName<BootRun>("bootRun") {
-    systemProperty("spring.datasource.url", "jdbc:postgresql://localhost:15432/postgres")
-    systemProperty("spring.datasource.username", "postgres")
-    systemProperty("spring.datasource.password", "postgres")
-}
-
-detekt {
-    config.setFrom("detekt.yml")
-}
-
-kover {
-    reports {
-        total {
-            xml {
-                onCheck = true
-            }
-        }
-    }
-}
-
-configurations.matching { it.name == "detekt" }.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlin") {
-            useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
-        }
-    }
-}
-
-var hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault())
-if (hostArchitecture == "aarch64") {
-    hostArchitecture = "arm64"
-}
-
-jib {
-    from {
-        image = "openjdk:$jdkVersion-jdk-slim"
-        platforms {
-            platform {
-                architecture = hostArchitecture
-                os = "linux"
-            }
-        }
-    }
-    to {
-        image = "moleus/highload-systems-itmo:dev"
-    }
 }
