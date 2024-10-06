@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository
 interface AdoptionRequestRepository : JpaRepository<AdoptionRequest, Int> {
     fun findAllByStatus(status: AdoptionStatus, pageable: Pageable): Page<AdoptionRequest>
     fun findByCustomerIdAndAnimalId(customerId: Int, animalId: Int): AdoptionRequest?
+    fun findAllByCustomerId(customerId: Int, pageable: Pageable): Page<AdoptionRequest>
 }

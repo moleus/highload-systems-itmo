@@ -1,6 +1,8 @@
+app:
+  base-url: /api/v1
 spring:
   application:
-    name: highload
+    name: adoption-service
   profiles:
     group:
       lab2: security
@@ -18,6 +20,5 @@ spring:
     web:
       pageable:
         max-page-size: 50
-# app.base-url: /api/v1
 # logging.level.web: TRACE
 # logging.level.org.springframework.web: TRACE

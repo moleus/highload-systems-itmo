@@ -5,18 +5,14 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.response.AdoptionRequestResponse
 import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.dto.response.AdoptionRequestResponse
-import itmo.highload.mapper.AnimalMapper
-import itmo.highload.mapper.UserMapper
 import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
-import itmo.highload.repository.CustomerRepository
 import itmo.highload.repository.UserRepository
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.DEMO_CUSTOMER_LOGIN
 import itmo.highload.utils.defaultJsonRequestSpec
+import itmo.highload.utils.withJwt
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Assertions
@@ -31,7 +27,9 @@ import java.time.LocalDateTime
 @IntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
-    private val jwtUtils: JwtUtils,
+    private val animalRepository: AnimalRepository,
+    private val userRepository: UserRepository,
+    jwtUtils: JwtUtils,
 ) {
     @LocalServerPort
     private var port: Int = 0
@@ -49,10 +47,10 @@ class TestAdoptionRequest @Autowired constructor(
     fun `test add adoption request`() {
         val animal = animalRepository.findByName("Buddy", Pageable.unpaged()).first()
         val animalId = animal.id
-        val user = userRepository.findByLogin(DEMO_CUSTOMER_LOGIN) ?: throw IllegalArgumentException("User not found")
+        val userId = userRepository.findByLogin("customer")?.id ?: throw IllegalArgumentException("User not found")
 
-        val expectedMessage = "An adoption request already exists for customer ID: ${user.id} and animal ID: $animalId"
-        defaultJsonRequestSpec().post("$apiUrlBasePath/$animalId").then()
+        val expectedMessage = "An adoption request already exists for customer ID: $userId and animal ID: $animalId"
+        defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/$animalId").then()
             .log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
             .body(`is`(expectedMessage))
 
@@ -62,19 +60,19 @@ class TestAdoptionRequest @Autowired constructor(
             id = -1,
             dateTime = LocalDateTime.now(),
             status = AdoptionStatus.PENDING,
-            customerId = user.id,
+            customerId = userId,
             animalId = animal2.id,
             managerId = null
         )
 
         val actualResponse =
-            defaultJsonRequestSpec().post("$apiUrlBasePath/${animal2.id}").then().log()
+            defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/${animal2.id}").then().log()
                 .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract()
                 .body()
                 .`as`(AdoptionRequestResponse::class.java)
         Assertions.assertEquals(expectedAdoptionRequestResponse.status, actualResponse.status)
-        Assertions.assertEquals(expectedAdoptionRequestResponse.customer, actualResponse.customer)
-        Assertions.assertEquals(expectedAdoptionRequestResponse.animal, actualResponse.animal)
+        Assertions.assertEquals(expectedAdoptionRequestResponse.customerId, actualResponse.customerId)
+        Assertions.assertEquals(expectedAdoptionRequestResponse.animalId, actualResponse.animalId)
     }
 
     @Test
@@ -90,7 +88,7 @@ class TestAdoptionRequest @Autowired constructor(
             )
         }
 
-        val result = defaultJsonRequestSpec().get(apiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
+        val result = defaultJsonRequestSpec().withJwt(adoptionManagerToken).get(apiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
             .statusCode(HttpStatus.OK.value()).extract()
             .body().`as`(Array<AdoptionRequestResponse>::class.java).toList()
         assertThat(result).containsExactlyInAnyOrderElementsOf(expectedAdoptionRequestResponse)
@@ -100,7 +98,7 @@ class TestAdoptionRequest @Autowired constructor(
     fun `should return list of statuses`() {
         val expectedStatuses = listOf(AdoptionStatus.PENDING, AdoptionStatus.APPROVED, AdoptionStatus.DENIED)
         val response =
-            defaultJsonRequestSpec().get("$apiUrlBasePath/statuses").then().log().ifValidationFails(LogDetail.BODY)
+            defaultJsonRequestSpec().withJwt(adoptionManagerToken).get("$apiUrlBasePath/statuses").then().log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.OK.value()).extract()
                 .body().`as`(Array<AdoptionStatus>::class.java).toList()
 

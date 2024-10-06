@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import java.util.*
 
 plugins {
@@ -15,6 +17,17 @@ var jdkVersion = 21
 var hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault())
 if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
+}
+
+testing {
+    suites {
+        val integrationTest by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation(project(":services:animal"))
+                implementation(project(":services:authentication")) // for userRepository
+            }
+        }
+    }
 }
 
 dependencies {

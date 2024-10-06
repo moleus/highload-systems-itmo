@@ -1,6 +1,6 @@
 spring:
   application:
-    name: highload
+    name: authentication-service
   profiles:
     group:
       lab2: security

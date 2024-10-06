@@ -13,9 +13,9 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
         UserDetailsServiceAutoConfiguration::class
     ]
 )
-class AdoptionServiceApplication
+class AnimalServiceApplication
 
 @Suppress("SpreadOperator")
 fun main(args: Array<String>) {
-    runApplication<AdoptionServiceApplication>(*args)
+    runApplication<AnimalServiceApplication>(*args)
 }

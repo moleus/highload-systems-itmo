@@ -18,8 +18,8 @@ data class Ownership(
 )
 
 data class OwnershipId(
-    val customer: Int = 0,
-    val animal: Int = 0
+    val customerId: Int = 0,
+    val animalId: Int = 0
 ) : Serializable {
     companion object {
         private const val serialVersionUID: Long = 1L

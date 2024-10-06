@@ -4,6 +4,7 @@ import itmo.highload.api.dto.response.AdoptionRequestResponse
 import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.model.enum.AdoptionStatus
+import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
@@ -19,15 +20,24 @@ class AdoptionRequestController(
     private val jwtUtils: JwtUtils,
 ) {
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAll(
         @RequestParam(required = false) status: AdoptionStatus?,
+        @RequestHeader("Authorization") token: String,
         pageable: Pageable
     ): List<AdoptionRequestResponse> {
-        return adoptionRequestService.getAll(status, pageable)
-            .map { AdoptionRequestMapper.toResponse(it) }.content
+        val role = jwtUtils.extractRole(token)
+        val userId = jwtUtils.extractUserId(token)
+        return if (role == Role.ADOPTION_MANAGER) {
+            adoptionRequestService.getAll(status, pageable).map { AdoptionRequestMapper.toResponse(it) }.content
+        } else {
+            adoptionRequestService.getAllByCustomer(userId, pageable)
+                .map { AdoptionRequestMapper.toResponse(it) }.content
+        }
     }
 
     @GetMapping("/statuses")
+    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun getAllStatuses(): List<AdoptionStatus> {
         return adoptionRequestService.getAllStatuses()
     }
@@ -36,8 +46,7 @@ class AdoptionRequestController(
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('CUSTOMER')")
     fun addAdoptionRequest(
-        @PathVariable animalId: Int,
-        @RequestHeader("Authorization") token: String
+        @PathVariable animalId: Int, @RequestHeader("Authorization") token: String
     ): AdoptionRequestResponse {
         val userId = jwtUtils.extractUserId(token)
         return AdoptionRequestMapper.toResponse(adoptionRequestService.save(userId, animalId))
@@ -46,8 +55,7 @@ class AdoptionRequestController(
     @PatchMapping
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAdoptionRequest(
-        @RequestBody @Valid request: UpdateAdoptionRequestStatusDto,
-        @RequestHeader("Authorization") token: String
+        @RequestBody @Valid request: UpdateAdoptionRequestStatusDto, @RequestHeader("Authorization") token: String
     ): AdoptionRequestResponse {
         val managerId = jwtUtils.extractUserId(token)
         return AdoptionRequestMapper.toResponse(adoptionRequestService.update(managerId, request))
@@ -57,8 +65,7 @@ class AdoptionRequestController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('CUSTOMER')")
     fun deleteAdoptionRequest(
-        @PathVariable animalId: Int,
-        @RequestHeader("Authorization") token: String
+        @PathVariable animalId: Int, @RequestHeader("Authorization") token: String
     ) {
         val customerId = jwtUtils.extractUserId(token)
         adoptionRequestService.delete(customerId, animalId)

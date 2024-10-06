@@ -45,7 +45,13 @@ class JwtUtils(
     }
 
     fun extractUserId(accessToken: String): Int {
-        return getAccessClaims(accessToken)["userId"] as Int
+        val token = accessToken.replace("Bearer ", "")
+        return getAccessClaims(token)["userId"] as Int
+    }
+
+    fun extractRole(accessToken: String): Role {
+        val token = accessToken.replace("Bearer ", "")
+        return Role.valueOf(getAccessClaims(token)["role"] as String)
     }
 
     private fun validateToken(token: String, key: SecretKey) {
