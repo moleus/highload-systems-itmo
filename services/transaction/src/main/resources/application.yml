@@ -15,6 +15,10 @@ spring:
     enabled: true
     show-summary-output: all
     change-log: classpath:db/changelog/changelog-root.yaml
+  data:
+    web:
+      pageable:
+        max-page-size: 50
 
 #app.base-url: /api/v1
 

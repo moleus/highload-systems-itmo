@@ -3,7 +3,7 @@ package itmo.highload.service
 import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
 import itmo.highload.security.dto.JwtResponse
-import itmo.highload.security.jwt.TokenUtils
+import itmo.highload.security.jwt.JwtUtils
 import jakarta.security.auth.message.AuthException
 import org.springframework.context.annotation.Profile
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 @Profile("security")
 @Service
 class AuthService(
-    private val jwtProvider: TokenUtils,
+    private val jwtProvider: JwtUtils,
     private val userService: UserService,
     private val encoder: PasswordEncoder
 ) {
@@ -27,7 +27,7 @@ class AuthService(
                 throw AuthException("Wrong password")
             }
 
-            val accessToken: String = jwtProvider.generateAccessToken(user.login, user.role)
+            val accessToken: String = jwtProvider.generateAccessToken(user.login, user.role, user.id)
             return JwtResponse(accessToken, user.role)
 
         } catch (e: UsernameNotFoundException) {

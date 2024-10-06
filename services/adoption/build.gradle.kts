@@ -17,6 +17,14 @@ if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
 }
 
+dependencies {
+    implementation(project(":shared:api"))
+    implementation(project(":shared:security"))
+
+    implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+}
+
 jib {
     from {
         image = "openjdk:$jdkVersion-jdk-slim"
