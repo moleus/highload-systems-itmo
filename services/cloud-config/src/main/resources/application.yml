@@ -2,7 +2,20 @@ spring:
   application:
     name: cloud-config
 
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/moleus/highload-systems-itmo.git
+          clone-on-start: true
+          default-label: add-config-server
+          search-paths:
+            - config
+
   profiles:
     group:
       lab2: security
     active: lab2
+
+server:
+  port: 8888
