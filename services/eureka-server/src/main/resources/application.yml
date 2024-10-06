@@ -5,7 +5,7 @@ eureka:
     fetch-registry: false
     service-url:
       defaultZone:
-        - "http://localhost:8761/eureka"
+        - "http://localhost:${server.port}/eureka"
 
 server:
   port: 8761
