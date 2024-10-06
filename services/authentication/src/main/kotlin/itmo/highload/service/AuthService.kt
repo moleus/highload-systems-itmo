@@ -1,10 +1,9 @@
-package itmo.highload.security
+package itmo.highload.service
 
 import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
 import itmo.highload.security.dto.JwtResponse
 import itmo.highload.security.jwt.TokenUtils
-import itmo.highload.service.UserService
 import jakarta.security.auth.message.AuthException
 import org.springframework.context.annotation.Profile
 import org.springframework.security.core.userdetails.UsernameNotFoundException

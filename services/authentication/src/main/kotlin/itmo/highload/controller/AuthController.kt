@@ -3,8 +3,8 @@ package itmo.highload.controller
 import itmo.highload.dto.LoginDto
 import itmo.highload.dto.RegisterDto
 import itmo.highload.model.User
-import itmo.highload.security.AuthService
 import itmo.highload.security.dto.JwtResponse
+import itmo.highload.service.AuthService
 import jakarta.security.auth.message.AuthException
 import jakarta.validation.Valid
 import org.springframework.context.annotation.Profile
