@@ -5,3 +5,7 @@ spring:
     group:
       lab2: security
     active: lab2
+  data:
+    web:
+      pageable:
+        max-page-size: 50

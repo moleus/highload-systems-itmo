@@ -1,0 +1,24 @@
+app:
+  base-url: /api/v1
+spring:
+  application:
+    name: highload
+  profiles:
+    group:
+      lab2: security
+    active: lab2
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    show-summary-output: all
+    change-log: classpath:db/changelog/changelog-root.yaml
+  data:
+    web:
+      pageable:
+        max-page-size: 50
+# logging.level.web: TRACE
+# logging.level.org.springframework.web: TRACE

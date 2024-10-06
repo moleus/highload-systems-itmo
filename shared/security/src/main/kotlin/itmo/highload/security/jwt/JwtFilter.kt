@@ -19,7 +19,7 @@ import java.io.IOException
 @Profile("security")
 @Component
 class JwtFilter(
-    private val jwtProvider: TokenUtils,
+    private val jwtProvider: JwtUtils,
 //    private val exceptionResolver: HandlerExceptionResolver
 ) : OncePerRequestFilter() {
 

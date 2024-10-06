@@ -42,6 +42,11 @@ testing {
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
                 implementation("io.rest-assured:rest-assured")
+                implementation(project(":shared:api"))
+                implementation(project(":shared:db"))
+                implementation(project(":shared:security"))
+                implementation("org.liquibase:liquibase-core")
+                runtimeOnly("org.postgresql:postgresql")
             }
 
             sources {
