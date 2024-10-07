@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: notification-service
+  profiles:
+    group:
+      lab2: security
+    active: lab2
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    show-summary-output: all
+    change-log: classpath:db/changelog/changelog-root.yaml
+
+  datasource:
+    url: jdbc:postgresql://localhost:15432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+
+# app.base-url: /api/v1
+# logging.level.web: TRACE
+# logging.level.org.springframework.web: TRACE
