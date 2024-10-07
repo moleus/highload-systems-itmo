@@ -28,3 +28,15 @@ jib {
         image = "moleus/highload/cloud-config:dev"
     }
 }
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://repo.spring.io/release")
+    }
+}
+
+dependencies {
+    implementation("org.springframework.cloud:spring-cloud-config-server:4.1.3")
+}
+
