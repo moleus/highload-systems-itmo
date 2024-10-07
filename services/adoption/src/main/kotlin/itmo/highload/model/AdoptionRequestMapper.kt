@@ -1,7 +1,7 @@
 package itmo.highload.model
 
 import itmo.highload.api.dto.response.AdoptionRequestResponse
-import itmo.highload.model.enum.AdoptionStatus
+import itmo.highload.api.dto.AdoptionStatus
 import java.time.LocalDateTime
 
 object AdoptionRequestMapper {

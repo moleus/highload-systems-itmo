@@ -1,7 +1,7 @@
 package itmo.highload.model
 
-import itmo.highload.dto.AnimalDto
-import itmo.highload.dto.response.AnimalResponse
+import itmo.highload.api.dto.AnimalDto
+import itmo.highload.api.dto.response.AnimalResponse
 
 object AnimalMapper {
     fun toEntity(animal: AnimalDto): Animal {

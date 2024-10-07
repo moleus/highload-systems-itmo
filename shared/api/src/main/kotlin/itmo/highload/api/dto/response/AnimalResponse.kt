@@ -1,9 +1,9 @@
-package itmo.highload.dto.response
+package itmo.highload.api.dto.response
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import itmo.highload.model.enum.Gender
-import itmo.highload.model.enum.HealthStatus
+import itmo.highload.api.dto.Gender
+import itmo.highload.api.dto.HealthStatus
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class AnimalResponse(

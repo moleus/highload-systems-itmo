@@ -5,7 +5,7 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.response.AdoptionRequestResponse
 import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.model.enum.AdoptionStatus
+import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.UserRepository

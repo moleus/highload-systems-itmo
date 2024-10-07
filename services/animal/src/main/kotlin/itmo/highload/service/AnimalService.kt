@@ -1,10 +1,10 @@
 package itmo.highload.service
 
-import itmo.highload.dto.AnimalDto
+import itmo.highload.api.dto.AnimalDto
 import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.model.Animal
 import itmo.highload.model.AnimalMapper
-import itmo.highload.model.enum.HealthStatus
+import itmo.highload.api.dto.HealthStatus
 import itmo.highload.repository.AnimalRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page

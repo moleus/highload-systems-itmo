@@ -1,4 +1,4 @@
-package itmo.highload.dto
+package itmo.highload.api.dto
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming

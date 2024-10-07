@@ -1,8 +1,8 @@
 package itmo.highload.controller
 
+import itmo.highload.api.dto.AdoptionStatus
+import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
-import itmo.highload.dto.UpdateAdoptionRequestStatusDto
-import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.AdoptionRequestService

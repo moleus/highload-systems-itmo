@@ -1,7 +1,7 @@
 package itmo.highload.controller
 
-import itmo.highload.dto.AnimalDto
-import itmo.highload.dto.response.AnimalResponse
+import itmo.highload.api.dto.AnimalDto
+import itmo.highload.api.dto.response.AnimalResponse
 import itmo.highload.model.AnimalMapper
 import itmo.highload.service.AnimalService
 import jakarta.validation.Valid

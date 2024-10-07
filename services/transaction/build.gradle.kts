@@ -17,6 +17,14 @@ if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
 }
 
+dependencies {
+    implementation(project(":shared:api"))
+    implementation(project(":shared:security"))
+    implementation("io.projectreactor:reactor-core")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+}
+
+
 jib {
     from {
         image = "openjdk:$jdkVersion-jdk-slim"

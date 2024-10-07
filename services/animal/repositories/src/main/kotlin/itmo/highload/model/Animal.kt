@@ -1,7 +1,7 @@
 package itmo.highload.model
 
-import itmo.highload.model.enum.Gender
-import itmo.highload.model.enum.HealthStatus
+import itmo.highload.api.dto.Gender
+import itmo.highload.api.dto.HealthStatus
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size

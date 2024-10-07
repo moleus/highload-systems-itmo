@@ -1,7 +1,7 @@
 package itmo.highload.repository
 
 import itmo.highload.model.AdoptionRequest
-import itmo.highload.model.enum.AdoptionStatus
+import itmo.highload.api.dto.AdoptionStatus
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository

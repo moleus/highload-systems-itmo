@@ -1,9 +1,7 @@
-package itmo.highload.dto
+package itmo.highload.api.dto
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import itmo.highload.model.enum.Gender
-import itmo.highload.model.enum.HealthStatus
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size

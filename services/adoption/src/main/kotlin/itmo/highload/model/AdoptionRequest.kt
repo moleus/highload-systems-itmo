@@ -1,6 +1,6 @@
 package itmo.highload.model
 
-import itmo.highload.model.enum.AdoptionStatus
+import itmo.highload.api.dto.AdoptionStatus
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 import org.hibernate.annotations.JdbcType

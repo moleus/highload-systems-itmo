@@ -1,12 +1,12 @@
 package itmo.highload.service
 
+import itmo.highload.api.dto.AdoptionStatus
+import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
-import itmo.highload.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
 import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.model.Ownership
-import itmo.highload.model.enum.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.OwnershipRepository
 import itmo.highload.service.exception.EntityAlreadyExistsException

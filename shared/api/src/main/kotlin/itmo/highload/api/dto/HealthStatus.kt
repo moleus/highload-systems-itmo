@@ -1,4 +1,4 @@
-package itmo.highload.model.enum
+package itmo.highload.api.dto
 
 enum class HealthStatus {
     HEALTHY, INJURY, SICK, RECOVERING, DEAD

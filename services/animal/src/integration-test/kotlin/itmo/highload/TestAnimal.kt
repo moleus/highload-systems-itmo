@@ -5,11 +5,11 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import io.restassured.response.Response
 import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.dto.AnimalDto
-import itmo.highload.dto.response.AnimalResponse
+import itmo.highload.api.dto.AnimalDto
+import itmo.highload.api.dto.response.AnimalResponse
 import itmo.highload.model.AnimalMapper
-import itmo.highload.model.enum.Gender
-import itmo.highload.model.enum.HealthStatus
+import itmo.highload.api.dto.Gender
+import itmo.highload.api.dto.HealthStatus
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
