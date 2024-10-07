@@ -38,6 +38,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
     implementation("org.springframework.boot:spring-boot-starter-logging:2.6.3")
+    implementation("io.projectreactor:reactor-core")
 }
 
 jib {
