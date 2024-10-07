@@ -8,7 +8,7 @@ spring:
         git:
           uri: git@github.com:moleus/highload-systems-itmo.git
           clone-on-start: true
-          default-label: add-config-server
+          default-label: lab2
           search-paths:
             - config
 
