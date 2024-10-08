@@ -1,3 +1,4 @@
+
 app:
   base-url: /api/v1
 spring:
@@ -9,6 +10,8 @@ spring:
   liquibase:
     contexts: test
     change-log: classpath:test-changelog-root.yaml
+  mvc:
+    log-request-details: true
 
 #added as the data is hardcoded in sql file
 jwt:
@@ -17,6 +20,13 @@ jwt:
 
 logging:
   level:
-    itmo:
-      highload: DEBUG
-    web: DEBUG
+    web: TRACE
+    org.springframework.web: TRACE
+    itmo.highload: TRACE
+    org:
+      apache:
+        http: DEBUG
+eureka:
+  client:
+    enabled: false
+

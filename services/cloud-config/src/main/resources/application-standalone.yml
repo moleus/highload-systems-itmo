@@ -6,8 +6,7 @@ spring:
     config:
       server:
         native:
-          search-locations: [classpath:/config/]
-#          ${CONFIG_PATH}
+          search-locations: file://config/
 
 server:
   port: 8888
