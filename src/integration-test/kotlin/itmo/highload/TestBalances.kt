@@ -4,6 +4,7 @@ import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.dto.PurposeDto
 import itmo.highload.dto.response.BalanceResponse
 import itmo.highload.dto.response.PurposeResponse
 import itmo.highload.mapper.BalanceMapper
@@ -14,7 +15,6 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
@@ -83,7 +83,7 @@ class TestBalances @Autowired constructor(
         assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose) }
         val initialPurposeSize = allPurposes.size
 
-        defaultJsonRequestSpec().body(newPurpose).post("$balanceApiUrlBasePath/purposes").then().log()
+        defaultJsonRequestSpec().body(PurposeDto(newPurpose)).post("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
             .body("name", equalTo(newPurpose))
 
