@@ -7,8 +7,7 @@ import itmo.highload.mapper.BalanceMapper
 import itmo.highload.model.Balance
 import itmo.highload.service.BalanceService
 import itmo.highload.utils.PaginationResponseHelper
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -56,7 +55,7 @@ class BalanceController(val balanceService: BalanceService) {
 
     @PostMapping("/purposes")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) purposeDto: PurposeDto): PurposeResponse {
+    fun addPurpose(@RequestBody @Valid purposeDto: PurposeDto): PurposeResponse {
         val purpose = balanceService.addPurpose(purposeDto.name)
         return BalanceMapper.toPurposeResponse(purpose)
     }
