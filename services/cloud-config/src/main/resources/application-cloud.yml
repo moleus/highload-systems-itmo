@@ -12,10 +12,5 @@ spring:
           search-paths:
             - config
 
-  profiles:
-    group:
-      lab2: security
-#    active: lab2
-
 server:
   port: 8888

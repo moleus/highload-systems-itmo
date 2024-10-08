@@ -53,10 +53,10 @@ class AdoptionRequestController(
     @PreAuthorize("hasAuthority('CUSTOMER')")
     fun addAdoptionRequest(
         @PathVariable animalId: Int, @RequestHeader("Authorization") token: String
-    ): ResponseEntity<Mono<AdoptionRequestResponse>> {
+    ): Mono<AdoptionRequestResponse> {
         val userId = jwtUtils.extractUserId(token)
-        logger.error("User $userId is trying to adopt animal $animalId")
-        return ResponseEntity.ok(adoptionRequestService.save(userId, animalId))
+        logger.info("User $userId is trying to adopt animal $animalId")
+        return adoptionRequestService.save(userId, animalId)
     }
 
     @PatchMapping

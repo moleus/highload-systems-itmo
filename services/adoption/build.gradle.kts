@@ -25,6 +25,7 @@ testing {
             dependencies {
                 implementation(project(":services:animal:repositories"))
                 implementation(project(":services:authentication:auth-repositories")) // for userRepository
+                implementation("io.projectreactor:reactor-core")
             }
         }
     }
@@ -35,10 +36,15 @@ dependencies {
     implementation(project(":shared:security"))
     implementation(project(":services:authentication:auth-repositories")) // for userRepository
 
-    implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
-    implementation("org.springframework.boot:spring-boot-starter-logging:2.6.3")
+    @Suppress("VulnerableDependency")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("io.projectreactor:reactor-core")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+
 }
 
 jib {

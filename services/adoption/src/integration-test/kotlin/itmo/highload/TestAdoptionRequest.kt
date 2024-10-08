@@ -3,9 +3,9 @@ package itmo.highload
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
+import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.response.AdoptionRequestResponse
 import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.UserRepository
@@ -48,18 +48,10 @@ class TestAdoptionRequest @Autowired constructor(
 
     @Test
     fun `test add adoption request`() {
-        val animal = animalRepository.findByName("Buddy", Pageable.unpaged()).first()
-        val animalId = animal.id
         val userId = userRepository.findByLogin("customer")?.id ?: throw IllegalArgumentException("User not found")
         val customerToken = this.jwtUtils.generateAccessToken(
             "customer", Role.CUSTOMER, userId
         )
-
-        val expectedMessage = "An adoption request already exists for customer ID: $userId and animal ID: $animalId"
-        val resp = defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/$animalId").then().log()
-            .ifValidationFails(LogDetail.BODY)
-
-        resp.statusCode(HttpStatus.BAD_REQUEST.value()).body(`is`(expectedMessage))
 
         val animal2 = animalRepository.findByName("Molly", Pageable.unpaged()).first()
 
@@ -72,13 +64,20 @@ class TestAdoptionRequest @Autowired constructor(
             managerId = null
         )
 
+        val expectedStatusCode = HttpStatus.CREATED
         val actualResponse =
             defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/${animal2.id}").then().log()
-                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value()).extract().body()
+                .ifValidationFails(LogDetail.BODY).statusCode(expectedStatusCode.value()).extract().body()
                 .`as`(AdoptionRequestResponse::class.java)
         Assertions.assertEquals(expectedAdoptionRequestResponse.status, actualResponse.status)
         Assertions.assertEquals(expectedAdoptionRequestResponse.customerId, actualResponse.customerId)
         Assertions.assertEquals(expectedAdoptionRequestResponse.animalId, actualResponse.animalId)
+
+        val expectedMessage = "An adoption request already exists for customer ID: $userId and animal ID: ${animal2.id}"
+        val actualResponse2 =
+            defaultJsonRequestSpec().withJwt(customerToken).post("$apiUrlBasePath/${animal2.id}").then().log()
+                .ifValidationFails(LogDetail.BODY)
+        actualResponse2.statusCode(HttpStatus.BAD_REQUEST.value()).body(`is`(expectedMessage))
     }
 
     @Test

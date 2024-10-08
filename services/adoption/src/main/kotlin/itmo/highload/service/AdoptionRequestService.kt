@@ -27,9 +27,8 @@ class AdoptionRequestService(
     fun save(customerId: Int, animalId: Int): Mono<AdoptionRequestResponse> {
         return Mono.fromCallable {
             adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
-                .orElseThrow { EntityNotFoundException("Adoption request not found") }
         }.subscribeOn(Schedulers.boundedElastic()).flatMap { existingRequest ->
-            if (existingRequest != null) {
+            if (existingRequest.isPresent) {
                 logger.error("Adoption request already exists for customer ID: $customerId and animal ID: $animalId")
                 Mono.error(
                     EntityAlreadyExistsException(
@@ -38,7 +37,7 @@ class AdoptionRequestService(
                 )
             } else {
                 val adoptionRequest = AdoptionRequestMapper.toEntity(customerId, animalId, AdoptionStatus.PENDING)
-                logger.error("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
+                logger.info("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic()).map { AdoptionRequestMapper.toResponse(it) }
             }

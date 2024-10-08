@@ -20,7 +20,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kover-gradle-plugin:0.8.3")
 
     // spring-conventions
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.2")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.4")
     // kotlin("jpa")
     implementation("org.jetbrains.kotlin:kotlin-noarg:1.9.24")
     // kotlin("spring")

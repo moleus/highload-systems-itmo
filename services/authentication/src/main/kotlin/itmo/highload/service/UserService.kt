@@ -21,7 +21,7 @@ class UserService(
         val user = User(
             login = request.login,
             password = encoder.encode(request.password),
-            role = request.role,
+            role = request.role!!,
             creationDate = LocalDate.now()
         )
 

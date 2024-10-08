@@ -6,12 +6,12 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 
-@ActiveProfiles("integration-test")
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @AutoConfigureWebMvc
 @Sql("/test-data.sql")
-@TestPropertySource(value = ["classpath:application-test.properties"])
+@ActiveProfiles("test") // load application-test.yml
+@TestPropertySource(value = ["classpath:application-test.yml"])
 @Target(AnnotationTarget.CLASS)
 annotation class IntegrationTestContext

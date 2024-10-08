@@ -9,14 +9,14 @@ eureka:
 server:
   port: 8761
 
+
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
+# load application-cloudconfig.yml file
 spring:
   profiles:
-    group:
-      lab2:
-        security:
-    active: lab2
+    active: standalone
