@@ -17,6 +17,12 @@ if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
 }
 
+dependencies {
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
+    @Suppress("VulnerableDependency")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+}
+
 jib {
     from {
         image = "openjdk:$jdkVersion-jdk-slim"

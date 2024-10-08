@@ -6,12 +6,7 @@ spring:
     config:
       server:
         native:
-          search-locations: file://${CONFIG_PATH}
-
-  profiles:
-    group:
-      lab2: security
-  #    active: lab2
+          search-locations: file:./config/
 
 server:
   port: 8888
