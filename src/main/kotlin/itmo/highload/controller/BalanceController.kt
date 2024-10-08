@@ -1,5 +1,6 @@
 package itmo.highload.controller
 
+import itmo.highload.dto.PurposeDto
 import itmo.highload.dto.response.BalanceResponse
 import itmo.highload.dto.response.PurposeResponse
 import itmo.highload.mapper.BalanceMapper
@@ -55,8 +56,8 @@ class BalanceController(val balanceService: BalanceService) {
 
     @PostMapping("/purposes")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) name: String): PurposeResponse {
-        val purpose = balanceService.addPurpose(name)
+    fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) purposeDto: PurposeDto): PurposeResponse {
+        val purpose = balanceService.addPurpose(purposeDto.name)
         return BalanceMapper.toPurposeResponse(purpose)
     }
 }
