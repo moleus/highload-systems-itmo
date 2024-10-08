@@ -17,6 +17,10 @@ if (hostArchitecture == "aarch64") {
     hostArchitecture = "arm64"
 }
 
+dependencies {
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
+}
+
 jib {
     from {
         image = "openjdk:$jdkVersion-jdk-slim"

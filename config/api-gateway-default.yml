@@ -1,14 +1,9 @@
 server:
-  port: 8080
+  port: 8089
 
 spring:
   application:
     name: api-gateway
-  profiles:
-    group:
-      lab2:
-        security:
-    active: lab2
   cloud:
     gateway:
       routes:

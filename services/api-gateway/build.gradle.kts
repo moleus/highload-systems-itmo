@@ -24,6 +24,8 @@ dependencies {
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
 }
 
 
