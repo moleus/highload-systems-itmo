@@ -1,0 +1,59 @@
+### Add new animal
+POST http://localhost:8080/api/v1/animals
+Content-Type: application/json
+
+{
+  "name": "Барсик2",
+  "type": "Кот",
+  "gender": "MALE",
+  "is_castrated": true,
+  "health_status": "HEALTHY"
+}
+
+### Get all animals
+GET http://localhost:8080/api/v1/animals
+
+### Get animal with id 1
+GET http://localhost:8080/api/v1/animals/1
+
+### Change fields of animal 1
+PUT http://localhost:8080/api/v1/animals/1
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "MALE",
+  "is_castrated": true,
+  "health_status": "SICK"
+}
+
+### Shows that we can't change animal's gender
+PUT http://localhost:8080/api/v1/animals/1
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "FEMALE",
+  "is_castrated": true,
+  "health_status": "SICK"
+}
+
+### Shows that we can't change animal's gender
+PUT http://localhost:8080/api/v1/animals/1
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "MALE",
+  "is_castrated": false,
+  "health_status": "SICK"
+}
+
+### Delete animal that doesn't exist
+DELETE http://localhost:8080/api/v1/animals/2
+
+### Delete initial animal
+DELETE http://localhost:8080/api/v1/animals/1

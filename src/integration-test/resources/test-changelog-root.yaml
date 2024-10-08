@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/changelog-1.0/
+  - changeSet:
+      id: 1
+      author: moleus
+      context: test
+      changes:
+        - sqlFile:
+            path: test-data.sql
