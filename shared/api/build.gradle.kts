@@ -1,4 +1,4 @@
-// this script builds plugins in buildSrc
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     kotlin("jvm")

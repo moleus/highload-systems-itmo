@@ -2,7 +2,13 @@
 
 plugins {
     kotlin("jvm")
+    id("io.spring.dependency-management")
     `jvm-test-suite`
+}
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
 }
 
 group = "ru.itmo"

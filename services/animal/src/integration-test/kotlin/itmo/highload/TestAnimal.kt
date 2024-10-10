@@ -4,17 +4,14 @@ import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import io.restassured.response.Response
-import itmo.highload.configuration.IntegrationTestContext
 import itmo.highload.api.dto.AnimalDto
-import itmo.highload.api.dto.response.AnimalResponse
-import itmo.highload.model.AnimalMapper
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
+import itmo.highload.api.dto.response.AnimalResponse
+import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.model.AnimalMapper
 import itmo.highload.repository.AnimalRepository
-import itmo.highload.security.Role
-import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.defaultJsonRequestSpec
-import itmo.highload.utils.withJwt
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
@@ -26,14 +23,14 @@ import org.springframework.http.HttpStatus
 @IntegrationTestContext
 class TestAnimal @Autowired constructor(
     private val animalRepository: AnimalRepository,
-    jwtUtils: JwtUtils,
+//    jwtUtils: JwtUtils,
 ) {
     @LocalServerPort
     private var port: Int = 0
     private val animalApiUrlBasePath = "/api/v1/animals"
 
-    private val customerToken = jwtUtils.generateAccessToken("customer", Role.CUSTOMER, 1)
-    private val adoptionManagerToken = jwtUtils.generateAccessToken("adoption_manager", Role.ADOPTION_MANAGER, 1)
+//    private val customerToken = jwtUtils.generateAccessToken("customer", Role.CUSTOMER, 1)
+//    private val adoptionManagerToken = jwtUtils.generateAccessToken("adoption_manager", Role.ADOPTION_MANAGER, 1)
 
     @BeforeEach
     fun setUp() {
@@ -48,7 +45,7 @@ class TestAnimal @Autowired constructor(
         }
 
         val actualAnimalResponse =
-            defaultJsonRequestSpec().withJwt(customerToken).get(animalApiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
+            defaultJsonRequestSpec().get(animalApiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.OK.value()).extract().`as`(Array<AnimalResponse>::class.java).toList()
 
         assertThat(actualAnimalResponse).containsExactlyInAnyOrderElementsOf(expectedAnimalResponse)
@@ -59,7 +56,7 @@ class TestAnimal @Autowired constructor(
         val animal = animalRepository.findAll().first()
         val expectedAnimalResponse = AnimalMapper.toAnimalResponse(animal)
 
-        val actualAnimalResponse = defaultJsonRequestSpec().withJwt(customerToken).get("$animalApiUrlBasePath/${animal.id}").then().log()
+        val actualAnimalResponse = defaultJsonRequestSpec().get("$animalApiUrlBasePath/${animal.id}").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
             .`as`(AnimalResponse::class.java)
 
@@ -76,7 +73,7 @@ class TestAnimal @Autowired constructor(
             healthStatus = HealthStatus.HEALTHY
         )
 
-        val response: Response = defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(animalDto).post(animalApiUrlBasePath)
+        val response: Response = defaultJsonRequestSpec().body(animalDto).post(animalApiUrlBasePath)
 
         response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
             .body("name", equalTo(animalDto.name))
@@ -96,7 +93,7 @@ class TestAnimal @Autowired constructor(
             healthStatus = animal.healthStatus
         )
 
-        defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(updatedAnimalDto).put("$animalApiUrlBasePath/${animal.id}").then().log()
+        defaultJsonRequestSpec().put("$animalApiUrlBasePath/${animal.id}").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
             .body("name", equalTo(updatedAnimalDto.name))
 
@@ -108,7 +105,7 @@ class TestAnimal @Autowired constructor(
     fun `test delete animal`() {
         val animal = animalRepository.findAll().first()
 
-        defaultJsonRequestSpec().withJwt(adoptionManagerToken).delete("$animalApiUrlBasePath/${animal.id}").then().log()
+        defaultJsonRequestSpec().delete("$animalApiUrlBasePath/${animal.id}").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.NO_CONTENT.value())
 
         val deletedAnimal = animalRepository.findById(animal.id)
