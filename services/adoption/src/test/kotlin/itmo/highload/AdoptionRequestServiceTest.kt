@@ -56,10 +56,8 @@ class AdoptionRequestServiceTest {
 
         every { adoptionRequestRepository.findByCustomerIdAndAnimalId(1, 1) } returns Optional.of(existingRequest)
 
-        adoptionRequestService.save(1, 1)
-            .test()
-            .expectErrorMessage("An adoption request already exists for customer ID: 1 and animal ID: 1")
-            .verify()
+        adoptionRequestService.save(1, 1).test()
+            .expectErrorMessage("An adoption request already exists for customer ID: 1 and animal ID: 1").verify()
     }
 
     @Test
@@ -80,13 +78,10 @@ class AdoptionRequestServiceTest {
         every { adoptionRequestRepository.findById(1) } returns Optional.of(adoptionRequest)
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
 
-        adoptionRequestService.update(managerId, requestDto)
-            .test()
-            .assertNext {
-                assertEquals(AdoptionStatus.DENIED, it.status)
-                assertEquals(managerId, it.managerId)
-            }
-            .verifyComplete()
+        adoptionRequestService.update(managerId, requestDto).test().assertNext {
+            assertEquals(AdoptionStatus.DENIED, it.status)
+            assertEquals(managerId, it.managerId)
+        }.verifyComplete()
         verify(exactly = 0) { ownershipRepository.save(any()) }
     }
 
@@ -116,11 +111,9 @@ class AdoptionRequestServiceTest {
 
         every { adoptionRequestRepository.findById(1) } returns Optional.empty()
 
-        adoptionRequestService.update(1, requestDto)
-            .test()
-            .verifyErrorMatches {
-                it is EntityNotFoundException && it.message == "Adoption request not found"
-            }
+        adoptionRequestService.update(1, requestDto).test().verifyErrorMatches {
+            it is EntityNotFoundException && it.message == "Adoption request not found"
+        }
 
         verify(exactly = 0) { ownershipRepository.save(any()) }
         verify(exactly = 0) { adoptionRequestRepository.save(any()) }
@@ -130,19 +123,13 @@ class AdoptionRequestServiceTest {
     fun `should delete adoption request if status is PENDING`() {
 
         val adoptionRequest = AdoptionRequest(
-            id = 1,
-            dateTime = LocalDateTime.now(),
-            customerId = 1,
-            animalId = 1,
-            status = AdoptionStatus.PENDING
+            id = 1, dateTime = LocalDateTime.now(), customerId = 1, animalId = 1, status = AdoptionStatus.PENDING
         )
 
         every { adoptionRequestRepository.findByCustomerIdAndAnimalId(1, 1) } returns Optional.of(adoptionRequest)
         every { adoptionRequestRepository.delete(adoptionRequest) } returns Unit
 
-        adoptionRequestService.delete(1, 1)
-            .test()
-            .verifyComplete()
+        adoptionRequestService.delete(1, 1).test().verifyComplete()
 
         verify { adoptionRequestRepository.delete(adoptionRequest) }
     }
@@ -151,11 +138,9 @@ class AdoptionRequestServiceTest {
     fun `should throw EntityNotFoundException if adoption request is not found`() {
         every { adoptionRequestRepository.findByCustomerIdAndAnimalId(1, 1) } returns Optional.empty()
 
-        adoptionRequestService.delete(1, 1)
-            .test()
-            .verifyErrorMatches {
-                it is EntityNotFoundException && it.message == "Adoption request not found"
-            }
+        adoptionRequestService.delete(1, 1).test().verifyErrorMatches {
+            it is EntityNotFoundException && it.message == "Adoption request not found"
+        }
 
         verify(exactly = 0) { adoptionRequestRepository.delete(any()) }
     }
@@ -164,20 +149,15 @@ class AdoptionRequestServiceTest {
     fun `should throw InvalidAdoptionRequestStatusException if status is not PENDING`() {
 
         val adoptionRequest = AdoptionRequest(
-            id = 1,
-            dateTime = LocalDateTime.now(),
-            customerId = 1,
-            animalId = 1,
-            status = AdoptionStatus.APPROVED
+            id = 1, dateTime = LocalDateTime.now(), customerId = 1, animalId = 1, status = AdoptionStatus.APPROVED
         )
 
         every { adoptionRequestRepository.findByCustomerIdAndAnimalId(1, 1) } returns Optional.of(adoptionRequest)
 
-        adoptionRequestService.delete(1, 1)
-            .test()
-            .verifyErrorMatches {
-                it is InvalidAdoptionRequestStatusException && it.message == "Cannot delete adoption request with status: APPROVED"
-            }
+        adoptionRequestService.delete(1, 1).test().verifyErrorMatches {
+            it is InvalidAdoptionRequestStatusException
+                    && it.message == "Cannot delete adoption request with status: APPROVED"
+        }
 
         verify(exactly = 0) { adoptionRequestRepository.delete(any()) }
     }
