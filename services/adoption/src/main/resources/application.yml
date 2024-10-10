@@ -1,23 +1,6 @@
-app:
-  base-url: /api/v1
 spring:
   application:
-    name: adoption-service
-  jpa:
-    show-sql: true
-    open-in-view: false
-    hibernate:
-      ddl-auto: none
-  liquibase:
-    enabled: true
-    show-summary-output: all
-    change-log: classpath:db/changelog/changelog-root.yaml
-  data:
-    web:
-      pageable:
-        max-page-size: 50
-logging:
-  level:
-    web: TRACE
-    org.springframework.web: TRACE
-    itmo.highload: TRACE
+    name: adoption
+  config:
+    import:
+      - "configserver:http://localhost:8888"

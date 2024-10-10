@@ -18,6 +18,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
 }
 
 var jdkVersion = 21

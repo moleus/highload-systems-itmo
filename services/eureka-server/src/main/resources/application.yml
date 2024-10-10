@@ -14,8 +14,3 @@ management:
     web:
       exposure:
         include: '*'
-
-# load application-cloudconfig.yml file
-spring:
-  profiles:
-    active: standalone

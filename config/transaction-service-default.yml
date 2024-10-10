@@ -1,10 +1,6 @@
 spring:
   application:
     name: transaction-service
-  profiles:
-    group:
-      lab2: security
-    active: lab2
   jpa:
     show-sql: true
     hibernate:
@@ -16,7 +12,9 @@ spring:
     show-summary-output: all
     change-log: classpath:db/changelog/changelog-root.yaml
 
-#app.base-url: /api/v1
+server:
+  port: 8086
+app.base-url: /api/v1
 
 #logging:
 #  level:

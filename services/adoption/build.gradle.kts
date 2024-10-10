@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":shared:security"))
     implementation(project(":services:authentication:auth-repositories")) // for userRepository
 
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("org.springframework.boot:spring-boot-starter-security")
