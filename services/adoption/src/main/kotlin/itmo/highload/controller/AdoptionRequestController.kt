@@ -8,7 +8,6 @@ import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -29,15 +28,14 @@ class AdoptionRequestController(
     fun getAll(
         @RequestParam(required = false) status: AdoptionStatus?,
         @RequestHeader("Authorization") token: String,
-        pageable: Pageable
     ): ResponseEntity<Flux<AdoptionRequestResponse>> {
         val userId = jwtUtils.extractUserId(token)
         val role = jwtUtils.extractRole(token)
         return ResponseEntity.ok(
             if (role == Role.ADOPTION_MANAGER) {
-                adoptionRequestService.getAll(status, pageable)
+                adoptionRequestService.getAll(status)
             } else {
-                adoptionRequestService.getAllByCustomer(userId, pageable)
+                adoptionRequestService.getAllByCustomer(userId)
             }
         )
     }

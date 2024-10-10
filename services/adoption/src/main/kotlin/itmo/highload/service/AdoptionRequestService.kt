@@ -11,7 +11,6 @@ import itmo.highload.repository.OwnershipRepository
 import itmo.highload.service.exception.EntityAlreadyExistsException
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -91,7 +90,7 @@ class AdoptionRequestService(
             }
     }
 
-    fun getAll(status: AdoptionStatus?, pageable: Pageable): Flux<AdoptionRequestResponse> {
+    fun getAll(status: AdoptionStatus?): Flux<AdoptionRequestResponse> {
         return (status?.let {
             Flux.fromStream { adoptionRequestRepository.findAllByStatus(it).stream() }
                 .subscribeOn(Schedulers.boundedElastic())
@@ -101,7 +100,7 @@ class AdoptionRequestService(
                 .map { AdoptionRequestMapper.toResponse(it) })
     }
 
-    fun getAllByCustomer(customerId: Int, pageable: Pageable): Flux<AdoptionRequestResponse> {
+    fun getAllByCustomer(customerId: Int): Flux<AdoptionRequestResponse> {
         return Flux.fromStream { adoptionRequestRepository.findAllByCustomerId(customerId).stream() }
             .subscribeOn(Schedulers.boundedElastic())
             .map { AdoptionRequestMapper.toResponse(it) }
