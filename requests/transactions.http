@@ -18,8 +18,8 @@ POST http://localhost:8080/api/v1/transactions/expenses
 Content-Type: application/json
 
 {
-  "purposeId": 1,
-  "moneyAmount": 200
+  "purpose_id": 1,
+  "money_amount": 200
 }
 
 ### Get all expenses
