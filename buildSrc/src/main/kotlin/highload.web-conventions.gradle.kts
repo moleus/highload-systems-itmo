@@ -1,4 +1,5 @@
 plugins {
+    id("io.spring.dependency-management")
     id("org.springframework.boot")
     id("com.google.cloud.tools.jib")
     kotlin("jvm")

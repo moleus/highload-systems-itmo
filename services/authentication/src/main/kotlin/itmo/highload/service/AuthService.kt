@@ -5,12 +5,10 @@ import itmo.highload.model.User
 import itmo.highload.security.dto.JwtResponse
 import itmo.highload.security.jwt.JwtUtils
 import jakarta.security.auth.message.AuthException
-import org.springframework.context.annotation.Profile
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
-@Profile("security")
 @Service
 class AuthService(
     private val jwtProvider: JwtUtils,

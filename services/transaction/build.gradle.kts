@@ -1,6 +1,7 @@
 import java.util.*
 
 plugins {
+    id("io.spring.dependency-management")
     id("highload.db-conventions")
     id("highload.web-conventions")
     id("highload.lint-conventions")
@@ -20,11 +21,15 @@ if (hostArchitecture == "aarch64") {
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
+    implementation(project(":shared:db"))
     implementation("io.projectreactor:reactor-core")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
 }
 
 

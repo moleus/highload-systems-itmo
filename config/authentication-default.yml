@@ -12,5 +12,8 @@ spring:
     show-summary-output: all
     change-log: classpath:db/changelog/changelog-root.yaml
 
+server:
+  port: 8088
+
 app:
   base-url: /api/v1

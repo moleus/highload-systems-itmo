@@ -19,6 +19,9 @@ dependencies {
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.7")
     implementation("org.jetbrains.kotlinx:kover-gradle-plugin:0.8.3")
 
+    // spring dependencies plugin
+    implementation("io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:1.1.6")
+
     // spring-conventions
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.4")
     // kotlin("jpa")

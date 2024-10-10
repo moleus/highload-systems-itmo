@@ -17,7 +17,6 @@ if (hostArchitecture == "aarch64") {
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
-    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 
