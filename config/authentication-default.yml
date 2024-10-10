@@ -1,6 +1,6 @@
 spring:
   application:
-    name: authentication
+    name: authentication-service
   jpa:
     show-sql: true
     # https://stackoverflow.com/questions/30549489/what-is-this-spring-jpa-open-in-view-true-property-in-spring-boot

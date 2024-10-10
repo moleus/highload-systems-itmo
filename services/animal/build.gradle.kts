@@ -48,6 +48,11 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+
+    @Suppress("VulnerableDependency")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
+
 }
 
 jib {
