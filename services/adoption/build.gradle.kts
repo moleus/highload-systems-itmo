@@ -75,9 +75,9 @@ testing {
                 implementation("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
 
-//                implementation(project(":services:animal:repositories"))
-//                implementation(project(":services:authentication:auth-repositories")) // for userRepository
-//                implementation("io.projectreactor:reactor-core")
+                implementation(project(":services:animal:repositories"))
+                implementation(project(":services:authentication:auth-repositories")) // for userRepository
+                implementation("io.projectreactor:reactor-core")
             }
 
             sources {

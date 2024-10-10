@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql
     ]
 //    properties = ["server.port=9999", "spring.datasource.url=jdbc:tc:postgresql:15:///test?TC_TMPFS=/testtmpfs:rw"]
 )
-@ActiveProfiles("disable-security")
+@ActiveProfiles(profiles=["disable-security", "test"])
 @AutoConfigureWebMvc
 @Sql("/test-data.sql")
 //@TestPropertySource(value = ["classpath:application.yml"])

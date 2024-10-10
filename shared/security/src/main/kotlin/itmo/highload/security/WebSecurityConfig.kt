@@ -50,7 +50,6 @@ class WebSecurityConfig {
 @Profile("disable-security")
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 class AllowAllSecurityConfig {
 
     @Bean

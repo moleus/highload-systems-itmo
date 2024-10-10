@@ -9,7 +9,6 @@ import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -28,22 +27,21 @@ class AdoptionRequestController(
     fun getAll(
         @RequestParam(required = false) status: AdoptionStatus?,
         @RequestHeader("Authorization") token: String,
-    ): ResponseEntity<Flux<AdoptionRequestResponse>> {
+    ): Flux<AdoptionRequestResponse> {
         val userId = jwtUtils.extractUserId(token)
         val role = jwtUtils.extractRole(token)
-        return ResponseEntity.ok(
-            if (role == Role.ADOPTION_MANAGER) {
-                adoptionRequestService.getAll(status)
-            } else {
-                adoptionRequestService.getAllByCustomer(userId)
-            }
-        )
+
+        return if (role == Role.ADOPTION_MANAGER) {
+            adoptionRequestService.getAll(status)
+        } else {
+            adoptionRequestService.getAllByCustomer(userId)
+        }
     }
 
     @GetMapping("/statuses")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun getAllStatuses(): ResponseEntity<Flux<AdoptionStatus>> {
-        return ResponseEntity.ok(adoptionRequestService.getAllStatuses())
+    fun getAllStatuses(): Flux<AdoptionStatus> {
+        return adoptionRequestService.getAllStatuses()
     }
 
     @PostMapping("/{animalId}")
@@ -61,9 +59,9 @@ class AdoptionRequestController(
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAdoptionRequest(
         @RequestBody @Valid request: UpdateAdoptionRequestStatusDto, @RequestHeader("Authorization") token: String
-    ): ResponseEntity<Mono<AdoptionRequestResponse>> {
+        ): Mono<AdoptionRequestResponse> {
         val managerId = jwtUtils.extractUserId(token)
-        return ResponseEntity.ok(adoptionRequestService.update(managerId, request))
+            return adoptionRequestService.update(managerId, request)
     }
 
     @DeleteMapping("/{animalId}")
