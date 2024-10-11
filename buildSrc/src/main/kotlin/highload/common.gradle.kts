@@ -1,4 +1,9 @@
+package highload
+
 plugins {
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    id("io.spring.dependency-management")
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
 }
@@ -7,8 +12,15 @@ repositories {
     mavenCentral()
 }
 
-group = "ru.itmo"
-version = "0.0.1-SNAPSHOT"
+group = "itmo.highload"
+version = "0.2.0"
+
+kotlin {
+    compilerOptions {
+        // infer Kotlin types from Spring API taking into account nullability
+        freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
+}
 
 detekt {
     config.setFrom(rootDir.absolutePath + "/detekt.yml")

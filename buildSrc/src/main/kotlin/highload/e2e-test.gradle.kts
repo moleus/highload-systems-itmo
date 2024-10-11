@@ -1,18 +1,11 @@
 @file:Suppress("UnstableApiUsage")
 
+package highload
+
 plugins {
-    kotlin("jvm")
     id("io.spring.dependency-management")
-    `jvm-test-suite`
+    id("highload.common")
 }
-
-repositories {
-    mavenCentral()
-    gradlePluginPortal()
-}
-
-group = "ru.itmo"
-version = "0.0.1-SNAPSHOT"
 
 dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -16,9 +16,3 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
 }
 
-kotlin {
-    compilerOptions {
-        // infer Kotlin types from Spring API taking into account nullability
-        freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
-}
