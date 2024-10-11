@@ -17,6 +17,7 @@ import javax.crypto.SecretKey
 class JwtUtils(
     @Value("\${jwt.secret.sign}") jwtAccessSecret: String,
 ) {
+    @Suppress("MagicNumber")
     private final val accessTokenExpirationTimeMinutes = 15
 
     private val jwtAccessSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
