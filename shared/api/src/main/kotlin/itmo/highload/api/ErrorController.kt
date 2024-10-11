@@ -1,9 +1,9 @@
 package itmo.highload.api
 
+import itmo.highload.exceptions.EntityAlreadyExistsException
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
 import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.exceptions.NegativeBalanceException
-import itmo.highload.service.exception.EntityAlreadyExistsException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice

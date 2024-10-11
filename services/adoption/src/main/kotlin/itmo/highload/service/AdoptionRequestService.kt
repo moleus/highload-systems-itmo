@@ -8,7 +8,7 @@ import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.model.Ownership
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.OwnershipRepository
-import itmo.highload.service.exception.EntityAlreadyExistsException
+import itmo.highload.exceptions.EntityAlreadyExistsException
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

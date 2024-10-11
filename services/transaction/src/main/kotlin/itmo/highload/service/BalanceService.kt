@@ -6,7 +6,7 @@ import itmo.highload.exceptions.NegativeBalanceException
 import itmo.highload.model.Balance
 import itmo.highload.model.BalanceMapper
 import itmo.highload.repository.BalanceRepository
-import itmo.highload.service.exception.EntityAlreadyExistsException
+import itmo.highload.exceptions.EntityAlreadyExistsException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

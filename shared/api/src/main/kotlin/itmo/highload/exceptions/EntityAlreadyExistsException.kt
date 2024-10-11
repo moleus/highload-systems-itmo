@@ -1,3 +1,3 @@
-package itmo.highload.service.exception
+package itmo.highload.exceptions
 
 class EntityAlreadyExistsException(msg: String?) : RuntimeException(msg)
