@@ -1,6 +1,7 @@
 plugins {
     // don't import spring-web-conventions
     id("highload.application")
+    id("io.spring.dependency-management")
 }
 
 dependencies {

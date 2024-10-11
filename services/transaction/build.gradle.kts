@@ -1,18 +1,17 @@
 plugins {
-    id("highload.db")
     id("highload.web")
 
     id("highload.e2e-test")
     id("highload.reactive-application")
-}
+    id("io.spring.dependency-management")
+    id("org.springframework.boot")
 
-highloadDatabase {
-    reactive = true
+    id("highload.reactive-db")
 }
 
 dependencies {
     implementation(project(":shared:api"))
-    implementation(project(":shared:security"))
+    api(project(":shared:security"))
     implementation(project(":shared:db"))
     implementation("io.projectreactor:reactor-core")
     implementation("org.springframework.boot:spring-boot-starter-webflux")

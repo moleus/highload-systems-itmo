@@ -1,14 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("highload.db")
     id("highload.web")
     id("highload.e2e-test")
     id("highload.reactive-application")
-}
-
-highloadApp {
-    serviceName = "adoption"
+    id("highload.db")
 }
 
 dependencies {

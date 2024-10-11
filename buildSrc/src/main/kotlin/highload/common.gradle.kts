@@ -3,7 +3,7 @@ package highload
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
-    id("io.spring.dependency-management")
+    id("org.springframework.boot")
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
 }

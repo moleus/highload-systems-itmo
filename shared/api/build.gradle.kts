@@ -1,7 +1,5 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
-    kotlin("plugin.spring")
+    id("io.spring.dependency-management")
     id("highload.common")
 }
 
