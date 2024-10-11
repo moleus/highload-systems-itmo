@@ -93,7 +93,7 @@ class TestAnimal @Autowired constructor(
             healthStatus = animal.healthStatus
         )
 
-        defaultJsonRequestSpec().put("$animalApiUrlBasePath/${animal.id}").then().log()
+        defaultJsonRequestSpec().body(updatedAnimalDto).put("$animalApiUrlBasePath/${animal.id}").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
             .body("name", equalTo(updatedAnimalDto.name))
 

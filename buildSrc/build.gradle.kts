@@ -13,9 +13,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.10")
     implementation("com.google.cloud.tools:jib-gradle-plugin:3.4.3")
-
 
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.7")
     implementation("org.jetbrains.kotlinx:kover-gradle-plugin:0.8.3")
@@ -26,8 +25,8 @@ dependencies {
     // spring-conventions
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.4")
     // kotlin("jpa")
-    implementation("org.jetbrains.kotlin:kotlin-noarg:1.9.24")
+    implementation("org.jetbrains.kotlin:kotlin-noarg:2.0.10")
     // kotlin("spring")
-    implementation("org.jetbrains.kotlin:kotlin-allopen:1.9.24")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:2.0.10")
     implementation("com.google.cloud.tools:jib-gradle-plugin:3.4.2")
 }
