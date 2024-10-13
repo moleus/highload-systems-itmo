@@ -37,14 +37,14 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
     fun `test get all animals`() {
         val expectedAnimalResponse = listOf(
             AnimalResponseFixture.of(
-                id = 1,
+                id = -1,
                 name = "Buddy",
                 type = "Dog",
                 gender = Gender.MALE,
                 isCastrated = true,
                 healthStatus = HealthStatus.HEALTHY
             ), AnimalResponseFixture.of(
-                id = 2,
+                id = -2,
                 name = "Molly",
                 type = "Cat",
                 gender = Gender.FEMALE,
@@ -62,17 +62,10 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
 
     @Test
     fun `test get animal by id`() {
-        val expectedAnimalResponse = AnimalResponseFixture.of(
-            id = 1,
-            name = "Buddy",
-            type = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
+        val expectedAnimalResponse = AnimalResponseFixture.of()
 
         val actualAnimalResponse =
-            defaultJsonRequestSpec().get("$animalApiUrlBasePath/1").then().log().ifValidationFails(LogDetail.BODY)
+            defaultJsonRequestSpec().get("$animalApiUrlBasePath/-1").then().log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.OK.value()).extract().`as`(AnimalResponse::class.java)
 
         assertThat(actualAnimalResponse).isEqualTo(expectedAnimalResponse)
@@ -104,14 +97,14 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
             healthStatus = HealthStatus.HEALTHY
         )
 
-        defaultJsonRequestSpec().body(updatedAnimalDto).put("$animalApiUrlBasePath/1").then().log()
+        defaultJsonRequestSpec().body(updatedAnimalDto).put("$animalApiUrlBasePath/-1").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
             .body("name", equalTo(updatedAnimalDto.name))
     }
 
     @Test
     fun `test delete animal`() {
-        defaultJsonRequestSpec().delete("$animalApiUrlBasePath/1").then().log().ifValidationFails(LogDetail.BODY)
+        defaultJsonRequestSpec().delete("$animalApiUrlBasePath/-1").then().log().ifValidationFails(LogDetail.BODY)
             .statusCode(HttpStatus.NO_CONTENT.value())
     }
 
@@ -125,7 +118,7 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
             healthStatus = HealthStatus.HEALTHY
         )
 
-        defaultJsonRequestSpec().body(invalidUpdateDto).put("$animalApiUrlBasePath/1").then().log()
+        defaultJsonRequestSpec().body(invalidUpdateDto).put("$animalApiUrlBasePath/-1").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(
                 CoreMatchers.equalTo(
                     "Can't change gender; Can't change type of animal; " + "Can't cancel castration of an animal"
