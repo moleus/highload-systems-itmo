@@ -9,6 +9,7 @@ import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.api.dto.response.AnimalResponse
 import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.configuration.JdbcTestContainerIntegrationTest
 import itmo.highload.fixtures.AnimalResponseFixture
 import itmo.highload.utils.defaultJsonRequestSpec
 import org.assertj.core.api.Assertions.assertThat
@@ -20,10 +21,11 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
 @IntegrationTestContext
-class TestAnimal {
+class TestAnimal : JdbcTestContainerIntegrationTest() {
     @LocalServerPort
     private var port: Int = 0
     private val animalApiUrlBasePath = "/api/v1/animals"
+
 
     @BeforeEach
     fun setUp() {
@@ -124,8 +126,10 @@ class TestAnimal {
         )
 
         defaultJsonRequestSpec().body(invalidUpdateDto).put("$animalApiUrlBasePath/1").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
-            .body(CoreMatchers.equalTo("Can't change gender; Can't change type of animal; " +
-                    "Can't cancel castration of an animal"))
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(
+                CoreMatchers.equalTo(
+                    "Can't change gender; Can't change type of animal; " + "Can't cancel castration of an animal"
+                )
+            )
     }
 }

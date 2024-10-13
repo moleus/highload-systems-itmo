@@ -26,8 +26,8 @@ testing {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation(project(":shared:db"))
-//                implementation(project(":shared:integration-tests"))
+                implementation(project(":shared:db-migrations"))
+                implementation(project(":shared:integration-tests"))
                 implementation(testFixtures(project(":shared:integration-tests")))
                 implementation("org.liquibase:liquibase-core")
                 implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
@@ -41,9 +41,9 @@ testing {
 
                 runtimeOnly("org.postgresql:postgresql")
             }
-//            sources {
-//                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
-//            }
+            sources {
+                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
+            }
         }
     }
 }

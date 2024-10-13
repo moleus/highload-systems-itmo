@@ -15,7 +15,7 @@ plugins {
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
-    implementation(project(":shared:db"))
+    implementation(project(":shared:db-migrations"))
     implementation("io.projectreactor:reactor-core")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")

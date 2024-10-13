@@ -8,8 +8,8 @@ TRUNCATE TABLE adoption_requests CASCADE;
 -- Insert balances
 INSERT INTO balances (id, purpose, money_amount)
 VALUES (1, 'Medicine', 1000),
-       (1, 'Food', 500),
-       (1, 'General', 0);
+       (2, 'Food', 500),
+       (3, 'General', 0);
 
 -- Insert animals
 INSERT INTO animals (id, name, type_of_animal, gender, is_castrated, health_status)
@@ -21,7 +21,7 @@ INSERT INTO users (id, login, password, role, creation_date)
 VALUES (1, 'superuser', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'SUPERUSER', '2023-01-01'),
        (2, 'customer', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'CUSTOMER', '2023-01-01'),
        (3, 'emanager', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'EXPENSE_MANAGER', '2023-01-01'),
-       (3, 'amanager', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'ADOPTION_MANAGER', '2023-01-01');
+       (4, 'amanager', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'ADOPTION_MANAGER', '2023-01-01');
 
 -- Insert customers
 INSERT INTO customers (id, gender, address, phone)

@@ -13,7 +13,7 @@ include(
     "services:transaction",
     "shared:security",
     "shared:api",
-    "shared:db",
+    "shared:db-migrations",
     "shared:integration-tests",
 )
 

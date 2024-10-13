@@ -7,5 +7,5 @@ plugins {
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
-    implementation(project(":shared:db"))
+    implementation(project(":shared:db-migrations"))
 }

@@ -25,7 +25,7 @@ testing {
                 implementation(project(":services:authentication:auth-repositories")) // for userRepository
                 implementation(project(":shared:api"))
                 implementation(project(":shared:security"))
-                implementation(project(":shared:db"))
+                implementation(project(":shared:db-migrations"))
                 implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
                 implementation("org.liquibase:liquibase-core")
