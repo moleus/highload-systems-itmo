@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
-@ActiveProfiles(profiles=["disable-security", "test"])
+@ActiveProfiles(profiles=["test"])
 @AutoConfigureWebMvc
 @Testcontainers
 @Sql("/test-data.sql")

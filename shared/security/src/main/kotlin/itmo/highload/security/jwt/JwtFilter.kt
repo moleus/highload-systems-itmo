@@ -1,12 +1,12 @@
 package itmo.highload.security.jwt
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.JwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -22,8 +22,6 @@ class JwtFilter(
     private val jwtProvider: JwtUtils,
 //    private val exceptionResolver: HandlerExceptionResolver
 ) : OncePerRequestFilter() {
-
-    private val log = LoggerFactory.getLogger(javaClass)
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
@@ -45,7 +43,7 @@ class JwtFilter(
             )
             SecurityContextHolder.getContext().authentication = authentication
         } catch (e: JwtException) {
-            log.warn("Failed to validate access token: {}", e.message)
+            KotlinLogging.logger {}.warn { "Failed to validate access token: ${e.message}" }
 //            exceptionResolver.resolveException(request, response, null, e)
         }
     }
@@ -53,6 +51,7 @@ class JwtFilter(
     private fun getTokenFromRequest(request: HttpServletRequest): String? {
         val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
         val authPrefix = "Bearer "
+        KotlinLogging.logger {}.info { "Getting token from request. Auth header: $authHeader" }
         if (authHeader == null || !authHeader.startsWith(authPrefix)) {
             return null
         }

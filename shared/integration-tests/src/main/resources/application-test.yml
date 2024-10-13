@@ -16,5 +16,13 @@ spring:
     contexts: test
 liquibase:
   duplicateFileMode: WARN
-# logging.level.web: TRACE
-# logging.level.org.springframework.web: TRACE
+
+logging:
+  level:
+    root: INFO
+    itmo:
+      highload: TRACE
+    web: TRACE
+    org.springframework:
+      web: TRACE
+      security: TRACE

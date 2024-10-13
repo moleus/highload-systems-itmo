@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+
 plugins {
     id("highload.web")
     id("highload.e2e-test")
@@ -22,15 +23,21 @@ testing {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation(project(":services:authentication:auth-repositories")) // for userRepository
                 implementation(project(":shared:api"))
                 implementation(project(":shared:security"))
                 implementation(project(":shared:db-migrations"))
+                implementation(project(":shared:integration-tests"))
+                implementation(testFixtures(project(":shared:integration-tests")))
+                implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
+
                 implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
                 implementation("org.liquibase:liquibase-core")
                 implementation("org.testcontainers:testcontainers")
                 runtimeOnly("org.postgresql:postgresql")
+            }
+            sources {
+                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
             }
         }
     }
