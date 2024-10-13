@@ -3,10 +3,10 @@ package itmo.highload
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
+import itmo.highload.api.dto.response.BalanceResponse
+import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.dto.response.BalanceResponse
-import itmo.highload.dto.response.PurposeResponse
-import itmo.highload.mapper.BalanceMapper
+import itmo.highload.model.BalanceMapper
 import itmo.highload.repository.BalanceRepository
 import itmo.highload.utils.defaultJsonRequestSpec
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +14,6 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
@@ -34,7 +33,7 @@ class TestBalances @Autowired constructor(
 
     @Test
     fun `test get all balances`() {
-        val expectedBalanceResponse = balanceRepository.findAll().map {
+        val expectedBalanceResponse = balanceRepository.findAll().collectList().block()!!.map {
             BalanceResponse(
                 purpose = BalanceMapper.toPurposeResponse(it), moneyAmount = it.moneyAmount
             )
@@ -49,7 +48,7 @@ class TestBalances @Autowired constructor(
 
     @Test
     fun `test get balance by id`() {
-        val balance = balanceRepository.findAll().first()
+        val balance = balanceRepository.findAll().blockFirst()!!
         val expectedBalanceResponse = BalanceResponse(
             purpose = BalanceMapper.toPurposeResponse(balance), moneyAmount = balance.moneyAmount
         )
@@ -63,7 +62,8 @@ class TestBalances @Autowired constructor(
 
     @Test
     fun `test get all purposes`() {
-        val expectedPurposeResponse = balanceRepository.findAll().map { BalanceMapper.toPurposeResponse(it) }
+        val expectedPurposeResponse =
+            balanceRepository.findAll().collectList().block()!!.map { BalanceMapper.toPurposeResponse(it) }
 
         val actualPurposeResponse = defaultJsonRequestSpec().get("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()

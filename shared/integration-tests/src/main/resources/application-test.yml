@@ -16,4 +16,3 @@ spring:
     contexts: test
 # logging.level.web: TRACE
 # logging.level.org.springframework.web: TRACE
-debug: true

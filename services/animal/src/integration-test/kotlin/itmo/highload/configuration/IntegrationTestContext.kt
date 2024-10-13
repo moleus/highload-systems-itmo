@@ -7,10 +7,10 @@ import org.springframework.test.context.jdbc.Sql
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [itmo.highload.AnimalServiceApplication::class,
-    ]
+    classes = [itmo.highload.AnimalServiceApplication::class]
 )
 @ActiveProfiles(profiles=["disable-security", "test"])
+//@ComponentScan("itmo.highload")
 @AutoConfigureWebMvc
 @Sql("/test-data.sql")
 @Target(AnnotationTarget.CLASS)

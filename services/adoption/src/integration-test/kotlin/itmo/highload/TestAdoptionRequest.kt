@@ -4,6 +4,7 @@ import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.AdoptionStatus
+import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
 import itmo.highload.configuration.IntegrationTestContext
 import itmo.highload.repository.AdoptionRequestRepository
@@ -14,6 +15,7 @@ import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.defaultJsonRequestSpec
 import itmo.highload.utils.withJwt
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -108,5 +110,23 @@ class TestAdoptionRequest @Autowired constructor(
                 .`as`(Array<AdoptionStatus>::class.java).toList()
 
         assertThat(response).containsExactlyInAnyOrderElementsOf(expectedStatuses)
+    }
+
+    @Test
+    fun `should return BAD_REQUEST when delete non-pending adoption-request`() {
+        val animalId = animalRepository.findByName("Molly", Pageable.unpaged()).first().id
+        val requestId = defaultJsonRequestSpec().post("/api/v1/adoptions/$animalId")
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
+
+        defaultJsonRequestSpec().body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
+            .patch("/api/v1/adoptions")
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.OK.value())
+
+        RestAssured.delete("/api/v1/adoptions/$animalId")
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body(CoreMatchers.equalTo("Cannot delete adoption request with status: APPROVED"))
     }
 }

@@ -45,38 +45,4 @@ class TestErrorHandling @Autowired constructor(
             .body(equalTo("Animal with ID $invalidId not found"))
     }
 
-    @Test
-    fun `should return BAD_REQUEST when delete non-pending adoption-request`() {
-        val animalId = animalRepository.findByName("Molly", Pageable.unpaged()).first().id
-        val requestId = defaultJsonRequestSpec().post("/api/v1/adoptions/$animalId")
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
-
-        defaultJsonRequestSpec().body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
-            .patch("/api/v1/adoptions")
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.OK.value())
-
-        RestAssured.delete("/api/v1/adoptions/$animalId")
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body(equalTo("Cannot delete adoption request with status: APPROVED"))
-    }
-
-    @Test
-    fun `test invalid animal update exception`() {
-        val animalId = animalRepository.findByName("Buddy", Pageable.unpaged()).first().id
-        val invalidUpdateDto = AnimalDto(
-            name = "Updated Animal",
-            type = "Cat",
-            gender = Gender.FEMALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY
-        )
-
-        defaultJsonRequestSpec().body(invalidUpdateDto).put("/api/v1/animals/$animalId")
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body(equalTo("Can't change gender; Can't change type of animal; Can't cancel castration of an animal"))
-    }
 }

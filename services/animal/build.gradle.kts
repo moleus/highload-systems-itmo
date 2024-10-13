@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+
 plugins {
     id("highload.db")
     id("highload.web")
@@ -11,7 +12,6 @@ plugins {
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
-    implementation(project(":services:animal:repositories")) // for userRepository
     implementation(project(":services:authentication:auth-repositories")) // for userRepository
 
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
@@ -26,12 +26,20 @@ testing {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation(project(":services:animal:repositories"))
-                implementation(project(":services:authentication:auth-repositories")) // for userRepository
-                implementation(project(":services:animal:repositories"))
+                implementation(project(":shared:db"))
+//                implementation(project(":shared:integration-tests"))
+                implementation(testFixtures(project(":shared:integration-tests")))
+                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+                implementation("org.liquibase:liquibase-core")
                 implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
+
+                implementation("io.rest-assured:rest-assured")
+                implementation("org.springframework.boot:spring-boot-starter-test")
             }
+//            sources {
+//                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
+//            }
         }
     }
 }

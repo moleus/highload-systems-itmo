@@ -1,33 +1,52 @@
-package itmo.highload
-
+import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import io.restassured.response.Response
+import itmo.highload.api.dto.TransactionDto
+import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.dto.TransactionDto
-import itmo.highload.dto.response.PurposeResponse
-import itmo.highload.dto.response.TransactionResponse
-import itmo.highload.dto.response.UserResponse
-import itmo.highload.repository.BalanceRepository
-import itmo.highload.repository.TransactionRepository
+import itmo.highload.fixtures.TransactionResponseFixture
 import itmo.highload.utils.defaultJsonRequestSpec
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
+import org.springframework.test.context.jdbc.Sql
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.utility.DockerImageName
 
+@Testcontainers
 @IntegrationTestContext
-class TestTransactions @Autowired constructor(
-    private val transactionRepository: TransactionRepository, private val balanceRepository: BalanceRepository
-) {
+@Sql("/test-data.sql")
+class TestTransactions {
     @LocalServerPort
     private var port: Int = 0
     private val donationApiUrlBasePath = "/api/v1/transactions/donations"
     private val expenseApiUrlBasePath = "/api/v1/transactions/expenses"
+
+    companion object {
+        private val postgres: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:15"))
+            .apply {
+                this.withDatabaseName("testDb")
+                    .withUsername("root")
+                    .withPassword("123456")
+                    .withReuse(true)
+            }
+
+        @JvmStatic
+        @BeforeAll
+        internal fun setUp(): Unit {
+            postgres.start()
+        }
+    }
 
     @BeforeEach
     fun setUp() {
@@ -35,14 +54,22 @@ class TestTransactions @Autowired constructor(
         RestAssured.defaultParser = Parser.JSON
     }
 
+    @BeforeEach
+    fun populateTestData(
+        @Value("classpath:test-data.sql") testDataSql: Resource,
+        connectionFactory: ConnectionFactory
+    ) {
+        val resourceDatabasePopulator = ResourceDatabasePopulator()
+        resourceDatabasePopulator.addScript(testDataSql)
+        resourceDatabasePopulator.populate(connectionFactory).block()
+    }
+
     @Test
     fun `test add donation`() {
-        val balance = balanceRepository.findAll().first()
         @Suppress("MagicNumber")
         val transactionMoney = 200
-
         val transactionDto = TransactionDto(
-            purposeId = balance.id, moneyAmount = transactionMoney
+            purposeId = 1, moneyAmount = transactionMoney
         )
 
         val response: Response = defaultJsonRequestSpec().body(transactionDto).post(donationApiUrlBasePath)
@@ -53,15 +80,9 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `test get all donations`() {
-        val expectedTransactionResponse = transactionRepository.findAll().filter { it.isDonation }.map {
-            TransactionResponse(
-                dateTime = it.dateTime,
-                purpose = PurposeResponse(it.balance.id, it.balance.purpose),
-                user = UserResponse(it.user.id, it.user.login),
-                moneyAmount = it.moneyAmount,
-                isDonation = it.isDonation
-            )
-        }
+        val expectedTransactionResponse = listOf(
+            TransactionResponseFixture.of()
+        )
 
         val actualTransactionResponse = defaultJsonRequestSpec().get(donationApiUrlBasePath)
             .then().log().ifValidationFails(LogDetail.BODY)
@@ -73,12 +94,10 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `test add expense`() {
-        val balance = balanceRepository.findAll().first()
         @Suppress("MagicNumber")
         val transactionMoney = 300
-
         val transactionDto = TransactionDto(
-            purposeId = balance.id, moneyAmount = transactionMoney
+            purposeId = 1, moneyAmount = transactionMoney
         )
 
         val response: Response = defaultJsonRequestSpec().body(transactionDto).post(expenseApiUrlBasePath)
@@ -89,7 +108,9 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `should return BAD_REQUEST when adding donation with negative money amount`() {
-        val transactionDto = TransactionDto(purposeId = balanceRepository.findAll().first().id, moneyAmount = -200)
+        val transactionDto = TransactionDto(
+            purposeId = 1, moneyAmount = -200
+        )
 
         defaultJsonRequestSpec().body(transactionDto).post(donationApiUrlBasePath).then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
@@ -97,7 +118,9 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `should return BAD_REQUEST when adding expense with negative money amount`() {
-        val transactionDto = TransactionDto(purposeId = balanceRepository.findAll().first().id, moneyAmount = -200)
+        val transactionDto = TransactionDto(
+            purposeId = 1, moneyAmount = -200
+        )
 
         defaultJsonRequestSpec().body(transactionDto).post(expenseApiUrlBasePath).then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
@@ -105,8 +128,7 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `should return BAD_REQUEST when there is not enough money on balance`() {
-        val balance = balanceRepository.findAll().first()
-        val transactionDto = TransactionDto(purposeId = balance.id, moneyAmount = balance.moneyAmount + 1)
+        val transactionDto = TransactionDto(purposeId = 1, moneyAmount = 1001)
 
         defaultJsonRequestSpec().body(transactionDto).post(expenseApiUrlBasePath).then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
@@ -114,15 +136,9 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `test get all expenses`() {
-        val expectedTransactionResponse = transactionRepository.findAll().filter { !it.isDonation }.map {
-            TransactionResponse(
-                dateTime = it.dateTime,
-                purpose = PurposeResponse(it.balance.id, it.balance.purpose),
-                user = UserResponse(it.user.id, it.user.login),
-                moneyAmount = it.moneyAmount,
-                isDonation = it.isDonation
-            )
-        }
+        val expectedTransactionResponse = listOf(
+            TransactionResponseFixture.of(isDonation = false)
+        )
 
         val actualTransactionResponse = defaultJsonRequestSpec().get(expenseApiUrlBasePath)
             .then().log().ifValidationFails(LogDetail.BODY)

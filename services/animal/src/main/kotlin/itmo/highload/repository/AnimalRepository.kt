@@ -1,8 +1,8 @@
 package itmo.highload.repository
 
-import itmo.highload.model.Animal
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
+import itmo.highload.model.Animal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

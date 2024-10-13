@@ -14,4 +14,7 @@ include(
     "shared:security",
     "shared:api",
     "shared:db",
+    "shared:integration-tests",
 )
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
