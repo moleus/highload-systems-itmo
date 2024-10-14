@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-adoption-requests-triggers
+      id: create-adoption-request-triggers
       author: Moleus
       changes:
         - sql:
@@ -9,27 +9,27 @@ databaseChangeLog:
             splitStatements: true
             stripComments: true
             sql: >-
-              CREATE OR REPLACE FUNCTION check_adoption_requests()
+              CREATE OR REPLACE FUNCTION check_adoption_request()
               RETURNS TRIGGER AS $$
                       BEGIN
                         IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.customer_id AND role = 'CUSTOMER') THEN
-                          RAISE EXCEPTION 'only user with role CUSTOMER can make adoption requests';
+                          RAISE EXCEPTION 'only user with role CUSTOMER can make adoption request';
                         END IF;
                         IF NEW.manager_id IS NOT NULL THEN
                           IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.manager_id AND role = 'ADOPTION_MANAGER') THEN
-                            RAISE EXCEPTION 'only user with role ADOPTION_MANAGER can approve or deny adoption requests';
+                            RAISE EXCEPTION 'only user with role ADOPTION_MANAGER can approve or deny adoption request';
                           END IF;
                         END IF;
                 RETURN NEW;
               END;
               $$ LANGUAGE plpgsql;
 
-              CREATE TRIGGER check_adoption_requests_trigger
-              BEFORE INSERT OR UPDATE ON adoption_requests
-              FOR EACH ROW EXECUTE FUNCTION check_adoption_requests();
+              CREATE TRIGGER check_adoption_request_trigger
+              BEFORE INSERT OR UPDATE ON adoption_request
+              FOR EACH ROW EXECUTE FUNCTION check_adoption_request();
 
   - changeSet:
-      id: create-check-transactions-triggers
+      id: create-check-transaction-triggers
       author: Moleus
       changes:
         - sql:
@@ -38,7 +38,7 @@ databaseChangeLog:
             splitStatements: true
             stripComments: true
             sql: >-
-              CREATE OR REPLACE FUNCTION check_transactions()
+              CREATE OR REPLACE FUNCTION check_transaction()
               RETURNS TRIGGER AS $$
                           BEGIN
                             IF NEW.is_donation THEN
@@ -54,6 +54,6 @@ databaseChangeLog:
               END;
               $$ LANGUAGE plpgsql;
               
-              CREATE TRIGGER check_transactions_trigger
-              BEFORE INSERT OR UPDATE ON transactions
-              FOR EACH ROW EXECUTE FUNCTION check_transactions();
+              CREATE TRIGGER check_transaction_trigger
+              BEFORE INSERT OR UPDATE ON transaction
+              FOR EACH ROW EXECUTE FUNCTION check_transaction();

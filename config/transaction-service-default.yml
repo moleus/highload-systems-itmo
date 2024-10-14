@@ -21,3 +21,6 @@ app.base-url: /api/v1
 #    web: TRACE
 #    org.springframework.web: TRACE
 
+jwt:
+  secret:
+    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='

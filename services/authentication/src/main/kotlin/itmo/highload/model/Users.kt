@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "users")
-data class User(
+data class Users(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ data class User(
     @Column(nullable = false)
     val role: Role,
 
-    @Column
+    @Column(name = "creation_date", nullable = false)
     val creationDate: LocalDate
 )
 

@@ -5,16 +5,17 @@ plugins {
     id("highload.web")
 
     id("highload.e2e-test")
-    id("highload.reactive-application")
+    id("highload.application")
     id("io.spring.dependency-management")
     id("org.springframework.boot")
 
     id("highload.reactive-db")
+    id("highload.security")
 }
 
 dependencies {
     implementation(project(":shared:api"))
-    implementation(project(":shared:security"))
+    api(project(":shared:security"))
     implementation(project(":shared:db-migrations"))
     implementation("io.projectreactor:reactor-core")
     implementation("org.springframework.boot:spring-boot-starter-webflux")

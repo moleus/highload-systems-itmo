@@ -68,7 +68,7 @@ databaseChangeLog:
                   value: 2024-01-01
 
         - insert:
-            tableName: customers
+            tableName: customer
             columns:
               - column:
                   name: gender
@@ -81,7 +81,7 @@ databaseChangeLog:
                   value: "+79444333141"
 
         - insert:
-            tableName: customers
+            tableName: customer
             columns:
               - column:
                   name: gender
@@ -94,7 +94,7 @@ databaseChangeLog:
                   value: "+79444333111"
 
         - insert:
-            tableName: customers
+            tableName: customer
             columns:
               - column:
                   name: gender
@@ -107,7 +107,7 @@ databaseChangeLog:
                   value: "+79444333112"
 
         - insert:
-            tableName: customers
+            tableName: customer
             columns:
               - column:
                   name: gender

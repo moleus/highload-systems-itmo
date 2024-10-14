@@ -36,7 +36,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-testcontainers")
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.springframework.boot:spring-boot-starter-web")
                 implementation("org.springframework.boot:spring-boot-starter-logging")
                 implementation("org.testcontainers:testcontainers")
                 implementation("org.testcontainers:postgresql")

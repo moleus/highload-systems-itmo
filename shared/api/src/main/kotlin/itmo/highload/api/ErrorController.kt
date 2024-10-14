@@ -6,6 +6,7 @@ import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.exceptions.NegativeBalanceException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -13,6 +14,13 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ControllerAdvice
 class ErrorController {
+    @ExceptionHandler(AuthenticationException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    fun onAuthenticationException(e: AuthenticationException): String? {
+        return e.message
+    }
+
     @ExceptionHandler(NegativeBalanceException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

@@ -17,15 +17,18 @@ import javax.crypto.SecretKey
 class JwtUtils(
     @Value("\${jwt.secret.sign}") jwtAccessSecret: String,
 ) {
+    companion object {
+        private const val FIFTEEN_MIN = 1000 * 60 * 15
+    }
+
     @Suppress("MagicNumber")
-    private final val accessTokenExpirationTimeMinutes = 15
 
     private val jwtAccessSecret: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
 
     fun generateAccessToken(login: String, role: Role, userId: Int): String {
         val now = LocalDateTime.now()
         val accessExpirationInstant =
-            now.plusMinutes(accessTokenExpirationTimeMinutes.toLong()).atZone(ZoneId.systemDefault()).toInstant()
+            now.plusMinutes(FIFTEEN_MIN.toLong()).atZone(ZoneId.systemDefault()).toInstant()
         val accessExpiration = Date.from(accessExpirationInstant)
         val claims = mapOf("role" to role.name, "userId" to userId)
         return Jwts.builder()
@@ -43,6 +46,10 @@ class JwtUtils(
 
     fun getAccessClaims(accessToken: String): Claims {
         return getClaims(accessToken, jwtAccessSecret)
+    }
+
+    fun extractUsername(token: String): String {
+        return getAccessClaims(token).subject
     }
 
     fun extractUserId(accessToken: String): Int {

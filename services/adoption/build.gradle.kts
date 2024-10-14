@@ -2,20 +2,25 @@
 
 
 plugins {
-    id("highload.web")
+//    id("highload.web")
     id("highload.e2e-test")
-    id("highload.reactive-application")
+    id("highload.application")
     id("highload.db")
 }
 
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
-    implementation(project(":services:authentication:auth-repositories")) // for userRepository
+    implementation(project(":shared:db-migrations"))
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.2")
 
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+
+    implementation("org.slf4j:slf4j-api")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
 testing {

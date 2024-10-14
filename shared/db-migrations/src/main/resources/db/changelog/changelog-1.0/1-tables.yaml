@@ -1,15 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: create-genders-enum
+      id: create-gender-enum
       author: Moleus
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE genders AS ENUM ('FEMALE', 'MALE');
+            sql: CREATE TYPE gender AS ENUM ('FEMALE', 'MALE');
       rollback:
         - sql:
             dbms: postgresql
-            sql: DROP TYPE genders;
+            sql: DROP TYPE gender;
 
   - changeSet:
       id: create-role-enum
@@ -29,11 +29,11 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE adoption_statuses AS ENUM ('PENDING', 'APPROVED', 'DENIED');
+            sql: CREATE TYPE adoption_status AS ENUM ('PENDING', 'APPROVED', 'DENIED');
       rollback:
         - sql:
             dbms: postgresql
-            sql: DROP TYPE adoption_statuses;
+            sql: DROP TYPE adoption_status;
 
   - changeSet:
       id: create-health-status-enum
@@ -41,18 +41,18 @@ databaseChangeLog:
       changes:
         - sql:
             dbms: postgresql
-            sql: CREATE TYPE health_statuses AS ENUM ('HEALTHY', 'INJURY', 'SICK', 'RECOVERING', 'DEAD');
+            sql: CREATE TYPE health_status AS ENUM ('HEALTHY', 'INJURY', 'SICK', 'RECOVERING', 'DEAD');
       rollback:
         - sql:
             dbms: postgresql
-            sql: DROP TYPE health_statuses;
+            sql: DROP TYPE health_status;
 
   - changeSet:
-      id: create-customers
+      id: create-customer
       author: Moleus
       changes:
         - createTable:
-            tableName: customers
+            tableName: customer
             columns:
               - column:
                   name: id
@@ -70,7 +70,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: gender
-                  type: genders
+                  type: gender
                   constraints:
                     nullable: false
               - column:
@@ -117,11 +117,11 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
-      id: create-animals
+      id: create-animal
       author: Moleus
       changes:
         - createTable:
-            tableName: animals
+            tableName: animal
             columns:
               - column:
                   name: id
@@ -144,7 +144,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: gender
-                  type: genders
+                  type: gender
                   constraints:
                     nullable: false
               - column:
@@ -154,16 +154,16 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: health_status
-                  type: health_statuses
+                  type: health_status
                   constraints:
                     nullable: false
 
   - changeSet:
-      id: create-ownerships
+      id: create-ownership
       author: Moleus
       changes:
         - createTable:
-            tableName: ownerships
+            tableName: ownership
             columns:
               - column:
                   name: customer_id
@@ -171,8 +171,8 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-                    foreignKeyName: fk_ownerships_customer
-                    references: customers(id)
+                    foreignKeyName: fk_ownership_customer
+                    references: customer(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:
@@ -181,17 +181,17 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-                    foreignKeyName: fk_ownerships_animal
-                    references: animals(id)
+                    foreignKeyName: fk_ownership_animal
+                    references: animal(id)
                     deleteCascade: true
                     validateForeignKey: true
 
   - changeSet:
-      id: create-adoption-requests
+      id: create-adoption-request
       author: Moleus
       changes:
         - createTable:
-            tableName: adoption_requests
+            tableName: adoption_request
             columns:
               - column:
                   name: id
@@ -208,7 +208,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: adoption_statuses
+                  type: adoption_status
                   constraints:
                     nullable: false
               - column:
@@ -216,8 +216,8 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_adoption_requests_customer
-                    references: customers(id)
+                    foreignKeyName: fk_adoption_request_customer
+                    references: customer(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:
@@ -225,7 +225,7 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: true
-                    foreignKeyName: fk_adoption_requests_manager
+                    foreignKeyName: fk_adoption_request_manager
                     references: users(id)
                     deleteCascade: true
                     validateForeignKey: true
@@ -234,17 +234,17 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_adoption_requests_animal
-                    references: animals(id)
+                    foreignKeyName: fk_adoption_request_animal
+                    references: animal(id)
                     deleteCascade: true
                     validateForeignKey: true
 
   - changeSet:
-      id: create-balances
+      id: create-balance
       author: Moleus
       changes:
         - createTable:
-            tableName: balances
+            tableName: balance
             columns:
               - column:
                   name: id
@@ -268,11 +268,11 @@ databaseChangeLog:
                     checkConstraint: "money_amount >= 0"
 
   - changeSet:
-      id: create-transactions
+      id: create-transaction
       author: Moleus
       changes:
         - createTable:
-            tableName: transactions
+            tableName: transaction
             columns:
               - column:
                   name: id
@@ -292,7 +292,7 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_transactions_user
+                    foreignKeyName: fk_transaction_user
                     references: users(id)
                     deleteCascade: true
                     validateForeignKey: true
@@ -301,8 +301,8 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_transactions_balance
-                    references: balances(id)
+                    foreignKeyName: fk_transaction_balance
+                    references: balance(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:

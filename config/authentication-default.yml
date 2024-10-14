@@ -1,12 +1,8 @@
 spring:
   application:
     name: authentication-service
-  jpa:
-    show-sql: true
-    # https://stackoverflow.com/questions/30549489/what-is-this-spring-jpa-open-in-view-true-property-in-spring-boot
-    open-in-view: false
-    hibernate:
-      ddl-auto: none
+  r2dbc:
+    dri
   liquibase:
     enabled: true
     show-summary-output: all
@@ -17,3 +13,18 @@ server:
 
 app:
   base-url: /api/v1
+jwt:
+  secret:
+    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='
+
+logging:
+  level:
+    itmo:
+      highload: TRACE
+    web: TRACE
+    org:
+      springframework:
+        security: TRACE
+        web: TRACE
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: DEBUG # for parameters

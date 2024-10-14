@@ -2,7 +2,7 @@
 
 
 plugins {
-    id("highload.db")
+    id("highload.reactive-db")
     id("highload.web")
     id("highload.e2e-test")
     id("highload.application")
@@ -12,7 +12,7 @@ plugins {
 dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
-    implementation(project(":services:authentication:auth-repositories")) // for userRepository
+    implementation(project(":shared:db-migrations"))
 
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")

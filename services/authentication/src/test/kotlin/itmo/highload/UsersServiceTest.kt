@@ -3,7 +3,7 @@ package itmo.highload
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import itmo.highload.model.User
+import itmo.highload.model.Users
 import itmo.highload.repository.UserRepository
 import itmo.highload.security.Role
 import itmo.highload.service.UserService
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDate
 
-class UserServiceTest {
+class UsersServiceTest {
 
 
     private val passwordEncoder: PasswordEncoder = mockk()
@@ -22,7 +22,7 @@ class UserServiceTest {
 
     @Test
     fun `should return user when found by login`() {
-        val user = User(
+        val users = Users(
             id = 1,
             login = "manager",
             password = "123",
@@ -30,11 +30,11 @@ class UserServiceTest {
             creationDate = LocalDate.now()
         )
 
-        every { userRepository.findByLogin("manager") } returns user
+        every { userRepository.findByLogin("manager") } returns users
 
         val result = userService.getByLogin("manager")
 
-        assertEquals(user, result)
+        assertEquals(users, result)
         verify { userRepository.findByLogin("manager") }
     }
 
