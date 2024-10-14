@@ -1,0 +1,11 @@
+@file:Suppress("UnstableApiUsage")
+
+plugins {
+    id("highload.db")
+}
+
+dependencies {
+    implementation(project(":shared:api"))
+    implementation(project(":shared:security"))
+    implementation(project(":shared:db"))
+}

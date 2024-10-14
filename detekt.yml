@@ -780,10 +780,12 @@ style:
     active: true
     ignoreLateinitVar: false
   WildcardImport:
-    active: true
+    active: false
     excludeImports:
       - 'java.util.*'
       - 'org.springframework.*'
       - 'io.restassured.*'
       - 'org.hamcrest.*'
       - 'org.junit.jupiter.*'
+      - 'jakarta.persistence.*'
+

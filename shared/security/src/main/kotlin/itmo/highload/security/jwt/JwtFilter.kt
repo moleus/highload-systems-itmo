@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 
-@Profile("security")
+@Profile("!disable-security")
 @Component
 class JwtFilter(
-    private val jwtProvider: TokenUtils,
+    private val jwtProvider: JwtUtils,
 //    private val exceptionResolver: HandlerExceptionResolver
 ) : OncePerRequestFilter() {
 

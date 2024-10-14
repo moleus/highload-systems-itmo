@@ -22,5 +22,5 @@ data class RegisterDto(
     val password: String,
 
     @field:NotNull
-    val role: Role
+    val role: Role?
 )

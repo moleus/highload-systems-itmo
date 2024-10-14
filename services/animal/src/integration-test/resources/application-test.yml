@@ -1,0 +1,18 @@
+jwt:
+  secret:
+    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='
+
+app:
+  base-url: /api/v1
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: "jdbc:tc:postgresql:15:///test?TC_TMPFS=/testtmpfs:rw"
+  liquibase:
+    show-summary-output: all
+    change-log: 'classpath:test-changelog-root.yaml'
+    contexts: test
+# logging.level.web: TRACE
+# logging.level.org.springframework.web: TRACE
