@@ -107,7 +107,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: role
-                  type: role
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
               - column:

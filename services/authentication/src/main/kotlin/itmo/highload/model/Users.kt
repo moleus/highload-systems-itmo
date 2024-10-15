@@ -1,34 +1,27 @@
-@file:Suppress("WildcardImport")
 package itmo.highload.model
 
 import itmo.highload.security.Role
-import jakarta.persistence.*
-import jakarta.validation.constraints.Size
-import org.hibernate.annotations.JdbcType
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
-@Entity
-@Table(name = "users")
+@Table("users")
 data class Users(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column("id")
     val id: Int = 0,
 
-    @Column(unique = true, nullable = false)
-    @Size(min = 4, max = 50)
+    @Column("login")
     val login: String,
 
-    @Column(nullable = false)
+    @Column("password")
     val password: String,
 
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType::class)
-    @Column(nullable = false)
+    @Column("role")
     val role: Role,
 
-    @Column(name = "creation_date", nullable = false)
+    @Column("creation_date")
     val creationDate: LocalDate
 )
-

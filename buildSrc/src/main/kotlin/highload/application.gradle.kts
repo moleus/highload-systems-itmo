@@ -27,6 +27,7 @@ interface HighloadAppExtension {
 }
 
 val applicationExtension = project.extensions.create<HighloadAppExtension>("highloadApp")
+applicationExtension.serviceName.set("highloadapp")
 
 val jdkVersion = 21
 val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault()).let {
@@ -47,6 +48,6 @@ jib {
         }
     }
     to {
-        image = "moleus/highload/${applicationExtension.serviceName}:dev"
+        image = "moleus/highload:${applicationExtension.serviceName.get()}-dev"
     }
 }
