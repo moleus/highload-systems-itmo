@@ -12,7 +12,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
-class AnimalService(private val animalRepository: AnimalRepository) {
+class AnimalService(
+    private val animalRepository: AnimalRepository,
+    private val adoptionService: AdoptionService) {
 
     fun getById(animalId: Int): Animal {
         return animalRepository.findById(animalId).orElseThrow {
@@ -41,11 +43,14 @@ class AnimalService(private val animalRepository: AnimalRepository) {
         animalRepository.delete(existingAnimal)
     }
 
-    fun getAll(name: String?, pageable: Pageable): Page<Animal> {
+    fun getAll(name: String?, isNotAdopted: Boolean?, pageable: Pageable): Page<Animal> {
+        val adoptedAnimalsId: List<Int> = if (isNotAdopted != null)
+            adoptionService.getAllAdoptedAnimalsId() else mutableListOf()
+
         if (name != null) {
-            return animalRepository.findByName(name, pageable)
+            return animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId, pageable)
         }
-        return animalRepository.findAll(pageable)
+        return animalRepository.findByIdNotIn(adoptedAnimalsId, pageable)
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

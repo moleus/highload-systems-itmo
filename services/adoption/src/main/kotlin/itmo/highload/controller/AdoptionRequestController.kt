@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("\${app.base-url}/adoptions")
 class AdoptionRequestController(
     private val adoptionRequestService: AdoptionRequestService,
-    private val jwtUtils: JwtUtils,
+    private val jwtUtils: JwtUtils
 ) {
     private val logger = LoggerFactory.getLogger(AdoptionRequestController::class.java)
 

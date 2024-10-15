@@ -19,6 +19,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
 
     implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
 }
 
 testing {

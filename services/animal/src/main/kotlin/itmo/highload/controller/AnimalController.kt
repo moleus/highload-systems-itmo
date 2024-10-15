@@ -16,9 +16,11 @@ class AnimalController(val animalService: AnimalService) {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAll(
-        @RequestParam(required = false) name: String?, pageable: Pageable
+        @RequestParam(required = false) name: String?,
+        @RequestParam(required = false) isNotAdopted: Boolean?,
+        pageable: Pageable
     ): List<AnimalResponse> {
-        return animalService.getAll(name, pageable).map { AnimalMapper.toAnimalResponse(it) }.content
+        return animalService.getAll(name, isNotAdopted, pageable).map { AnimalMapper.toAnimalResponse(it) }.content
     }
 
     @GetMapping("/{id}")
