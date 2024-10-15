@@ -10,7 +10,7 @@ databaseChangeLog:
             stripComments: true
             sql: >-
               CREATE OR REPLACE FUNCTION check_adoption_request()
-              RETURNS TRIGGER AS $$
+              RETURNS TRIGGER AS $check_adoption_request$
                       BEGIN
                         IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.customer_id AND role = 'CUSTOMER') THEN
                           RAISE EXCEPTION 'only user with role CUSTOMER can make adoption request';
@@ -22,11 +22,12 @@ databaseChangeLog:
                         END IF;
                 RETURN NEW;
               END;
-              $$ LANGUAGE plpgsql;
+              $check_adoption_request$ LANGUAGE plpgsql;
 
-              CREATE TRIGGER check_adoption_request_trigger
+              CREATE TRIGGER check_adoption_request
               BEFORE INSERT OR UPDATE ON adoption_request
               FOR EACH ROW EXECUTE FUNCTION check_adoption_request();
+              
 
   - changeSet:
       id: create-check-transaction-triggers
@@ -39,7 +40,7 @@ databaseChangeLog:
             stripComments: true
             sql: >-
               CREATE OR REPLACE FUNCTION check_transaction()
-              RETURNS TRIGGER AS $$
+              RETURNS TRIGGER AS $check_transaction$
                           BEGIN
                             IF NEW.is_donation THEN
                               IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'CUSTOMER') THEN
@@ -52,8 +53,8 @@ databaseChangeLog:
                             END IF;
                 RETURN NEW;
               END;
-              $$ LANGUAGE plpgsql;
+              $check_transaction$ LANGUAGE plpgsql;
               
-              CREATE TRIGGER check_transaction_trigger
+              CREATE TRIGGER check_transaction
               BEFORE INSERT OR UPDATE ON transaction
               FOR EACH ROW EXECUTE FUNCTION check_transaction();

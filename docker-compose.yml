@@ -21,20 +21,23 @@ services:
       retries: 5
 
   liquibase-migrations:
-    image: liquibase/liquibase:4.18
+    image: liquibase/liquibase:4.29
     depends_on:
       db:
         condition: service_healthy
+#    entrypoint: "bash"
+#    command:
+#      - -c
+#      - sleep 100000
     command:
-      - --hub-mode=off
-      - --changelog-file=changelog-root.yaml
-      - --driver=org.postgresql.Driver
-      - --url=jdbc:postgresql://db:5432/postgres
+      - --changeLogFile=changelog/changelog-root.yaml
+      - --url=jdbc:postgresql://db:15432/postgres
       - --username=postgres
       - --password=postgres
+      - --log-level=debug
       - update
     volumes:
-      - ./shared/db-migrations/src/resources/db.changelog:/liquibase/changelog
+      - ./shared/db-migrations/src/main/resources/changelog:/liquibase/changelog
     networks:
       - backend
 
