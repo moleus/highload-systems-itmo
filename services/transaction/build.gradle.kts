@@ -37,7 +37,6 @@ testing {
                 implementation(project(":shared:integration-tests"))
                 implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
-                implementation("org.liquibase:liquibase-core")
                 implementation("org.testcontainers:testcontainers")
                 implementation("org.testcontainers:r2dbc")
                 runtimeOnly("org.postgresql:r2dbc-postgresql")

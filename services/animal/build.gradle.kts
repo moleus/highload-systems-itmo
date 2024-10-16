@@ -29,7 +29,6 @@ testing {
                 implementation(project(":shared:db-migrations"))
                 implementation(project(":shared:integration-tests"))
                 implementation(testFixtures(project(":shared:integration-tests")))
-                implementation("org.liquibase:liquibase-core")
                 implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
 
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")

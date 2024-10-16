@@ -6,10 +6,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-  liquibase:
-    enabled: true
-    show-summary-output: all
-    change-log: classpath:db/changelog/changelog-root.yaml
   main:
     web-application-type: reactive
 

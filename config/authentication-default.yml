@@ -5,10 +5,6 @@ spring:
     url: r2dbc:postgresql://localhost:15432/postgres
     username: postgres
     password: postgres
-  liquibase:
-    enabled: true
-    show-summary-output: all
-    change-log: classpath:db/changelog/changelog-root.yaml
 
 server:
   port: 8088

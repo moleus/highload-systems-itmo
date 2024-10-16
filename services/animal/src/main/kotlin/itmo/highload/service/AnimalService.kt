@@ -34,7 +34,7 @@ class AnimalService(private val animalRepository: AnimalRepository) {
     }
 
     fun getAll(name: String?): Flux<Animal> = if (name != null) {
-        animalRepository.findByName(name).flux()
+        animalRepository.findByName(name)
     } else {
         animalRepository.findAll()
     }

@@ -5,6 +5,7 @@ package itmo.highload.security
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +18,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.config.web.server.invoke
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
@@ -31,7 +33,9 @@ import javax.crypto.SecretKey
 @Configuration
 @EnableReactiveMethodSecurity
 @EnableWebFluxSecurity
-class WebFluxSecurityConfig {
+class WebFluxSecurityConfig @Autowired constructor(
+    @Value("\${jwt.secret.sign}") private val  jwtAccessSecret: String
+) {
     companion object {
         val EXCLUDED_PATHS = arrayOf(
             "/api/v1/auth/register", "/api/v1/auth/login", "/", "/static/**", "/index.html", "/favicon.ico",
@@ -51,20 +55,24 @@ class WebFluxSecurityConfig {
             }
             oauth2ResourceServer {
                 jwt {
+                    jwtDecoder = jwtDecoder(jwtAccessSecret = jwtAccessSecret)
                     jwtAuthenticationConverter = grantedAuthoritiesExtractor()
                 }
             }
 //            addFilterAt(jwtFilter, SecurityWebFiltersOrder.HTTP_BASIC)
         }
 
-    @Bean
-    fun jwtDecoder(@Value("\${jwt.secret.sign}") jwtAccessSecret: String): ReactiveJwtDecoder {
+    fun jwtDecoder(jwtAccessSecret : String): ReactiveJwtDecoder {
         val publicKey: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
-        return NimbusReactiveJwtDecoder.withSecretKey(publicKey).build()
+        return NimbusReactiveJwtDecoder.withSecretKey(publicKey)
+            .macAlgorithm(MacAlgorithm.HS512)
+            .build()
     }
 
     fun grantedAuthoritiesExtractor(): Converter<Jwt, Mono<AbstractAuthenticationToken>> {
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
+        val grantedAuthoritiesConverter = GrantedAuthoritiesExtractor()
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(GrantedAuthoritiesExtractor())
         return ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter)
     }
