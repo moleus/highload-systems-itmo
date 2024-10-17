@@ -71,22 +71,21 @@ class WebFluxSecurityConfig @Autowired constructor(
 
     fun grantedAuthoritiesExtractor(): Converter<Jwt, Mono<AbstractAuthenticationToken>> {
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
-        val grantedAuthoritiesConverter = GrantedAuthoritiesExtractor()
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+//        val grantedAuthoritiesConverter = GrantedAuthoritiesExtractor()
+//        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(GrantedAuthoritiesExtractor())
         return ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter)
     }
 
     internal class GrantedAuthoritiesExtractor : Converter<Jwt, Collection<GrantedAuthority>> {
         override fun convert(jwt: Jwt): Collection<GrantedAuthority> {
-            val authorities: Any = jwt.claims.getOrDefault("role", listOf<Role>())
-            if (authorities !is List<*>) {
+            val authority: Any = jwt.claims.getOrDefault("role", null)
+            log.debug { "Authorities: $authority" }
+            if (authority == null) {
                 log.warn { "Authorities are not a list" }
                 return emptyList()
             }
-            return authorities
-                .map { it.toString() }
-                .map { SimpleGrantedAuthority(it) }
+            return listOf(SimpleGrantedAuthority(authority.toString()))
         }
     }
 }
