@@ -2,39 +2,27 @@ package itmo.highload.model
 
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
-import jakarta.persistence.*
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
-import org.hibernate.annotations.JdbcType
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 
-@Entity
+
 @Table(name = "animal")
 data class Animal(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
-    @Column(nullable = false, length = 50)
-    @NotBlank(message = "Name is mandatory")
-    @Size(max = 50, message = "Name cannot exceed 50 characters")
+    @Column("name")
     var name: String,
 
-    @Column(nullable = false, length = 50)
-    @NotBlank(message = "Type of animal is mandatory")
-    @Size(max = 50, message = "Type of animal cannot exceed 50 characters")
+    @Column("type_of_animal")
     val typeOfAnimal: String,
 
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType::class)
-    @Column(nullable = false)
     val gender: Gender,
 
-    @Column(nullable = false)
+    @Column("is_castrated")
     var isCastrated: Boolean,
 
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType::class)
-    @Column(nullable = false)
+    @Column("health_status")
     var healthStatus: HealthStatus
 )

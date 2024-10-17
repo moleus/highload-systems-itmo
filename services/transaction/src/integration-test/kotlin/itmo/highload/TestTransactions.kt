@@ -5,7 +5,7 @@ import io.restassured.parsing.Parser
 import io.restassured.response.Response
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.fixtures.TransactionResponseFixture
 import itmo.highload.utils.defaultJsonRequestSpec
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 
 @Testcontainers
-@IntegrationTestContext
+@R2dbcIntegrationTestContext
 @Sql("/test-data.sql")
 class TestTransactions {
     @LocalServerPort

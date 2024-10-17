@@ -154,7 +154,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: health_status
-                  type: health_status
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
 

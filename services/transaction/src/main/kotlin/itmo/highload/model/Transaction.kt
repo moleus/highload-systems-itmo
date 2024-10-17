@@ -1,32 +1,26 @@
 package itmo.highload.model
 
-import jakarta.persistence.*
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Positive
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
-@Entity
 @Table(name = "transaction")
 data class Transaction(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
-    @Column(nullable = false)
-    @NotNull(message = "Date and time is mandatory")
+    @Column("date_time")
     val dateTime: LocalDateTime,
 
-    @Column(nullable = false)
+    @Column("user_id")
     val userId: Int,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "balance_id", nullable = false)
     val balance: Balance,
 
-    @Column(nullable = false)
-    @Positive(message = "Money amount must be positive")
+    @Column("money_amount")
     val moneyAmount: Int,
 
-    @Column(nullable = false)
+    @Column("is_donation")
     val isDonation: Boolean
 )

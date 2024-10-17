@@ -5,7 +5,7 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
-import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.model.BalanceMapper
 import itmo.highload.repository.BalanceRepository
 import itmo.highload.utils.defaultJsonRequestSpec
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
-@IntegrationTestContext
+@R2dbcIntegrationTestContext
 class TestBalances @Autowired constructor(
     private val balanceRepository: BalanceRepository
 ) {

@@ -8,7 +8,7 @@ import io.restassured.parsing.Parser
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
-import itmo.highload.configuration.IntegrationTestContext
+import itmo.highload.configuration.JdbcIntegrationTestContext
 import itmo.highload.configuration.R2bcTestContainerIntegrationTest
 import itmo.highload.fixtures.AdoptionRequestResponseFixture
 import itmo.highload.security.Role
@@ -25,7 +25,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-@IntegrationTestContext
+@JdbcIntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     jwtUtils: JwtUtils,
 ) : R2bcTestContainerIntegrationTest() {

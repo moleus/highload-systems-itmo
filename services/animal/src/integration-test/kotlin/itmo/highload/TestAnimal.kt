@@ -1,31 +1,60 @@
 package itmo.highload
 
+import io.r2dbc.spi.Connection
+import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
-import io.restassured.response.Response
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.api.dto.response.AnimalResponse
-import itmo.highload.configuration.IntegrationTestContext
 import itmo.highload.configuration.JdbcTestContainerIntegrationTest
+import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.fixtures.AnimalResponseFixture
+import itmo.highload.security.Role
+import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.defaultJsonRequestSpec
+import itmo.highload.utils.withJwt
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.r2dbc.connection.init.ScriptUtils
+import reactor.core.publisher.Mono
 
-@IntegrationTestContext
-class TestAnimal : JdbcTestContainerIntegrationTest() {
+@R2dbcIntegrationTestContext
+class TestAnimal @Autowired constructor(
+    private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
+) : JdbcTestContainerIntegrationTest() {
+
     @LocalServerPort
     private var port: Int = 0
     private val animalApiUrlBasePath = "/api/v1/animals"
 
+    private val adoptionManagerToken = jwtUtils.generateAccessToken(
+        "amanager", Role.ADOPTION_MANAGER, -4
+    )
+
+    private val customerToken = jwtUtils.generateAccessToken(
+        "customer", Role.CUSTOMER, -2
+    )
+
+    private fun executeScriptBlocking(sqlScript: Resource) {
+        Mono.from(connectionFactory.create())
+            .flatMap<Any> { connection: Connection -> ScriptUtils.executeSqlScript(connection, sqlScript) }.block()
+    }
+
+    @BeforeEach
+    fun rollOutTestData(@Value("classpath:/test-data.sql") script: Resource) {
+        executeScriptBlocking(script)
+    }
 
     @BeforeEach
     fun setUp() {
@@ -54,8 +83,9 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
         )
 
         val actualAnimalResponse =
-            defaultJsonRequestSpec().get(animalApiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.OK.value()).extract().`as`(Array<AnimalResponse>::class.java).toList()
+            defaultJsonRequestSpec().withJwt(customerToken).get(animalApiUrlBasePath).then().log()
+                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+                .`as`(Array<AnimalResponse>::class.java).toList()
 
         assertThat(actualAnimalResponse).containsExactlyInAnyOrderElementsOf(expectedAnimalResponse)
     }
@@ -65,8 +95,9 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
         val expectedAnimalResponse = AnimalResponseFixture.of()
 
         val actualAnimalResponse =
-            defaultJsonRequestSpec().get("$animalApiUrlBasePath/-1").then().log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.OK.value()).extract().`as`(AnimalResponse::class.java)
+            defaultJsonRequestSpec().withJwt(customerToken).get("$animalApiUrlBasePath/-1").then().log()
+                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+                .`as`(AnimalResponse::class.java)
 
         assertThat(actualAnimalResponse).isEqualTo(expectedAnimalResponse)
     }
@@ -81,7 +112,7 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
             healthStatus = HealthStatus.HEALTHY
         )
 
-        val response: Response = defaultJsonRequestSpec().body(animalDto).post(animalApiUrlBasePath)
+        val response = defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(animalDto).post(animalApiUrlBasePath)
 
         response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
             .body("name", equalTo(animalDto.name))
@@ -97,15 +128,15 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
             healthStatus = HealthStatus.HEALTHY
         )
 
-        defaultJsonRequestSpec().body(updatedAnimalDto).put("$animalApiUrlBasePath/-1").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(updatedAnimalDto).put("$animalApiUrlBasePath/-1")
+            .then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
             .body("name", equalTo(updatedAnimalDto.name))
     }
 
     @Test
     fun `test delete animal`() {
-        defaultJsonRequestSpec().delete("$animalApiUrlBasePath/-1").then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.NO_CONTENT.value())
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).delete("$animalApiUrlBasePath/-1").then().log()
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.NO_CONTENT.value())
     }
 
     @Test
@@ -118,8 +149,8 @@ class TestAnimal : JdbcTestContainerIntegrationTest() {
             healthStatus = HealthStatus.HEALTHY
         )
 
-        defaultJsonRequestSpec().body(invalidUpdateDto).put("$animalApiUrlBasePath/-1").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(invalidUpdateDto).put("$animalApiUrlBasePath/-1")
+            .then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(
                 CoreMatchers.equalTo(
                     "Can't change gender; Can't change type of animal; " + "Can't cancel castration of an animal"
                 )
