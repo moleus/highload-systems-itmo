@@ -23,8 +23,8 @@ logging:
     root: INFO
     itmo:
       highload: TRACE
-    web: TRACE
-    org.springframework:
-      web: TRACE
-      security: TRACE
+#    web: TRACE
+#    org.springframework:
+#      web: TRACE
+#      security: TRACE
 debug: true

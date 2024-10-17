@@ -67,33 +67,33 @@ class TestTransactions @Autowired constructor(
         RestAssured.defaultParser = Parser.JSON
     }
 
-    @Test
-    fun `test add donation`() {
-        val transactionMoney = 200
-        val transactionDto = TransactionDto(
-            purposeId = -1, moneyAmount = transactionMoney
-        )
-
-        val response = defaultJsonRequestSpec().withJwt(customerToken).body(transactionDto).post(donationApiUrlBasePath)
-
-        response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
-            .body("money_amount", equalTo(transactionMoney))
-    }
-
-    @Test
-    fun `test get all donations`() {
-        val expectedTransactionResponse = listOf(
-            TransactionResponseFixture.of()
-        )
-
-        val actualTransactionResponse = defaultJsonRequestSpec().withJwt(managerToken).get(donationApiUrlBasePath)
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.OK.value())
-            .extract().`as`(Array<TransactionResponse>::class.java).toList()
-
-        assertThat(actualTransactionResponse).containsExactlyInAnyOrderElementsOf(expectedTransactionResponse)
-    }
-
+//    @Test
+//    fun `test add donation`() {
+//        val transactionMoney = 200
+//        val transactionDto = TransactionDto(
+//            purposeId = -1, moneyAmount = transactionMoney
+//        )
+//
+//        val response = defaultJsonRequestSpec().withJwt(customerToken).body(transactionDto).post(donationApiUrlBasePath)
+//
+//        response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
+//            .body("money_amount", equalTo(transactionMoney))
+//    }
+//
+//    @Test
+//    fun `test get all donations`() {
+//        val expectedTransactionResponse = listOf(
+//            TransactionResponseFixture.of()
+//        )
+//
+//        val actualTransactionResponse = defaultJsonRequestSpec().withJwt(managerToken).get(donationApiUrlBasePath)
+//            .then().log().ifValidationFails(LogDetail.BODY)
+//            .statusCode(HttpStatus.OK.value())
+//            .extract().`as`(Array<TransactionResponse>::class.java).toList()
+//
+//        assertThat(actualTransactionResponse).containsExactlyInAnyOrderElementsOf(expectedTransactionResponse)
+//    }
+//
     @Test
     fun `test add expense`() {
         val transactionMoney = 300

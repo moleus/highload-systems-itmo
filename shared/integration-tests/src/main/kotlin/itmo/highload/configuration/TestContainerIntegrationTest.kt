@@ -5,7 +5,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
-import java.time.Duration
 
 
 @Testcontainers
@@ -16,8 +15,12 @@ abstract class TestContainerIntegrationTest {
         @ServiceConnection
         @Suppress("UnusedPrivateProperty")
         private val postgres: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:15")).apply {
-            this.withDatabaseName("test").withUsername("test").withPassword("test")
-                .withTmpFs(mapOf("/testtmpfs" to "rw")).withMinimumRunningDuration(Duration.ofSeconds(5L))
+            this.withDatabaseName("test")
+                .withUsername("test")
+                .withPassword("test")
+                .withTmpFs(mapOf("/testtmpfs" to "rw"))
+                .withReuse(true)
+//                .withMinimumRunningDuration(Duration.ofSeconds(5L))
         }
     }
 }
