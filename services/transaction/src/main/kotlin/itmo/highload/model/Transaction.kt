@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transaction")
 data class Transaction(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

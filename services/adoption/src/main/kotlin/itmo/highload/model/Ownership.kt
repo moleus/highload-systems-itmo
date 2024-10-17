@@ -7,7 +7,7 @@ import jakarta.persistence.Table
 import java.io.Serializable
 
 @Entity
-@Table(name = "ownerships")
+@Table(name = "ownership")
 @IdClass(OwnershipId::class)
 data class Ownership(
     @Id

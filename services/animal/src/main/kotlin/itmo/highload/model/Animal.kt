@@ -9,7 +9,7 @@ import org.hibernate.annotations.JdbcType
 import org.hibernate.dialect.PostgreSQLEnumJdbcType
 
 @Entity
-@Table(name = "animals")
+@Table(name = "animal")
 data class Animal(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
