@@ -50,6 +50,7 @@ class WebFluxSecurityConfig @Autowired constructor(
             httpBasic { disable() }
             csrf { disable() }
             authorizeExchange {
+                @Suppress("SpreadOperator")
                 authorize(pathMatchers(*EXCLUDED_PATHS), permitAll)
                 authorize(anyExchange, authenticated)
             }
