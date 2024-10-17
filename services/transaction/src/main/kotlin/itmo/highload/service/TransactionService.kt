@@ -10,44 +10,53 @@ import reactor.core.publisher.Mono
 
 @Service
 class TransactionService(
-    private val transactionRepository: TransactionRepository,
-    private val balanceService: BalanceService
+    private val transactionRepository: TransactionRepository, private val balanceService: BalanceService
 ) {
 
     fun getExpenses(purposeId: Int?): Flux<TransactionResponse> {
         return if (purposeId != null) {
-            transactionRepository.findByIsDonationAndBalanceId(false, purposeId)
-                .map { TransactionMapper.toResponse(it) }
+            transactionRepository.findByIsDonationAndBalanceId(false, purposeId).flatMap { transaction ->
+                    balanceService.getById(transaction.balanceId)
+                        .map { balance -> TransactionMapper.toResponse(transaction, balance) }
+                }
         } else {
-            transactionRepository.findByIsDonation(false)
-                .map { TransactionMapper.toResponse(it) }
+            transactionRepository.findByIsDonation(false).flatMap { transaction ->
+                    balanceService.getById(transaction.balanceId)
+                        .map { balance -> TransactionMapper.toResponse(transaction, balance) }
+                }
         }
     }
 
     fun getDonations(purposeId: Int?): Flux<TransactionResponse> {
         return if (purposeId != null) {
-            transactionRepository.findByIsDonationAndBalanceId(true, purposeId)
-                .map { TransactionMapper.toResponse(it) }
+            transactionRepository.findByIsDonationAndBalanceId(true, purposeId).flatMap { transaction ->
+                    balanceService.getById(transaction.balanceId)
+                        .map { balance -> TransactionMapper.toResponse(transaction, balance) }
+                }
         } else {
-            transactionRepository.findByIsDonation(true)
-                .map { TransactionMapper.toResponse(it) }
+            transactionRepository.findByIsDonation(true).flatMap { transaction ->
+                    balanceService.getById(transaction.balanceId)
+                        .map { balance -> TransactionMapper.toResponse(transaction, balance) }
+                }
         }
     }
 
     fun getAllByUser(isDonation: Boolean, userId: Int): Flux<TransactionResponse> =
-        transactionRepository.findByIsDonationAndUserId(isDonation, userId)
-            .map { TransactionMapper.toResponse(it) }
+        transactionRepository.findByIsDonationAndUserId(isDonation, userId).flatMap { transaction ->
+                balanceService.getById(transaction.balanceId)
+                    .map { balance -> TransactionMapper.toResponse(transaction, balance) }
+            }
 
     fun addTransaction(donationDto: TransactionDto, managerId: Int, isDonation: Boolean): Mono<TransactionResponse> {
-        return balanceService.getById(donationDto.purposeId!!)
-            .flatMap { balance ->
+        return balanceService.getById(donationDto.purposeId!!).flatMap { balance ->
                 val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, balance, isDonation)
-                transactionRepository.save(transactionEntity)
-                    .flatMap { savedTransaction ->
+                transactionRepository.save(transactionEntity).flatMap { savedTransaction ->
                         balanceService.changeMoneyAmount(donationDto.purposeId!!, isDonation, donationDto.moneyAmount!!)
                             .thenReturn(savedTransaction)
                     }
+            }.flatMap { transaction ->
+                balanceService.getById(transaction.balanceId)
+                    .map { balance -> TransactionMapper.toResponse(transaction, balance) }
             }
-            .map { TransactionMapper.toResponse(it) }
     }
 }
