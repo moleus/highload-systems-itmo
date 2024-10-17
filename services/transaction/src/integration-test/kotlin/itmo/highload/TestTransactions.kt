@@ -6,10 +6,14 @@ import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.TransactionDto
+import itmo.highload.api.dto.response.BalanceResponse
+import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.api.dto.response.UserResponse
-import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.configuration.R2dbcIntegrationTestContext
+import itmo.highload.configuration.TestContainerIntegrationTest
+import itmo.highload.fixtures.BalanceResponseFixture
+import itmo.highload.fixtures.PurposeResponseFixture
 import itmo.highload.fixtures.TransactionResponseFixture
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
@@ -37,6 +41,7 @@ class TestTransactions @Autowired constructor(
     private var port: Int = 0
     private val donationApiUrlBasePath = "/api/v1/transactions/donations"
     private val expenseApiUrlBasePath = "/api/v1/transactions/expenses"
+    private val balanceApiUrlBasePath = "/api/v1/balances"
 
     private val managerToken = jwtUtils.generateAccessToken(
         "emanager",
@@ -163,5 +168,63 @@ class TestTransactions @Autowired constructor(
             assertThat(it.purpose).isEqualTo(expectedTransactionResponse[0].purpose)
             assertThat(it.user).isEqualTo(UserResponse(id = -3))
         }
+    }
+
+    @Test
+    fun `test get all balances`() {
+        val expectedBalanceResponse = listOf(BalanceResponseFixture.of())
+
+        val actualBalanceResponse =
+            defaultJsonRequestSpec().withJwt(managerToken).get(balanceApiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value()).extract().`as`(Array<BalanceResponse>::class.java).toList()
+
+        assertThat(actualBalanceResponse).hasSize(3)
+        assertThat(expectedBalanceResponse).containsAnyElementsOf(actualBalanceResponse)
+    }
+
+    @Test
+    fun `test get balance by id`() {
+        val expectedBalanceResponse = BalanceResponseFixture.of()
+
+        val actualBalanceResponse = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/-1").then().log()
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+            .`as`(BalanceResponse::class.java)
+
+        assertThat(actualBalanceResponse).isEqualTo(expectedBalanceResponse)
+    }
+
+    @Test
+    fun `test get all purposes`() {
+        val expectedPurposeResponse = listOf(PurposeResponseFixture.of())
+
+        val actualPurposeResponse = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+            .`as`(Array<PurposeResponse>::class.java).toList()
+
+        assertThat(actualPurposeResponse).hasSize(3)
+        assertThat(expectedPurposeResponse).containsAnyElementsOf(actualPurposeResponse)
+    }
+
+    @Test
+    fun `test add purpose`() {
+        val newPurpose = "New Purpose"
+
+        val allPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+            .`as`(Array<PurposeResponse>::class.java).toList()
+
+        assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose) }
+        val initialPurposeSize = allPurposes.size
+
+        defaultJsonRequestSpec().withJwt(managerToken).body(newPurpose).post("$balanceApiUrlBasePath/purposes").then().log()
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
+            .body("name", equalTo(newPurpose))
+
+        val updatedPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+            .`as`(Array<PurposeResponse>::class.java).toList()
+
+        assertThat(updatedPurposes).hasSize(initialPurposeSize + 1)
+        assertThat(updatedPurposes).anyMatch { it.name == newPurpose }
     }
 }

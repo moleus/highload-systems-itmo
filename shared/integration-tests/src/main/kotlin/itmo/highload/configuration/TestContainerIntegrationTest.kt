@@ -16,8 +16,8 @@ abstract class TestContainerIntegrationTest {
         @ServiceConnection
         @Suppress("UnusedPrivateProperty")
         private val postgres: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:15")).apply {
-            this.withDatabaseName("test").withUsername("test").withPassword("test").withReuse(true)
-                .withTmpFs(mapOf("/testtmpfs" to "rw")).withMinimumRunningDuration(Duration.ofSeconds(5L));
+            this.withDatabaseName("test").withUsername("test").withPassword("test")
+                .withTmpFs(mapOf("/testtmpfs" to "rw")).withMinimumRunningDuration(Duration.ofSeconds(5L))
         }
     }
 }
