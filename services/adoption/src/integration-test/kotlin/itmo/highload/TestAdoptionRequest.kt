@@ -43,7 +43,7 @@ class TestAdoptionRequest @Autowired constructor(
     private val customerToken = jwtUtils.generateAccessToken(
         "customer",
         Role.CUSTOMER,
-        -1
+        -2
     )
 
     @BeforeEach
@@ -56,7 +56,7 @@ class TestAdoptionRequest @Autowired constructor(
     @Test
     fun `test add adoption request`() {
         val expectedAdoptionRequestResponse = AdoptionRequestResponseFixture.of(
-            dateTime = LocalDateTime.now(), status = AdoptionStatus.PENDING, customerId = -1, animalId = -2
+            dateTime = LocalDateTime.now(), status = AdoptionStatus.PENDING, customerId = -2, animalId = -2
         )
 
         val response = defaultJsonRequestSpec().withJwt(customerToken)
@@ -83,8 +83,8 @@ class TestAdoptionRequest @Autowired constructor(
                 id = -1,
                 dateTime = LocalDateTime.parse("2023-01-01T00:00:00"),
                 status = AdoptionStatus.PENDING,
-                customerId = -1,
-                animalId = -2
+                customerId = -2,
+                animalId = -1
             )
         )
 
@@ -92,7 +92,7 @@ class TestAdoptionRequest @Autowired constructor(
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract().body()
             .`as`(Array<AdoptionRequestResponse>::class.java).toList()
 
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedAdoptionRequestResponse)
+        assertThat(result).isEqualTo(expectedAdoptionRequestResponse)
     }
 
     @Test
@@ -115,7 +115,7 @@ class TestAdoptionRequest @Autowired constructor(
                 .ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.CREATED.value()).extract().path<Int>("id")
 
-        defaultJsonRequestSpec().withJwt(customerToken)
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken)
             .body(UpdateAdoptionRequestStatusDto(id = requestId, AdoptionStatus.APPROVED))
             .patch("/api/v1/adoptions").then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
 

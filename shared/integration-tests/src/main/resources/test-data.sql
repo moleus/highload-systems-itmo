@@ -38,8 +38,8 @@ WITH customer AS (SELECT id
                 FROM animal
                 WHERE name = 'Buddy')
 INSERT
-INTO adoption_request (customer_id, animal_id, status, date_time)
-VALUES ((SELECT id FROM customer), (SELECT id FROM animal), 'PENDING', '2023-01-01');
+INTO adoption_request (id, customer_id, animal_id, status, date_time)
+VALUES (-1, (SELECT id FROM customer), (SELECT id FROM animal), 'PENDING', '2023-01-01');
 
 -- Donations
 WITH customer AS (SELECT id

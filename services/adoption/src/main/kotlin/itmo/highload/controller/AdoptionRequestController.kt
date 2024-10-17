@@ -40,7 +40,7 @@ class AdoptionRequestController(
     }
 
     @GetMapping("/statuses")
-    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllStatuses(): Flux<AdoptionStatus> {
         return adoptionRequestService.getAllStatuses()
     }
