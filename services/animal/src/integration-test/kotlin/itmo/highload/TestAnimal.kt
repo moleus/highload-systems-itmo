@@ -9,7 +9,7 @@ import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.api.dto.response.AnimalResponse
-import itmo.highload.configuration.JdbcTestContainerIntegrationTest
+import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.fixtures.AnimalResponseFixture
 import itmo.highload.security.Role
@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono
 @R2dbcIntegrationTestContext
 class TestAnimal @Autowired constructor(
     private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
-) : JdbcTestContainerIntegrationTest() {
+) : TestContainerIntegrationTest() {
 
     @LocalServerPort
     private var port: Int = 0

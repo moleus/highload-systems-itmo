@@ -10,11 +10,11 @@ import java.time.LocalDate
 
 @Service
 class UserService(
-    private val userRepository: UserRepository,
-    private val encoder: PasswordEncoder
+    private val userRepository: UserRepository, private val encoder: PasswordEncoder
 ) {
 
     fun getByLogin(login: String): Mono<Users> = userRepository.findByLogin(login)
+        .switchIfEmpty(Mono.error(NoSuchElementException("User with login $login not found")))
 
     fun addUser(request: RegisterDto): Mono<Users> {
         val users = Users(

@@ -7,7 +7,7 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
-import itmo.highload.configuration.R2bcTestContainerIntegrationTest
+import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.model.BalanceMapper
 import itmo.highload.repository.BalanceRepository
@@ -32,7 +32,7 @@ class TestBalances @Autowired constructor(
     private val connectionFactory: ConnectionFactory,
     private val balanceRepository: BalanceRepository,
     jwtUtils: JwtUtils
-) : R2bcTestContainerIntegrationTest() {
+) : TestContainerIntegrationTest() {
 
     @LocalServerPort
     private var port: Int = 0

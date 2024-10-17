@@ -11,11 +11,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
+import reactor.core.publisher.Mono
 import java.time.LocalDate
 
 class UsersServiceTest {
-
-
     private val passwordEncoder: PasswordEncoder = mockk()
     private val userRepository: UserRepository = mockk()
     private val userService = UserService(userRepository, passwordEncoder)
@@ -30,9 +29,9 @@ class UsersServiceTest {
             creationDate = LocalDate.now()
         )
 
-        every { userRepository.findByLogin("manager") } returns users
+        every { userRepository.findByLogin("manager") } returns Mono.just(users)
 
-        val result = userService.getByLogin("manager")
+        val result = userService.getByLogin("manager").block()
 
         assertEquals(users, result)
         verify { userRepository.findByLogin("manager") }
@@ -42,10 +41,10 @@ class UsersServiceTest {
     fun `should throw NoSuchElementException when user is not found`() {
         val login = "unknownUser"
 
-        every { userRepository.findByLogin(login) } returns null
+        every { userRepository.findByLogin(login) } returns Mono.empty()
 
         val exception = assertThrows<NoSuchElementException> {
-            userService.getByLogin(login)
+            userService.getByLogin(login).block()
         }
 
         assertEquals("User with login $login not found", exception.message)

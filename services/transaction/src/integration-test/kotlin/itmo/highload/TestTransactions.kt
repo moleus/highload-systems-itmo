@@ -7,8 +7,8 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
- import itmo.highload.api.dto.response.UserResponse
-import itmo.highload.configuration.R2bcTestContainerIntegrationTest
+import itmo.highload.api.dto.response.UserResponse
+import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.fixtures.TransactionResponseFixture
 import itmo.highload.security.Role
@@ -31,7 +31,7 @@ import reactor.core.publisher.Mono
 class TestTransactions @Autowired constructor(
     private val connectionFactory: ConnectionFactory,
     jwtUtils: JwtUtils
-) : R2bcTestContainerIntegrationTest() {
+) : TestContainerIntegrationTest() {
 
     @LocalServerPort
     private var port: Int = 0
