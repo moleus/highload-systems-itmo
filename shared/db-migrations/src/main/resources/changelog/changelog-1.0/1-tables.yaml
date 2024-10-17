@@ -144,7 +144,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: gender
-                  type: gender
+                  type: VARCHAR(10)
                   constraints:
                     nullable: false
               - column:
