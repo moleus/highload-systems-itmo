@@ -41,6 +41,7 @@ testing {
 
                 implementation("io.rest-assured:rest-assured")
                 implementation("org.springframework.boot:spring-boot-starter-test")
+                implementation("org.testcontainers:r2dbc")
 
                 runtimeOnly("org.postgresql:postgresql")
             }

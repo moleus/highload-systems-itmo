@@ -33,12 +33,5 @@ abstract class R2bcTestContainerIntegrationTest {
         private fun getR2bcUrl(): String {
             return postgres.jdbcUrl.replace("jdbc", "r2dbc")
         }
-
-//
-//        @JvmStatic
-//        @BeforeAll
-//        internal fun setUp() {
-//            postgres.start()
-//        }
     }
 }

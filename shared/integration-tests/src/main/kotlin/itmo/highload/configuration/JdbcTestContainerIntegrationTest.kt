@@ -29,11 +29,5 @@ abstract class JdbcTestContainerIntegrationTest {
             registry.add("spring.datasource.password", postgres::getPassword);
             registry.add("spring.datasource.username", postgres::getUsername);
         }
-//
-//        @JvmStatic
-//        @BeforeAll
-//        internal fun setUp() {
-//            postgres.start()
-//        }
     }
 }

@@ -2,7 +2,6 @@
 
 package itmo.highload
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
@@ -48,7 +47,6 @@ class TestAdoptionRequest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        KotlinLogging.logger {}.info { "RUNNING Port: $port" }
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
     }
