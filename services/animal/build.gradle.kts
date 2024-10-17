@@ -21,6 +21,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-logging")
 }
 
+highloadApp {
+    serviceName.set("animal")
+}
+
 testing {
     suites {
         val integrationTest by getting(JvmTestSuite::class) {

@@ -6,6 +6,10 @@ plugins {
     id("highload.security")
 }
 
+highloadApp {
+    serviceName.set("authentication")
+}
+
 dependencies {
     implementation(project(":shared:security"))
     implementation(project(":shared:api"))

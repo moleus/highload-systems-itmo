@@ -24,6 +24,10 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
 }
 
+highloadApp {
+    serviceName.set("transaction")
+}
+
 testing {
     suites {
         val integrationTest by getting(JvmTestSuite::class) {

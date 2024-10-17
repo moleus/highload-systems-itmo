@@ -79,7 +79,7 @@ class WebFluxSecurityConfig @Autowired constructor(
 
     internal class GrantedAuthoritiesExtractor : Converter<Jwt, Collection<GrantedAuthority>> {
         override fun convert(jwt: Jwt): Collection<GrantedAuthority> {
-            val authority: Any = jwt.claims.getOrDefault("role", null)
+            val authority: Any? = jwt.claims.getOrDefault("role", null)
             log.debug { "Authorities: $authority" }
             if (authority == null) {
                 log.warn { "Authorities are not a list" }

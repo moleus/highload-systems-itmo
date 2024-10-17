@@ -23,6 +23,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
+highloadApp {
+    serviceName.set("adoption")
+}
+
 testing {
     suites {
         val integrationTest by getting(JvmTestSuite::class) {

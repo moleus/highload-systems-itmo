@@ -27,7 +27,6 @@ interface HighloadAppExtension {
 }
 
 val applicationExtension = project.extensions.create<HighloadAppExtension>("highloadApp")
-applicationExtension.serviceName.set("highloadapp")
 
 val jdkVersion = 21
 val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault()).let {
@@ -37,17 +36,19 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
     }
 }
 
-jib {
-    from {
-        image = "openjdk:$jdkVersion-jdk-slim"
-        platforms {
-            platform {
-                architecture = hostArchitecture
-                os = "linux"
+gradle.projectsEvaluated {
+    jib {
+        from {
+            image = "openjdk:$jdkVersion-jdk-slim"
+            platforms {
+                platform {
+                    architecture = hostArchitecture
+                    os = "linux"
+                }
             }
         }
-    }
-    to {
-        image = "moleus/highload:${applicationExtension.serviceName.get()}-dev"
+        to {
+            image = "moleus/highload/${applicationExtension.serviceName.get()}:dev"
+        }
     }
 }
