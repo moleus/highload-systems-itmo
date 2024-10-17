@@ -7,6 +7,7 @@ import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
+ import itmo.highload.api.dto.response.UserResponse
 import itmo.highload.configuration.R2bcTestContainerIntegrationTest
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.fixtures.TransactionResponseFixture
@@ -140,6 +141,27 @@ class TestTransactions @Autowired constructor(
             .statusCode(HttpStatus.OK.value())
             .extract().`as`(Array<TransactionResponse>::class.java).toList()
 
-        assertThat(actualTransactionResponse).containsExactlyInAnyOrderElementsOf(expectedTransactionResponse)
+        assertThat(actualTransactionResponse).isEmpty()
+
+        val transactionMoney = 300
+        val transactionDto = TransactionDto(
+            purposeId = -1, moneyAmount = transactionMoney
+        )
+
+        defaultJsonRequestSpec().withJwt(managerToken).body(transactionDto).post(expenseApiUrlBasePath)
+            .then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
+            .body("money_amount", equalTo(transactionMoney))
+
+        val actualTransactionResponse2 = defaultJsonRequestSpec().withJwt(managerToken).get(expenseApiUrlBasePath)
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(Array<TransactionResponse>::class.java).toList()
+
+        assertThat(actualTransactionResponse2).allSatisfy {
+            assertThat(it.moneyAmount).isEqualTo(transactionMoney)
+            assertThat(it.isDonation).isFalse()
+            assertThat(it.purpose).isEqualTo(expectedTransactionResponse[0].purpose)
+            assertThat(it.user).isEqualTo(UserResponse(id = -3))
+        }
     }
 }

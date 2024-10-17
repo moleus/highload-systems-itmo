@@ -21,10 +21,7 @@ class ExpenseController(
     @GetMapping
     fun getExpenses(
         @RequestParam(required = false) purposeId: Int?
-    ): Flux<TransactionResponse> {
-        val expenses = transactionService.getExpenses(purposeId)
-        return expenses
-    }
+    ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
