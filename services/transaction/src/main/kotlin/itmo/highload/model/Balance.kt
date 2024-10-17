@@ -8,9 +8,10 @@ import org.springframework.data.relational.core.mapping.Table
 @Table(name = "balance")
 data class Balance(
     @Id
+    @Column("id")
     val id: Int = 0,
 
-    @Column("user_id")
+    @Column("purpose")
     val purpose: String,
 
     @Column("money_amount")

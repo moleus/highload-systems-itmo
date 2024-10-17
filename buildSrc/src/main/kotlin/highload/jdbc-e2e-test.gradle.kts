@@ -32,11 +32,6 @@ testing {
 
             dependencies {
                 implementation(project())
-                implementation(project(":shared:api"))
-                implementation(project(":shared:db-migrations"))
-                implementation(project(":shared:security"))
-                implementation(project(":shared:integration-tests"))
-                implementation(testFixtures(project(":shared:integration-tests")))
                 implementation("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-testcontainers")
@@ -46,13 +41,12 @@ testing {
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
                 implementation("io.rest-assured:rest-assured")
+                implementation(project(":shared:api"))
+                implementation(project(":shared:db-migrations"))
+                implementation(project(":shared:security"))
+                implementation(testFixtures(project(":shared:integration-tests")))
                 implementation("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
-
-                implementation("org.testcontainers:r2dbc")
-                implementation("org.springframework.data:spring-data-r2dbc")
-                runtimeOnly("org.postgresql:r2dbc-postgresql")
-                implementation("io.projectreactor:reactor-core")
             }
 
             sources {

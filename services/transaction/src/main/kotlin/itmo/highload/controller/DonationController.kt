@@ -24,16 +24,16 @@ class DonationController(
     fun getDonations(
         @RequestParam(required = false) purposeId: Int?, pageable: Pageable
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getDonations(purposeId, pageable)
+        val donations = transactionService.getDonations(purposeId)
         return donations
     }
 
     @GetMapping("/{customerId}")
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER')")
     fun getDonationsByCustomerForManager(
-        @PathVariable customerId: Int, pageable: Pageable
+        @PathVariable customerId: Int
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId, pageable = pageable)
+        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId)
         return donations
     }
 

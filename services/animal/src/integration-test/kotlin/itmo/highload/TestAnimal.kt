@@ -54,10 +54,6 @@ class TestAnimal @Autowired constructor(
     @BeforeEach
     fun rollOutTestData(@Value("classpath:/test-data.sql") script: Resource) {
         executeScriptBlocking(script)
-    }
-
-    @BeforeEach
-    fun setUp() {
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
     }

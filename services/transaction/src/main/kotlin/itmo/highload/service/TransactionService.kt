@@ -4,7 +4,6 @@ import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.model.TransactionMapper
 import itmo.highload.repository.TransactionRepository
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -15,30 +14,29 @@ class TransactionService(
     private val balanceService: BalanceService
 ) {
 
-    fun getExpenses(purposeId: Int?, pageable: Pageable): Flux<TransactionResponse> {
+    fun getExpenses(purposeId: Int?): Flux<TransactionResponse> {
         return if (purposeId != null) {
-            transactionRepository.findByIsDonationAndBalanceId(false, purposeId, pageable)
+            transactionRepository.findByIsDonationAndBalanceId(false, purposeId)
                 .map { TransactionMapper.toResponse(it) }
         } else {
-            transactionRepository.findByIsDonation(false, pageable)
+            transactionRepository.findByIsDonation(false)
                 .map { TransactionMapper.toResponse(it) }
         }
     }
 
-    fun getDonations(purposeId: Int?, pageable: Pageable): Flux<TransactionResponse> {
+    fun getDonations(purposeId: Int?): Flux<TransactionResponse> {
         return if (purposeId != null) {
-            transactionRepository.findByIsDonationAndBalanceId(true, purposeId, pageable)
+            transactionRepository.findByIsDonationAndBalanceId(true, purposeId)
                 .map { TransactionMapper.toResponse(it) }
         } else {
-            transactionRepository.findByIsDonation(true, pageable)
+            transactionRepository.findByIsDonation(true)
                 .map { TransactionMapper.toResponse(it) }
         }
     }
 
-    fun getAllByUser(isDonation: Boolean, userId: Int, pageable: Pageable): Flux<TransactionResponse> {
-        return transactionRepository.findByIsDonationAndUserId(isDonation, userId, pageable)
+    fun getAllByUser(isDonation: Boolean, userId: Int): Flux<TransactionResponse> =
+        transactionRepository.findByIsDonationAndUserId(isDonation, userId)
             .map { TransactionMapper.toResponse(it) }
-    }
 
     fun addTransaction(donationDto: TransactionDto, managerId: Int, isDonation: Boolean): Mono<TransactionResponse> {
         return balanceService.getById(donationDto.purposeId!!)

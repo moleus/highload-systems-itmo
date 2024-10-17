@@ -2,11 +2,11 @@
 
 
 plugins {
-    id("highload.reactive-db")
     id("highload.web")
-    id("highload.e2e-test")
     id("highload.application")
     id("highload.security")
+    id("highload.reactive-db")
+    id("highload.e2e-test")
 }
 
 dependencies {
@@ -23,34 +23,4 @@ dependencies {
 
 highloadApp {
     serviceName.set("animal")
-}
-
-testing {
-    suites {
-        val integrationTest by getting(JvmTestSuite::class) {
-            dependencies {
-                implementation(project())
-                implementation(project(":shared:db-migrations"))
-                implementation(project(":shared:integration-tests"))
-                implementation(testFixtures(project(":shared:integration-tests")))
-                implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
-
-                implementation("org.springframework.data:spring-data-r2dbc")
-
-                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
-                implementation("org.springframework.boot:spring-boot-starter-validation")
-
-                implementation("io.rest-assured:rest-assured")
-                implementation("org.springframework.boot:spring-boot-starter-test")
-                implementation("org.testcontainers:r2dbc")
-                implementation("io.projectreactor:reactor-core")
-
-                runtimeOnly("org.postgresql:postgresql")
-            }
-            sources {
-                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
-            }
-        }
-    }
 }

@@ -9,7 +9,7 @@ import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
 import itmo.highload.configuration.JdbcIntegrationTestContext
-import itmo.highload.configuration.R2bcTestContainerIntegrationTest
+import itmo.highload.configuration.JdbcTestContainerIntegrationTest
 import itmo.highload.fixtures.AdoptionRequestResponseFixture
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 @JdbcIntegrationTestContext
 class TestAdoptionRequest @Autowired constructor(
     jwtUtils: JwtUtils,
-) : R2bcTestContainerIntegrationTest() {
+) : JdbcTestContainerIntegrationTest() {
     @LocalServerPort
     private var port: Int = 0
     private val apiUrlBasePath = "/api/v1/adoptions"

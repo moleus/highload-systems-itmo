@@ -2,10 +2,10 @@
 
 
 plugins {
-//    id("highload.web")
-    id("highload.e2e-test")
+    id("highload.jdbc-e2e-test")
     id("highload.application")
     id("highload.db")
+    id("highload.common")
 }
 
 dependencies {
@@ -26,28 +26,3 @@ dependencies {
 highloadApp {
     serviceName.set("adoption")
 }
-
-testing {
-    suites {
-        val integrationTest by getting(JvmTestSuite::class) {
-            dependencies {
-                implementation(project())
-                implementation(project(":shared:api"))
-                implementation(project(":shared:security"))
-                implementation(project(":shared:db-migrations"))
-                implementation(project(":shared:integration-tests"))
-                implementation(testFixtures(project(":shared:integration-tests")))
-                implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
-
-                implementation("org.springframework.boot:spring-boot-starter-security:3.3.2")
-                implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
-                implementation("org.testcontainers:testcontainers")
-                runtimeOnly("org.postgresql:postgresql")
-            }
-            sources {
-                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
-            }
-        }
-    }
-}
-
