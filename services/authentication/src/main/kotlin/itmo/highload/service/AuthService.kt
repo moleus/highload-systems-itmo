@@ -1,43 +1,29 @@
 package itmo.highload.service
 
 import itmo.highload.dto.RegisterDto
-import itmo.highload.model.User
+import itmo.highload.model.Users
 import itmo.highload.security.dto.JwtResponse
 import itmo.highload.security.jwt.JwtUtils
-import jakarta.security.auth.message.AuthException
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 
 @Service
 class AuthService(
-    private val jwtProvider: JwtUtils,
-    private val userService: UserService,
-    private val encoder: PasswordEncoder
+    private val jwtProvider: JwtUtils, private val userService: UserService, private val encoder: PasswordEncoder
 ) {
 
-    @Throws(AuthException::class)
-    fun login(login: String, password: String): JwtResponse {
-        try {
-            val user: User = userService.getByLogin(login)
-
-            if (!encoder.matches(password, user.password)) {
-                throw AuthException("Wrong password")
-            }
-
+    fun login(login: String, password: String): Mono<JwtResponse> = userService.getByLogin(login).flatMap { user ->
+        if (!encoder.matches(password, user.password)) {
+            Mono.error(BadCredentialsException("Wrong password"))
+        } else {
             val accessToken: String = jwtProvider.generateAccessToken(user.login, user.role, user.id)
-            return JwtResponse(accessToken, user.role)
-
-        } catch (e: UsernameNotFoundException) {
-            throw AuthException("User not found", e)
+            Mono.just(JwtResponse(accessToken, user.role))
         }
     }
 
-    fun register(request: RegisterDto): User {
-        return userService.addUser(request)
-    }
+    fun register(request: RegisterDto): Mono<Users> = userService.addUser(request)
 
-    fun checkIfUserExists(login: String): Boolean {
-        return userService.checkIfExists(login)
-    }
+    fun checkIfUserExists(login: String): Mono<Boolean> = userService.checkIfExists(login)
 }

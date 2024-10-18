@@ -11,7 +11,11 @@ plugins {
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("io.projectreactor:reactor-core")
 
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.mockk:mockk:1.12.0")
@@ -32,17 +36,19 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
     }
 }
 
-jib {
-    from {
-        image = "openjdk:$jdkVersion-jdk-slim"
-        platforms {
-            platform {
-                architecture = hostArchitecture
-                os = "linux"
+gradle.projectsEvaluated {
+    jib {
+        from {
+            image = "openjdk:$jdkVersion-jdk-slim"
+            platforms {
+                platform {
+                    architecture = hostArchitecture
+                    os = "linux"
+                }
             }
         }
-    }
-    to {
-        image = "moleus/highload/${applicationExtension.serviceName}:dev"
+        to {
+            image = "moleus/highload/${applicationExtension.serviceName.get()}:dev"
+        }
     }
 }

@@ -1,51 +1,42 @@
 package itmo.highload.service
 
 import itmo.highload.api.dto.AnimalDto
+import itmo.highload.api.dto.HealthStatus
 import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.model.Animal
 import itmo.highload.model.AnimalMapper
-import itmo.highload.api.dto.HealthStatus
 import itmo.highload.repository.AnimalRepository
 import jakarta.persistence.EntityNotFoundException
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Service
 class AnimalService(private val animalRepository: AnimalRepository) {
 
-    fun getById(animalId: Int): Animal {
-        return animalRepository.findById(animalId).orElseThrow {
-            EntityNotFoundException("Animal with ID $animalId not found")
+    fun getById(animalId: Int): Mono<Animal> = animalRepository.findById(animalId)
+        .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
+
+    fun save(request: AnimalDto): Mono<Animal> = animalRepository.save(AnimalMapper.toEntity(request))
+
+    fun update(animalId: Int, request: AnimalDto): Mono<Animal> {
+        return getById(animalId).flatMap { existingAnimal ->
+            validateAnimal(existingAnimal, request)
+            existingAnimal.name = request.name
+            existingAnimal.isCastrated = request.isCastrated!!
+            existingAnimal.healthStatus = request.healthStatus!!
+            animalRepository.save(existingAnimal)
         }
     }
 
-    fun save(request: AnimalDto): Animal {
-        val animalEntity = AnimalMapper.toEntity(request)
-        return animalRepository.save(animalEntity)
-    }
-
-    fun update(animalId: Int, request: AnimalDto): Animal {
-        val existingAnimal = getById(animalId)
-        validateAnimal(existingAnimal, request)
-
-        existingAnimal.name = request.name
-        existingAnimal.isCastrated = request.isCastrated!!
-        existingAnimal.healthStatus = request.healthStatus!!
-
-        return animalRepository.save(existingAnimal)
-    }
-
-    fun delete(animalId: Int) {
-        val existingAnimal = getById(animalId)
+    fun delete(animalId: Int): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
         animalRepository.delete(existingAnimal)
     }
 
-    fun getAll(name: String?, pageable: Pageable): Page<Animal> {
-        if (name != null) {
-            return animalRepository.findByName(name, pageable)
-        }
-        return animalRepository.findAll(pageable)
+    fun getAll(name: String?): Flux<Animal> = if (name != null) {
+        animalRepository.findByName(name)
+    } else {
+        animalRepository.findAll()
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

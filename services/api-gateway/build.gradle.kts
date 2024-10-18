@@ -4,6 +4,10 @@ plugins {
     id("io.spring.dependency-management")
 }
 
+highloadApp {
+    serviceName.set("api-gateway")
+}
+
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:4.1.5")
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.2")

@@ -26,6 +26,10 @@ detekt {
     config.setFrom(rootDir.absolutePath + "/detekt.yml")
 }
 
+dependencies {
+    api("io.github.oshai:kotlin-logging-jvm:7.0.0")
+}
+
 kover {
     reports {
         total {
