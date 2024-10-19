@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
+import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.AdoptionRequestService
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("\${app.base-url}/adoptions")
 class AdoptionRequestController(
     private val adoptionRequestService: AdoptionRequestService,
-    private val jwtUtils: JwtUtils,
+    private val jwtUtils: JwtUtils
 ) {
     private val logger = KotlinLogging.logger { }
 
@@ -33,9 +34,9 @@ class AdoptionRequestController(
         logger.info { "User $userId is trying to get adoption requests" }
 
         return if (role == Role.ADOPTION_MANAGER) {
-            adoptionRequestService.getAll(status)
+            adoptionRequestService.getAll(status).map { AdoptionRequestMapper.toResponse(it) }
         } else {
-            adoptionRequestService.getAllByCustomer(userId)
+            adoptionRequestService.getAllByCustomer(userId).map { AdoptionRequestMapper.toResponse(it) }
         }
     }
 
@@ -52,8 +53,8 @@ class AdoptionRequestController(
         @PathVariable animalId: Int, @RequestHeader("Authorization") token: String
     ): Mono<AdoptionRequestResponse> {
         val userId = jwtUtils.extractUserId(token)
-        logger.info("User $userId is trying to adopt animal $animalId")
-        return adoptionRequestService.save(userId, animalId)
+        logger.info {"User $userId is trying to adopt animal $animalId" }
+        return adoptionRequestService.save(userId, animalId).map { AdoptionRequestMapper.toResponse(it) }
     }
 
     @PatchMapping
@@ -62,7 +63,7 @@ class AdoptionRequestController(
         @RequestBody @Valid request: UpdateAdoptionRequestStatusDto, @RequestHeader("Authorization") token: String
         ): Mono<AdoptionRequestResponse> {
         val managerId = jwtUtils.extractUserId(token)
-            return adoptionRequestService.update(managerId, request)
+            return adoptionRequestService.update(managerId, request).map { AdoptionRequestMapper.toResponse(it) }
     }
 
     @DeleteMapping("/{animalId}")

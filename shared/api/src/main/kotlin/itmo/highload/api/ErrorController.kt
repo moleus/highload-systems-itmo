@@ -29,14 +29,14 @@ class ErrorController {
     }
 
     @ExceptionHandler(EntityNotFoundException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     fun onEntityNotFoundException(e: EntityNotFoundException): String? {
         return e.message
     }
 
     @ExceptionHandler(EntityAlreadyExistsException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     fun onEntityAlreadyExistsException(e: EntityAlreadyExistsException): String? {
         return e.message

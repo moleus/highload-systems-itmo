@@ -2,13 +2,13 @@ package itmo.highload.service
 
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
-import itmo.highload.api.dto.response.AdoptionRequestResponse
+import itmo.highload.exceptions.EntityAlreadyExistsException
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
+import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.model.Ownership
 import itmo.highload.repository.AdoptionRequestRepository
 import itmo.highload.repository.OwnershipRepository
-import itmo.highload.exceptions.EntityAlreadyExistsException
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -23,7 +23,7 @@ class AdoptionRequestService(
 ) {
     private val logger = LoggerFactory.getLogger(AdoptionRequestService::class.java)
 
-    fun save(customerId: Int, animalId: Int): Mono<AdoptionRequestResponse> {
+    fun save(customerId: Int, animalId: Int): Mono<AdoptionRequest> {
         return Mono.fromCallable {
             adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
         }.subscribeOn(Schedulers.boundedElastic()).flatMap { existingRequest ->
@@ -38,12 +38,12 @@ class AdoptionRequestService(
                 val adoptionRequest = AdoptionRequestMapper.toEntity(customerId, animalId, AdoptionStatus.PENDING)
                 logger.info("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
-                    .subscribeOn(Schedulers.boundedElastic()).map { AdoptionRequestMapper.toResponse(it) }
+                    .subscribeOn(Schedulers.boundedElastic())
             }
         }
     }
 
-    fun update(managerId: Int, request: UpdateAdoptionRequestStatusDto): Mono<AdoptionRequestResponse> {
+    fun update(managerId: Int, request: UpdateAdoptionRequestStatusDto): Mono<AdoptionRequest> {
         return Mono.fromCallable {
             adoptionRequestRepository.findById(request.id!!).orElseThrow {
                 EntityNotFoundException("Adoption request not found")
@@ -66,7 +66,7 @@ class AdoptionRequestService(
                     .subscribeOn(Schedulers.boundedElastic())
             }
             saveMono
-        }.map { AdoptionRequestMapper.toResponse(it) }
+        }
     }
 
 
@@ -90,20 +90,17 @@ class AdoptionRequestService(
             }
     }
 
-    fun getAll(status: AdoptionStatus?): Flux<AdoptionRequestResponse> {
+    fun getAll(status: AdoptionStatus?): Flux<AdoptionRequest> {
         return (status?.let {
             Flux.fromStream { adoptionRequestRepository.findAllByStatus(it).stream() }
                 .subscribeOn(Schedulers.boundedElastic())
-                .map { AdoptionRequestMapper.toResponse(it) }
         } ?: Flux.fromStream { adoptionRequestRepository.findAll().stream() }
-                .subscribeOn(Schedulers.boundedElastic())
-                .map { AdoptionRequestMapper.toResponse(it) })
+            .subscribeOn(Schedulers.boundedElastic()))
     }
 
-    fun getAllByCustomer(customerId: Int): Flux<AdoptionRequestResponse> {
+    fun getAllByCustomer(customerId: Int): Flux<AdoptionRequest> {
         return Flux.fromStream { adoptionRequestRepository.findAllByCustomerId(customerId).stream() }
             .subscribeOn(Schedulers.boundedElastic())
-            .map { AdoptionRequestMapper.toResponse(it) }
     }
 
     fun getAllStatuses(): Flux<AdoptionStatus> {

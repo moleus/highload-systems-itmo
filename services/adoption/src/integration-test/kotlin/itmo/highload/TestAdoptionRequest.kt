@@ -71,7 +71,7 @@ class TestAdoptionRequest @Autowired constructor(
                     "and animal ID: ${expectedAdoptionRequestResponse.animalId}"
         defaultJsonRequestSpec().withJwt(customerToken)
             .post("$apiUrlBasePath/${expectedAdoptionRequestResponse.animalId}").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(`is`(expectedMessage))
+            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CONFLICT.value()).body(`is`(expectedMessage))
     }
 
     @Test

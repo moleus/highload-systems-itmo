@@ -41,10 +41,10 @@ object TransactionResponseFixture {
     fun of(
         dateTime: LocalDateTime = LocalDateTime.parse("2023-01-01T00:00:00"),
         purpose: PurposeResponse = PurposeResponse(-1, "Medicine"),
-        user: UserResponse = UserResponse(-2),
+        userId: Int = -2,
         moneyAmount: Int = 100,
         isDonation: Boolean = true
-    ) = TransactionResponse(dateTime, purpose, user, moneyAmount, isDonation)
+    ) = TransactionResponse(dateTime, purpose, userId, moneyAmount, isDonation)
 }
 
 object AdoptionRequestResponseFixture {

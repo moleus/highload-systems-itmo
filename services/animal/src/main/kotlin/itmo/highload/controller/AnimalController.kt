@@ -17,8 +17,10 @@ class AnimalController(val animalService: AnimalService) {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAll(
-        @RequestParam(required = false) name: String?
-    ): Flux<AnimalResponse> = animalService.getAll(name).map { AnimalMapper.toAnimalResponse(it) }
+        @RequestParam(required = false) name: String?,
+        @RequestParam(required = false) isNotAdopted: Boolean?,
+        @RequestHeader("Authorization") token: String
+    ): Flux<AnimalResponse> = animalService.getAll(name, isNotAdopted, token).map { AnimalMapper.toAnimalResponse(it) }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
