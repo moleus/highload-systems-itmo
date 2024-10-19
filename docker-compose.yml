@@ -7,11 +7,11 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: ${POSTGRES_USERNAME:?error}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
-      POSTGRES_PORT: 15432
+      POSTGRES_PORT: 5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "15432:15432"
+      - "127.0.0.1:15432:5432"
     networks:
       - backend
     healthcheck:
@@ -39,10 +39,13 @@ services:
 
   cloud-config:
     image: moleus/highload/cloud-config:dev
+    working_dir: /app
     volumes:
       - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
+      - ./config:/app/config
     environment:
-      SPRING_PROFILES_ACTIVE: cloud
+#      SPRING_PROFILES_ACTIVE: cloud
+      SPRING_PROFILES_ACTIVE: standalone,native
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
     env_file:
       - .env
@@ -78,6 +81,10 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    entrypoint: ["bash"]
+    command:
+      - -c
+      - sleep 1000
     env_file:
       - .env
     networks:
