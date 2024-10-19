@@ -12,7 +12,7 @@ databaseChangeLog:
               CREATE OR REPLACE FUNCTION check_adoption_request()
               RETURNS TRIGGER AS $check_adoption_request$
                       BEGIN
-                        IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.customer_id AND role = 'CUSTOMER') THEN
+                        IF NOT EXISTS (SELECT 1 FROM persons WHERE id = NEW.customer_id AND role = 'CUSTOMER') THEN
                           RAISE EXCEPTION 'only user with role CUSTOMER can make adoption request';
                         END IF;
                         IF NEW.manager_id IS NOT NULL THEN
@@ -43,11 +43,11 @@ databaseChangeLog:
               RETURNS TRIGGER AS $check_transaction$
                           BEGIN
                             IF NEW.is_donation THEN
-                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'CUSTOMER') THEN
+                              IF NOT EXISTS (SELECT 1 FROM persons WHERE id = NEW.person_id AND role = 'CUSTOMER') THEN
                                 RAISE EXCEPTION 'only user with role CUSTOMER can make donations';
                               END IF;
                             ELSE
-                              IF NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id AND role = 'EXPENSE_MANAGER') THEN
+                              IF NOT EXISTS (SELECT 1 FROM persons WHERE id = NEW.person_id AND role = 'EXPENSE_MANAGER') THEN
                                 RAISE EXCEPTION 'only user with role EXPENSE_MANAGER can make expenses';
                               END IF;
                             END IF;
