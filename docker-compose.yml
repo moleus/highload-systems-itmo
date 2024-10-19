@@ -43,6 +43,7 @@ services:
       - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
     environment:
       SPRING_PROFILES_ACTIVE: cloud
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
     env_file:
       - .env
     ports:
@@ -62,6 +63,8 @@ services:
     depends_on:
       cloud-config:
         condition: service_healthy
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
       interval: 10s
@@ -75,6 +78,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    env_file:
+      - .env
     networks:
       - backend
 
@@ -83,6 +88,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    env_file:
+      - .env
     networks:
       - backend
 
@@ -90,6 +97,8 @@ services:
     image: moleus/highload/api-gateway:dev
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -101,6 +110,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    env_file:
+      - .env
     networks:
         - backend
 
@@ -109,6 +120,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    env_file:
+      - .env
     networks:
       - backend
 

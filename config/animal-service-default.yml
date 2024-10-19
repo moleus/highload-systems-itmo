@@ -17,6 +17,11 @@ spring:
     username: postgres
     password: postgres
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+
 server:
   port: 8087
 # logging.level.web: TRACE
