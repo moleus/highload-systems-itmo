@@ -35,14 +35,18 @@ class AnimalService(
         animalRepository.delete(existingAnimal)
     }
 
-    fun getAll(name: String?, isNotAdopted: Boolean?): Flux<Animal> {
-        val adoptedAnimalsId: List<Int> = if (isNotAdopted != null)
-            adoptionService.getAllAdoptedAnimalsId() else mutableListOf()
+    fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<Animal> {
+        val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null)
+            adoptionService.getAllAdoptedAnimalsId(token) else Flux.empty()
 
-        if (name != null) {
-            return animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId)
-        }
-        return animalRepository.findByIdNotIn(adoptedAnimalsId)
+        return adoptedAnimalsIdFlux.collectList()
+            .flatMapMany { adoptedAnimalsId ->
+                if (name != null) {
+                    animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId)
+                } else {
+                    animalRepository.findByIdNotIn(adoptedAnimalsId)
+                }
+            }
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

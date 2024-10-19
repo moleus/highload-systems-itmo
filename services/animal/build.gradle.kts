@@ -19,8 +19,10 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
 
     implementation("org.springframework.boot:spring-boot-starter-logging")
+    @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
+    implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
 }
 
 highloadApp {
