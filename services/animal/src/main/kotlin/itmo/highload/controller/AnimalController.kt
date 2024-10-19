@@ -5,10 +5,11 @@ import itmo.highload.api.dto.response.AnimalResponse
 import itmo.highload.model.AnimalMapper
 import itmo.highload.service.AnimalService
 import jakarta.validation.Valid
-import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/animals")
@@ -17,37 +18,30 @@ class AnimalController(val animalService: AnimalService) {
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAll(
         @RequestParam(required = false) name: String?,
-        @RequestParam(required = false) isNotAdopted: Boolean?,
-        pageable: Pageable
-    ): List<AnimalResponse> {
-        return animalService.getAll(name, isNotAdopted, pageable).map { AnimalMapper.toAnimalResponse(it) }.content
-    }
+        @RequestParam(required = false) isNotAdopted: Boolean?
+    ): Flux<AnimalResponse> = animalService.getAll(name, isNotAdopted).map { AnimalMapper.toAnimalResponse(it) }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    fun getAnimal(@PathVariable id: Int): AnimalResponse {
-        return AnimalMapper.toAnimalResponse(animalService.getById(id))
+    fun getAnimal(@PathVariable id: Int): Mono<AnimalResponse> {
+        return animalService.getById(id).map { AnimalMapper.toAnimalResponse(it) }
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun addAnimal(@RequestBody @Valid request: AnimalDto): AnimalResponse {
-        return AnimalMapper.toAnimalResponse(animalService.save(request))
+    fun addAnimal(@RequestBody @Valid request: AnimalDto): Mono<AnimalResponse> {
+        return animalService.save(request).map { AnimalMapper.toAnimalResponse(it) }
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAnimal(
         @PathVariable id: Int, @RequestBody @Valid request: AnimalDto
-    ): AnimalResponse {
-        return AnimalMapper.toAnimalResponse(animalService.update(id, request))
-    }
+    ): Mono<AnimalResponse> = animalService.update(id, request).map { AnimalMapper.toAnimalResponse(it) }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
-    fun deleteAnimal(@PathVariable id: Int) {
-        animalService.delete(id)
-    }
+    fun deleteAnimal(@PathVariable id: Int): Mono<Void> = animalService.delete(id)
 }

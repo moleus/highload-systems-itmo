@@ -5,7 +5,6 @@ import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
-import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -21,11 +20,8 @@ class ExpenseController(
 
     @GetMapping
     fun getExpenses(
-        @RequestParam(required = false) purposeId: Int?, pageable: Pageable
-    ): Flux<TransactionResponse> {
-        val expenses = transactionService.getExpenses(purposeId, pageable)
-        return expenses
-    }
+        @RequestParam(required = false) purposeId: Int?
+    ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

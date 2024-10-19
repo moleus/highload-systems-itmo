@@ -12,18 +12,18 @@ object TransactionMapper {
         return Transaction(
             dateTime = LocalDateTime.now(),
             userId = userId,
-            balance = balance,
+            balanceId = balance.id,
             moneyAmount = dto.moneyAmount!!,
             isDonation = isDonation
         )
     }
 
-    fun toResponse(entity: Transaction): TransactionResponse {
+    fun toResponse(entity: Transaction, balance: Balance): TransactionResponse {
         return TransactionResponse(
             dateTime = entity.dateTime,
             purpose = PurposeResponse(
-                id = entity.balance.id,
-                name = entity.balance.purpose
+                id = balance.id,
+                name = balance.purpose
             ),
             user = UserResponse(
                 id = entity.userId,

@@ -1,64 +1,99 @@
 package itmo.highload
 
+import io.r2dbc.spi.Connection
+import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
-import io.restassured.response.Response
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.api.dto.response.AnimalResponse
-import itmo.highload.configuration.IntegrationTestContext
-import itmo.highload.model.AnimalMapper
-import itmo.highload.repository.AnimalRepository
+import itmo.highload.configuration.TestContainerIntegrationTest
+import itmo.highload.configuration.R2dbcIntegrationTestContext
+import itmo.highload.fixtures.AnimalResponseFixture
+import itmo.highload.security.Role
+import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.defaultJsonRequestSpec
+import itmo.highload.utils.withJwt
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.r2dbc.connection.init.ScriptUtils
+import reactor.core.publisher.Mono
 
-@IntegrationTestContext
+@R2dbcIntegrationTestContext
 class TestAnimal @Autowired constructor(
-    private val animalRepository: AnimalRepository,
-//    jwtUtils: JwtUtils,
-) {
+    private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
+) : TestContainerIntegrationTest() {
+
     @LocalServerPort
     private var port: Int = 0
     private val animalApiUrlBasePath = "/api/v1/animals"
 
-//    private val customerToken = jwtUtils.generateAccessToken("customer", Role.CUSTOMER, 1)
-//    private val adoptionManagerToken = jwtUtils.generateAccessToken("adoption_manager", Role.ADOPTION_MANAGER, 1)
+    private val adoptionManagerToken = jwtUtils.generateAccessToken(
+        "amanager", Role.ADOPTION_MANAGER, -4
+    )
+
+    private val customerToken = jwtUtils.generateAccessToken(
+        "customer", Role.CUSTOMER, -2
+    )
+
+    private fun executeScriptBlocking(sqlScript: Resource) {
+        Mono.from(connectionFactory.create())
+            .flatMap<Any> { connection: Connection -> ScriptUtils.executeSqlScript(connection, sqlScript) }.block()
+    }
 
     @BeforeEach
-    fun setUp() {
+    fun rollOutTestData(@Value("classpath:/test-data.sql") script: Resource) {
+        executeScriptBlocking(script)
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
     }
 
     @Test
     fun `test get all animals`() {
-        val expectedAnimalResponse = animalRepository.findAll().map {
-            AnimalMapper.toAnimalResponse(it)
-        }
+        val expectedAnimalResponse = listOf(
+            AnimalResponseFixture.of(
+                id = -1,
+                name = "Buddy",
+                type = "Dog",
+                gender = Gender.MALE,
+                isCastrated = true,
+                healthStatus = HealthStatus.HEALTHY
+            ), AnimalResponseFixture.of(
+                id = -2,
+                name = "Molly",
+                type = "Cat",
+                gender = Gender.FEMALE,
+                isCastrated = false,
+                healthStatus = HealthStatus.SICK
+            )
+        )
 
         val actualAnimalResponse =
-            defaultJsonRequestSpec().get(animalApiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.OK.value()).extract().`as`(Array<AnimalResponse>::class.java).toList()
+            defaultJsonRequestSpec().withJwt(customerToken).get(animalApiUrlBasePath).then().log()
+                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+                .`as`(Array<AnimalResponse>::class.java).toList()
 
         assertThat(actualAnimalResponse).containsExactlyInAnyOrderElementsOf(expectedAnimalResponse)
     }
 
     @Test
     fun `test get animal by id`() {
-        val animal = animalRepository.findAll().first()
-        val expectedAnimalResponse = AnimalMapper.toAnimalResponse(animal)
+        val expectedAnimalResponse = AnimalResponseFixture.of()
 
-        val actualAnimalResponse = defaultJsonRequestSpec().get("$animalApiUrlBasePath/${animal.id}").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
-            .`as`(AnimalResponse::class.java)
+        val actualAnimalResponse =
+            defaultJsonRequestSpec().withJwt(customerToken).get("$animalApiUrlBasePath/-1").then().log()
+                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+                .`as`(AnimalResponse::class.java)
 
         assertThat(actualAnimalResponse).isEqualTo(expectedAnimalResponse)
     }
@@ -73,42 +108,48 @@ class TestAnimal @Autowired constructor(
             healthStatus = HealthStatus.HEALTHY
         )
 
-        val response: Response = defaultJsonRequestSpec().body(animalDto).post(animalApiUrlBasePath)
+        val response = defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(animalDto).post(animalApiUrlBasePath)
 
         response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
             .body("name", equalTo(animalDto.name))
-
-        val createdAnimal = animalRepository.findAll().find { it.name == animalDto.name }
-        assertThat(createdAnimal).isNotNull
     }
 
     @Test
     fun `test update animal`() {
-        val animal = animalRepository.findAll().first()
         val updatedAnimalDto = AnimalDto(
             name = "Updated Animal",
-            type = animal.typeOfAnimal,
-            gender = animal.gender,
-            isCastrated = animal.isCastrated,
-            healthStatus = animal.healthStatus
+            type = "Dog",
+            gender = Gender.MALE,
+            isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
         )
 
-        defaultJsonRequestSpec().body(updatedAnimalDto).put("$animalApiUrlBasePath/${animal.id}").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(updatedAnimalDto).put("$animalApiUrlBasePath/-1")
+            .then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value())
             .body("name", equalTo(updatedAnimalDto.name))
-
-        val updatedAnimal = animalRepository.findById(animal.id).get()
-        assertThat(updatedAnimal.name).isEqualTo(updatedAnimalDto.name)
     }
 
     @Test
     fun `test delete animal`() {
-        val animal = animalRepository.findAll().first()
-
-        defaultJsonRequestSpec().delete("$animalApiUrlBasePath/${animal.id}").then().log()
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).delete("$animalApiUrlBasePath/-1").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.NO_CONTENT.value())
+    }
 
-        val deletedAnimal = animalRepository.findById(animal.id)
-        assertThat(deletedAnimal).isEmpty
+    @Test
+    fun `test invalid animal update exception`() {
+        val invalidUpdateDto = AnimalDto(
+            name = "Updated Animal",
+            type = "Cat",
+            gender = Gender.FEMALE,
+            isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY
+        )
+
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).body(invalidUpdateDto).put("$animalApiUrlBasePath/-1")
+            .then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value()).body(
+                CoreMatchers.equalTo(
+                    "Can't change gender; Can't change type of animal; " + "Can't cancel castration of an animal"
+                )
+            )
     }
 }

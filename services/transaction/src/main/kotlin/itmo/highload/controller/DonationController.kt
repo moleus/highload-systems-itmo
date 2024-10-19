@@ -5,7 +5,6 @@ import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
-import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -22,18 +21,18 @@ class DonationController(
     @GetMapping
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER')")
     fun getDonations(
-        @RequestParam(required = false) purposeId: Int?, pageable: Pageable
+        @RequestParam(required = false) purposeId: Int?
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getDonations(purposeId, pageable)
+        val donations = transactionService.getDonations(purposeId)
         return donations
     }
 
     @GetMapping("/{customerId}")
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER')")
     fun getDonationsByCustomerForManager(
-        @PathVariable customerId: Int, pageable: Pageable
+        @PathVariable customerId: Int
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId, pageable = pageable)
+        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId)
         return donations
     }
 

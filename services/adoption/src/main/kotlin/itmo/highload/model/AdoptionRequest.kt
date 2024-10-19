@@ -8,7 +8,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "adoption_requests")
+@Table(name = "adoption_request")
 data class AdoptionRequest(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

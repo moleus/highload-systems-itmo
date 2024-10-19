@@ -1,23 +1,19 @@
 package itmo.highload.model
 
-import jakarta.persistence.*
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.PositiveOrZero
-import jakarta.validation.constraints.Size
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 
-@Entity
-@Table(name = "balances")
+
+@Table(name = "balance")
 data class Balance(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column("id")
     val id: Int = 0,
 
-    @Column(nullable = false, unique = true, length = 50)
-    @NotBlank(message = "Purpose is mandatory")
-    @Size(max = 50, message = "Purpose cannot exceed 50 characters")
+    @Column("purpose")
     val purpose: String,
 
-    @Column(nullable = false)
-    @PositiveOrZero(message = "Money amount cannot be negative")
+    @Column("money_amount")
     var moneyAmount: Int
 )

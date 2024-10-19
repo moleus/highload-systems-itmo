@@ -32,28 +32,34 @@ testing {
 
             dependencies {
                 implementation(project())
+                implementation(project(":shared:api"))
+                implementation(project(":shared:db-migrations"))
+                implementation(project(":shared:security"))
+                implementation(project(":shared:integration-tests"))
+                implementation(testFixtures(project(":shared:integration-tests")))
                 implementation("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-testcontainers")
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.springframework.boot:spring-boot-starter-web")
                 implementation("org.springframework.boot:spring-boot-starter-logging")
                 implementation("org.testcontainers:testcontainers")
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:junit-jupiter")
                 implementation("io.rest-assured:rest-assured")
-                implementation(project(":shared:api"))
-                implementation(project(":shared:db"))
-                implementation(project(":shared:security"))
                 implementation("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+
+                implementation("org.testcontainers:r2dbc")
+                implementation("org.springframework.data:spring-data-r2dbc")
+                runtimeOnly("org.postgresql:r2dbc-postgresql")
+                implementation("io.projectreactor:reactor-core")
             }
 
             sources {
                 kotlin {
                     srcDir("src/integration-test/kotlin")
                 }
-                resources.srcDir("src/integration-test/resources")
+                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
             }
 
             // run integration tests after unit tests

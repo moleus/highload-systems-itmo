@@ -1,5 +1,6 @@
 package itmo.highload.controller
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
@@ -7,7 +8,6 @@ import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -20,7 +20,7 @@ class AdoptionRequestController(
     private val adoptionRequestService: AdoptionRequestService,
     private val jwtUtils: JwtUtils
 ) {
-    private val logger = LoggerFactory.getLogger(AdoptionRequestController::class.java)
+    private val logger = KotlinLogging.logger { }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
@@ -30,6 +30,7 @@ class AdoptionRequestController(
     ): Flux<AdoptionRequestResponse> {
         val userId = jwtUtils.extractUserId(token)
         val role = jwtUtils.extractRole(token)
+        logger.info { "User $userId is trying to get adoption requests" }
 
         return if (role == Role.ADOPTION_MANAGER) {
             adoptionRequestService.getAll(status)
@@ -39,7 +40,7 @@ class AdoptionRequestController(
     }
 
     @GetMapping("/statuses")
-    @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getAllStatuses(): Flux<AdoptionStatus> {
         return adoptionRequestService.getAllStatuses()
     }
