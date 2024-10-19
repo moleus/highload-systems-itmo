@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: adoption-service
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  main:
+    web-application-type: reactive
+
+app.base-url: /api/v1
+
+server:
+  port: 8085
+
+debug: true
+logging:
+  level:
+    itmo:
+      highload: TRACE
+    web: TRACE
+    org:
+      springframework:
+        security: TRACE
+        web: TRACE
+jwt:
+  secret:
+    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='

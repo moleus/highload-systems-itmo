@@ -1,7 +1,9 @@
-GET http://localhost:8080/api/v1/adoptions
+GET http://127.0.0.1:8085/api/v1/adoptions
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMxNzY4MDksInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTE3NjgwOSwicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.KJeQDpR393K2q07xc0J69FOoG85qgbsQbeyfvOWESk2XyYGvjXxMKK7liPjrc8OOfAS2TRWiF2ELjOvPLNoB7Q
 
 ###
-POST http://localhost:8080/api/v1/adoptions/5
+POST http://localhost:8082/api/v1/adoptions/4
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMwMDU2NTgsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTAwNTY1OCwicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.Wcc6D_vW741kxJ-L9H2rFUAVFNfCIpj4dYajEHd2QWTb9-fN2dAszt3bgCEerK2dhBHKLS9GVd_87cjd0A_0ZQ
 
 ###
 PATCH http://localhost:8080/api/v1/adoptions
@@ -11,3 +13,4 @@ Content-Type: application/json
   "id": 1,
   "status": "DENIED"
 }
+
