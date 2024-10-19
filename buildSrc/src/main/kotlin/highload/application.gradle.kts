@@ -39,7 +39,7 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
 gradle.projectsEvaluated {
     jib {
         from {
-            image = "openjdk:$jdkVersion-jdk-slim"
+            image = "eclipse-temurin:21-jre"
             platforms {
                 platform {
                     architecture = hostArchitecture
