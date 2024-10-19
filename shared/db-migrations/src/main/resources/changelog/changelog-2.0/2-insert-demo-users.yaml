@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: moleus
+      author: Korako2
       changes:
         - insert:
             tableName: users
@@ -66,55 +66,3 @@ databaseChangeLog:
               - column:
                   name: creation_date
                   value: 2024-01-01
-
-        - insert:
-            tableName: customer
-            columns:
-              - column:
-                  name: gender
-                  value: MALE
-              - column:
-                  name: address
-                  value: Moscow
-              - column:
-                  name: phone
-                  value: "+79444333141"
-
-        - insert:
-            tableName: customer
-            columns:
-              - column:
-                  name: gender
-                  value: MALE
-              - column:
-                  name: address
-                  value: Moscow
-              - column:
-                  name: phone
-                  value: "+79444333111"
-
-        - insert:
-            tableName: customer
-            columns:
-              - column:
-                  name: gender
-                  value: MALE
-              - column:
-                  name: address
-                  value: Moscow
-              - column:
-                  name: phone
-                  value: "+79444333112"
-
-        - insert:
-            tableName: customer
-            columns:
-              - column:
-                  name: gender
-                  value: MALE
-              - column:
-                  name: address
-                  value: Moscow
-              - column:
-                  name: phone
-                  value: "+79444333131"
