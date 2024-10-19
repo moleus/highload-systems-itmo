@@ -9,7 +9,6 @@ import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.api.dto.response.UserResponse
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.fixtures.BalanceResponseFixture
@@ -166,7 +165,7 @@ class TestTransactions @Autowired constructor(
             assertThat(it.moneyAmount).isEqualTo(transactionMoney)
             assertThat(it.isDonation).isFalse()
             assertThat(it.purpose).isEqualTo(expectedTransactionResponse[0].purpose)
-            assertThat(it.user).isEqualTo(UserResponse(id = -3))
+            assertThat(it.userId).isEqualTo(-3)
         }
     }
 

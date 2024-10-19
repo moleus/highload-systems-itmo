@@ -3,7 +3,6 @@ package itmo.highload.model
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.api.dto.response.UserResponse
 import java.time.LocalDateTime
 
 object TransactionMapper {
@@ -25,10 +24,7 @@ object TransactionMapper {
                 id = balance.id,
                 name = balance.purpose
             ),
-            user = UserResponse(
-                id = entity.userId,
-//                login = entity.user.login
-            ),
+            userId = entity.userId,
             moneyAmount = entity.moneyAmount,
             isDonation = entity.isDonation
         )
