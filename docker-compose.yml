@@ -39,9 +39,10 @@ services:
 
   cloud-config:
     image: moleus/highload/cloud-config:dev
+    volumes:
+      - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
     environment:
       SPRING_PROFILES_ACTIVE: cloud
-      GIT_PRIVATE_KEY: ${GIT_PRIVATE_KEY:?error}
     env_file:
       - .env
     ports:
