@@ -13,9 +13,9 @@ spring:
       pageable:
         max-page-size: 50
   r2dbc:
-    url: r2dbc:postgresql://localhost:15432/postgres
-    username: postgres
-    password: postgres
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
 
 eureka:
   client:
@@ -24,8 +24,7 @@ eureka:
 
 server:
   port: 8087
-# logging.level.web: TRACE
-# logging.level.org.springframework.web: TRACE
+
 jwt:
   secret:
-    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='
+    sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}

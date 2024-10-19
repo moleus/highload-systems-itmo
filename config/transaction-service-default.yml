@@ -1,25 +1,18 @@
 spring:
   application:
     name: transaction-service
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
-    # https://stackoverflow.com/questions/30549489/what-is-this-spring-jpa-open-in-view-true-property-in-spring-boot
-    open-in-view: false
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
 
 server:
   port: 8086
 app.base-url: /api/v1
 
-#logging:
-#  level:
-#    web: TRACE
-#    org.springframework.web: TRACE
-
 jwt:
   secret:
-    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='
+    sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}
 
 eureka:
   client:
