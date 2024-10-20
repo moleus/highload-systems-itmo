@@ -1,12 +1,13 @@
-GET http://127.0.0.1:8080/api/v1/adoptions
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc0MzUsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzQzNSwicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.nN9DmiJTbOgD8ZmBYKNvKNBSwWWyTDCt_j6vxO3LI8955HKj96KP7rE7UJHk0sFyGHRArZN3fh4tXGna1LP2Mg
+GET http://127.0.0.1:8085/api/v1/adoptions
+Authorization: Bearer {{$auth.token("customer-auth")}}
 
 ###
 POST http://localhost:8080/api/v1/adoptions/4
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc0MzUsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzQzNSwicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.nN9DmiJTbOgD8ZmBYKNvKNBSwWWyTDCt_j6vxO3LI8955HKj96KP7rE7UJHk0sFyGHRArZN3fh4tXGna1LP2Mg
+Authorization: Bearer {{$auth.token("customer-auth")}}
 
 ###
 PATCH http://localhost:8080/api/v1/adoptions
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {

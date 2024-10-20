@@ -6,11 +6,13 @@ import itmo.highload.security.dto.JwtResponse
 import itmo.highload.service.AuthService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 @RestController
@@ -22,6 +24,21 @@ class AuthController(private val authService: AuthService) {
         authService.login(request.login, request.password).onErrorMap { e ->
             ResponseStatusException(HttpStatus.UNAUTHORIZED, e.message, e)
         }
+
+
+    @PostMapping("/token", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    fun token(
+        exchange: ServerWebExchange,
+    ): Mono<JwtResponse> {
+        return exchange.formData.map {
+            LoginDto(
+                login = it["username"]?.firstOrNull() ?: "",
+                password = it["password"]?.firstOrNull() ?: ""
+            )
+        }.flatMap { login(it) }.onErrorMap {
+            ResponseStatusException(HttpStatus.UNAUTHORIZED, it.message, it)
+        }
+    }
 
     @PostMapping("/register")
     fun register(@RequestBody @Valid request: RegisterDto): Mono<String> =

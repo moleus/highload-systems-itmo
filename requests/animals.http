@@ -1,6 +1,6 @@
 ### Add new animal
 POST http://localhost:8080/api/v1/animals
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {
@@ -13,13 +13,15 @@ Content-Type: application/json
 
 ### Get all animals
 GET http://localhost:8080/api/v1/animals
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
+Authorization: Bearer {{$auth.token("customer-auth")}}
 
 ### Get animal with id 1
 GET http://localhost:8080/api/v1/animals/1
+Authorization: Bearer {{$auth.token("customer-auth")}}
 
 ### Change fields of animal 1
 PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {
@@ -32,6 +34,7 @@ Content-Type: application/json
 
 ### Shows that we can't change animal's gender
 PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {
@@ -44,6 +47,7 @@ Content-Type: application/json
 
 ### Shows that we can't change animal's gender
 PUT http://localhost:8080/api/v1/animals/1
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {
@@ -56,6 +60,8 @@ Content-Type: application/json
 
 ### Delete animal that doesn't exist
 DELETE http://localhost:8080/api/v1/animals/2
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 
 ### Delete initial animal
 DELETE http://localhost:8080/api/v1/animals/1
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
