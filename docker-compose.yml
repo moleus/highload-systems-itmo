@@ -7,11 +7,11 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: ${POSTGRES_USERNAME:?error}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
-      POSTGRES_PORT: 15432
+      POSTGRES_PORT: 5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "15432:15432"
+      - "127.0.0.1:15432:5432"
     networks:
       - backend
     healthcheck:
@@ -25,10 +25,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-#    entrypoint: "bash"
-#    command:
-#      - -c
-#      - sleep 100000
     command:
       - --changeLogFile=changelog/changelog-root.yaml
       - --url=jdbc:postgresql://db:15432/postgres
@@ -41,19 +37,100 @@ services:
     networks:
       - backend
 
-  app:
-    image: moleus/highload-systems-itmo:dev
+  cloud-config:
+    image: moleus/highload/cloud-config:dev
+    working_dir: /app
+    volumes:
+      - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
+      - ./config:/app/config
+    environment:
+#      SPRING_PROFILES_ACTIVE: cloud
+      SPRING_PROFILES_ACTIVE: standalone,native
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
+    env_file:
+      - .env
     ports:
-      - "8080:8080"
+      - "8888:8888"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8888/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  eureka-server:
+    image: moleus/highload/eureka-server:dev
+    ports:
+      - "8761:8761"
     depends_on:
-      db:
+      cloud-config:
         condition: service_healthy
     env_file:
       - .env
-    environment:
-      SPRING_DATASOURCE_URL: ${POSTGRES_URL:?error}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME:?error}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?error}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  adoption:
+    image: moleus/highload/adoption:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    entrypoint: ["bash"]
+    command:
+      - -c
+      - sleep 1000
+    env_file:
+      - .env
+    networks:
+      - backend
+
+  animal:
+    image: moleus/highload/animal:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - backend
+
+  api-gateway:
+    image: moleus/highload/api-gateway:dev
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - backend
+
+  authentication:
+    image: moleus/highload/authentication:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+        - backend
+
+  transaction:
+    image: moleus/highload/transaction:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - backend
 
 volumes:
   postgres-data:

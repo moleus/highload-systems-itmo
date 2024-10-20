@@ -1,5 +1,6 @@
 ### Add a new donation
 POST http://localhost:8080/api/v1/transactions/donations
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
 Content-Type: application/json
 
 {
@@ -9,12 +10,14 @@ Content-Type: application/json
 
 ### Get all donations
 GET http://localhost:8080/api/v1/transactions/donations
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
 
 ### Get donations by purpose ID
 GET http://localhost:8080/api/v1/transactions/donations?purposeID=1
 
 ### Add a new expense
 POST http://localhost:8080/api/v1/transactions/expenses
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
 Content-Type: application/json
 
 {
@@ -24,6 +27,7 @@ Content-Type: application/json
 
 ### Get all expenses
 GET http://localhost:8080/api/v1/transactions/expenses
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
 
 ### Get expenses by purpose ID
 GET http://localhost:8080/api/v1/transactions/expenses?purposeID=1

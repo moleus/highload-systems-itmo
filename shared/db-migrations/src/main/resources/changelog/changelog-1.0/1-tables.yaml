@@ -80,11 +80,11 @@ databaseChangeLog:
                     nullable: true
 
   - changeSet:
-      id: create-users
+      id: create-person
       author: Moleus
       changes:
         - createTable:
-            tableName: users
+            tableName: persons
             columns:
               - column:
                   name: id
@@ -93,17 +93,6 @@ databaseChangeLog:
                   generationType: "BY DEFAULT"
                   constraints:
                     primaryKey: true
-                    nullable: false
-              - column:
-                  name: login
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-                    unique: true
-              - column:
-                  name: password
-                  type: VARCHAR(200)
-                  constraints:
                     nullable: false
               - column:
                   name: role
@@ -226,7 +215,7 @@ databaseChangeLog:
                   constraints:
                     nullable: true
                     foreignKeyName: fk_adoption_request_manager
-                    references: users(id)
+                    references: persons(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:
@@ -288,12 +277,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: user_id
+                  name: person_id
                   type: INT
                   constraints:
                     nullable: false
-                    foreignKeyName: fk_transaction_user
-                    references: users(id)
+                    foreignKeyName: fk_transaction_person
+                    references: persons(id)
                     deleteCascade: true
                     validateForeignKey: true
               - column:

@@ -1,5 +1,6 @@
 ### Add new animal
 POST http://localhost:8080/api/v1/animals
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
 Content-Type: application/json
 
 {
@@ -12,6 +13,7 @@ Content-Type: application/json
 
 ### Get all animals
 GET http://localhost:8080/api/v1/animals
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
 
 ### Get animal with id 1
 GET http://localhost:8080/api/v1/animals/1

@@ -7,10 +7,15 @@ spring:
       server:
         git:
           uri: git@github.com:moleus/highload-systems-itmo.git
-          clone-on-start: true
-          default-label: lab2
           search-paths:
             - config
-
+          clone-on-start: true
+          default-label: main
+          strict-host-key-checking: false
 server:
   port: 8888
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
