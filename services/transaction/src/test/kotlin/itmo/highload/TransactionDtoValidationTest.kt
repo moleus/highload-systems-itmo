@@ -5,7 +5,10 @@ import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.ValidatorFactory
 import jakarta.validation.ConstraintViolation
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -30,7 +33,8 @@ class TransactionDtoValidationTest {
 
         assertEquals(1, violations.size)
         val violation = violations.first()
-        assertEquals("не должно равняться null", violation.message)
+
+        assertTrue(violation.constraintDescriptor.annotation is NotNull)
         assertEquals("purposeId", violation.propertyPath.toString())
     }
 
@@ -45,7 +49,8 @@ class TransactionDtoValidationTest {
 
         assertEquals(1, violations.size)
         val violation = violations.first()
-        assertEquals("не должно равняться null", violation.message)
+
+        assertTrue(violation.constraintDescriptor.annotation is NotNull)
         assertEquals("moneyAmount", violation.propertyPath.toString())
     }
 
@@ -60,7 +65,8 @@ class TransactionDtoValidationTest {
 
         assertEquals(1, violations.size)
         val violation = violations.first()
-        assertEquals("должно быть не меньше 1", violation.message)
+
+        assertTrue(violation.constraintDescriptor.annotation is Min)
         assertEquals("moneyAmount", violation.propertyPath.toString())
     }
 
