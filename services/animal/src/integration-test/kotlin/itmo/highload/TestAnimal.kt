@@ -9,8 +9,8 @@ import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.api.dto.response.AnimalResponse
-import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.configuration.R2dbcIntegrationTestContext
+import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.fixtures.AnimalResponseFixture
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
@@ -151,5 +151,16 @@ class TestAnimal @Autowired constructor(
                     "Can't change gender; Can't change type of animal; " + "Can't cancel castration of an animal"
                 )
             )
+    }
+
+    @Test
+    fun `test entity not found exception`() {
+        @Suppress("MagicNumber")
+        val invalidId = 9999
+
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).get("/api/v1/animals/$invalidId").then().log()
+            .ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.NOT_FOUND.value())
+            .body(CoreMatchers.equalTo("Animal with ID $invalidId not found"))
     }
 }

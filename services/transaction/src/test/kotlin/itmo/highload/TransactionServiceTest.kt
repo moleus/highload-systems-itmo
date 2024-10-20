@@ -3,21 +3,19 @@ package itmo.highload
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import itmo.highload.dto.TransactionDto
+import itmo.highload.api.dto.TransactionDto
+import itmo.highload.exceptions.NegativeBalanceException
 import itmo.highload.model.Balance
 import itmo.highload.model.Transaction
-import itmo.highload.model.User
-import itmo.highload.model.enum.Role
 import itmo.highload.repository.TransactionRepository
 import itmo.highload.service.BalanceService
 import itmo.highload.service.TransactionService
-import itmo.highload.service.exception.NegativeBalanceException
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDate
+import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 class TransactionServiceTest {
@@ -26,46 +24,32 @@ class TransactionServiceTest {
     private val balanceService: BalanceService = mockk()
     private val transactionService = TransactionService(transactionRepository, balanceService)
 
-    private val user = User(
-        id = 1,
-        login = "customer",
-        password = "123",
-        role = Role.CUSTOMER,
-        creationDate = LocalDate.now()
-    )
+    private val userId = -1
 
     private val balance = Balance(
-        id = 1,
-        purpose = "food",
-        moneyAmount = 200
+        id = 1, purpose = "food", moneyAmount = 200
     )
 
     private val transactionDto = TransactionDto(
-        purposeId = 1,
-        moneyAmount = 100
+        purposeId = 1, moneyAmount = 100
     )
 
     @Test
     fun `should add transaction and update balance successfully`() {
 
         val transaction = Transaction(
-            id = 1,
-            LocalDateTime.now(),
-            user,
-            balance,
-            moneyAmount = 100,
-            isDonation = true
+            id = 1, LocalDateTime.now(), userId, balance.id, moneyAmount = 100, isDonation = true
         )
 
-        every { balanceService.getById(transactionDto.purposeId!!) } returns balance
-        every { transactionRepository.save(any()) } returns transaction
-        every { balanceService.changeMoneyAmount(
-            transactionDto.purposeId!!,
-            true,
-            transactionDto.moneyAmount!!)
-        } returns balance
+        every { balanceService.getById(transactionDto.purposeId!!) } returns Mono.just(balance)
+        every { transactionRepository.save(any()) } returns Mono.just(transaction)
+        every {
+            balanceService.changeMoneyAmount(
+                transactionDto.purposeId!!, true, transactionDto.moneyAmount!!
+            )
+        } returns Mono.just(balance)
 
-        val result = transactionService.addTransaction(transactionDto, user, isDonation = true)
+        val result = transactionService.addTransaction(transactionDto, userId, isDonation = true).block()
 
         assertNotNull(result)
         verify { transactionRepository.save(any()) }
@@ -74,26 +58,20 @@ class TransactionServiceTest {
 
     @Test
     fun `should throw NegativeBalanceException when balance becomes negative`() {
-
         val transaction = Transaction(
-            id = 1,
-            LocalDateTime.now(),
-            user,
-            balance,
-            moneyAmount = 100,
-            isDonation = false
+            id = 1, LocalDateTime.now(), userId, balance.id, moneyAmount = 100, isDonation = false
         )
 
-        every { balanceService.getById(transactionDto.purposeId!!) } returns balance
-        every { transactionRepository.save(any()) } returns transaction
-        every { balanceService.changeMoneyAmount(
-            transactionDto.purposeId!!,
-            false,
-            transactionDto.moneyAmount!!)
-        } throws NegativeBalanceException("Insufficient funds to complete the transaction")
+        every { balanceService.getById(transactionDto.purposeId!!) } returns Mono.just(balance)
+        every { transactionRepository.save(any()) } returns Mono.just(transaction)
+        every {
+            balanceService.changeMoneyAmount(
+                transactionDto.purposeId!!, false, transactionDto.moneyAmount!!
+            )
+        } returns Mono.error(NegativeBalanceException("Insufficient funds to complete the transaction"))
 
         val exception = assertThrows<NegativeBalanceException> {
-            transactionService.addTransaction(transactionDto, user, isDonation = false)
+            transactionService.addTransaction(transactionDto, userId, isDonation = false).block()
         }
 
         assertEquals("Insufficient funds to complete the transaction", exception.message)
@@ -103,11 +81,11 @@ class TransactionServiceTest {
     @Test
     fun `should throw EntityNotFoundException when balance is not found`() {
 
-        every { balanceService.getById(transactionDto.purposeId!!)
-        } throws EntityNotFoundException("Failed to find Balance with id = ${transactionDto.purposeId}")
+        every { balanceService.getById(transactionDto.purposeId!!) } returns
+                Mono.error(EntityNotFoundException("Failed to find Balance with id = ${transactionDto.purposeId}"))
 
         val exception = assertThrows<EntityNotFoundException> {
-            transactionService.addTransaction(transactionDto, user, isDonation = true)
+            transactionService.addTransaction(transactionDto, userId, isDonation = true).block()
         }
 
         assertEquals("Failed to find Balance with id = ${transactionDto.purposeId}", exception.message)

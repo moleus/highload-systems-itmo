@@ -21,7 +21,7 @@ class BalanceController(
     @GetMapping
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun getAllBalances(): Flux<BalanceResponse> {
-        return balanceService.getAll()
+        return balanceService.getAll().map { BalanceMapper.toBalanceResponse(it) }
     }
 
     @GetMapping("/{id}")
@@ -33,7 +33,7 @@ class BalanceController(
     @GetMapping("/purposes")
     @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER', 'CUSTOMER')")
     fun getAllPurposes(): Flux<PurposeResponse> {
-        return balanceService.getAllPurposes()
+        return balanceService.getAllPurposes().map { BalanceMapper.toPurposeResponse(it) }
     }
 
     @PostMapping("/purposes")

@@ -32,6 +32,11 @@ dependencies {
 
 kover {
     reports {
+        filters {
+            excludes {
+                projects.add(":buildSrc")
+            }
+        }
         total {
             xml {
                 onCheck = true
