@@ -35,6 +35,7 @@ class UpdateAdoptionRequestStatusDtoValidationTest {
         val violation = violations.first()
 
         assertTrue(violation.constraintDescriptor.annotation is NotNull)
+        assertEquals("must not be null", violation.message)
         assertEquals("id", violation.propertyPath.toString())
     }
 
@@ -49,8 +50,7 @@ class UpdateAdoptionRequestStatusDtoValidationTest {
 
         assertEquals(1, violations.size)
         val violation = violations.first()
-
-        assertTrue(violation.constraintDescriptor.annotation is NotNull)
+        assertEquals("must not be null", violation.message)
         assertEquals("status", violation.propertyPath.toString())
     }
 
