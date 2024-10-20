@@ -9,4 +9,4 @@ databaseChangeLog:
       context: test
       changes:
         - sqlFile:
-            path: test-data.sql
+            path: changelog/test-data.sql
