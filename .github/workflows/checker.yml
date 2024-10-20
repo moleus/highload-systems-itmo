@@ -22,6 +22,45 @@ env:
   JAVA_OPTS: -Xmx2048M
 
 jobs:
+  run-docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JDK_VERSION }}
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: false
+        gradle-version: ${{ env.GRADLE_VERSION }}
+        build-scan-publish: true
+        build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+        build-scan-terms-of-use-agree: "yes"
+
+    - name: Build docker images
+      run: ./gradlew jibDockerBuild
+
+    - name: Start and run
+      run: |
+        docker compose up -d --wait -f docker-compose.yml --env-file env-ci
+
+    - name: Execute HTTP requests
+      uses: madhead/intellij-http-client-action@latest
+      with:
+        files: |-
+          requests/adoptions.http
+          requests/animals.http
+          requests/auth.http
+          requests/balances.http
+          requests/transactions.http
+        env_file: requests/http-client.env.json
+        env: dev
+        insecure: true
+
   lint-and-test:
     runs-on: ubuntu-latest
     steps:
