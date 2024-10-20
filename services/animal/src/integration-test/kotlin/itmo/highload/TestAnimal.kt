@@ -158,8 +158,9 @@ class TestAnimal @Autowired constructor(
         @Suppress("MagicNumber")
         val invalidId = 9999
 
-        RestAssured.get("/api/v1/animals/$invalidId").then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.BAD_REQUEST.value())
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).get("/api/v1/animals/$invalidId").then().log()
+            .ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.NOT_FOUND.value())
             .body(CoreMatchers.equalTo("Animal with ID $invalidId not found"))
     }
 }
