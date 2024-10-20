@@ -19,6 +19,7 @@ class ExpenseController(
 ) {
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER')")
     fun getExpenses(
         @RequestParam(required = false) purposeId: Int?
     ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId)
