@@ -11,6 +11,18 @@ Content-Type: application/json
   "health_status": "HEALTHY"
 }
 
+> {%
+    client.test("Successfully added new animal", function () {
+        client.assert(response.status === 201, "Expected status code to be 201");
+        client.assert(response.body.name === "Барсик2", "Expected name to be 'Барсик2'");
+        client.assert(response.body.type === "Кот", "Expected type to be 'Кот'");
+        client.assert(response.body.gender === "MALE", "Expected type to be 'MALE'");
+        client.assert(response.body.is_castrated === true, "Expected is_castrated to be true");
+        client.assert(response.body.health_status === "HEALTHY", "Expected health_status to be 'HEALTHY'");
+    });
+%}
+
+
 ### Get all animals
 GET http://localhost:8080/api/v1/animals
 Authorization: Bearer {{$auth.token("customer-auth")}}
