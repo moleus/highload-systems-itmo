@@ -1,3 +1,10 @@
+x-defaults: &default-healthcheck
+  healthcheck:
+    test: ["CMD-SHELL", "curl -f http://localhost:${APP_SERVER_PORT}/actuator/health || exit 1"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
 services:
   db:
     image: postgres:15
@@ -92,6 +99,7 @@ services:
       - sleep 1000
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
       - backend
 
@@ -104,6 +112,7 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
       - backend
 
@@ -116,6 +125,11 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - backend
 
@@ -128,8 +142,9 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
-        - backend
+      - backend
 
   transaction:
     image: moleus/highload/transaction:dev
@@ -140,6 +155,7 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
       - backend
 
