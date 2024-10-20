@@ -31,7 +31,7 @@ class UpdateAdoptionRequestStatusDtoValidationTest {
 
         assertEquals(1, violations.size)
         val violation = violations.first()
-        assertEquals("не должно равняться null", violation.message)
+        assertEquals("must not be null", violation.message)
         assertEquals("id", violation.propertyPath.toString())
     }
 
