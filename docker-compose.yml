@@ -26,7 +26,7 @@ services:
       db:
         condition: service_healthy
     command:
-      - --changeLogFile=changelog/changelog-root.yaml
+      - --changeLogFile=${DB_CHANGE_LOG_FILE:changelog/changelog-root.yaml}
       - --url=jdbc:postgresql://db:15432/postgres
       - --username=postgres
       - --password=postgres
