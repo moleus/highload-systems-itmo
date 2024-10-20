@@ -1,5 +1,6 @@
 ### Add a new purpose
 POST http://localhost:8080/api/v1/balances/purposes
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 Content-Type: application/json
 
 {
@@ -8,11 +9,12 @@ Content-Type: application/json
 
 ### Get all purposes
 GET http://localhost:8080/api/v1/balances/purposes
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 ### Get all balances
 GET http://localhost:8080/api/v1/balances
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3ODMzNjc1NzMsInN1YiI6ImN1c3RvbWVyMyIsImlhdCI6MTcyOTM2NzU3Mywicm9sZSI6IkNVU1RPTUVSIiwidXNlcklkIjo1fQ.sC-wuAlAMQIgev_CcARS3f7ak2QESQpNogYi_ze_rMDnCgBsHx3HL7mweEkryiYgxpp-lv-EiDdv3nnGEIzQUg
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 ### Get balance by ID
 GET http://localhost:8080/api/v1/balances/1
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}

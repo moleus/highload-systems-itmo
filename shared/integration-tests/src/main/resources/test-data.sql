@@ -17,11 +17,12 @@ VALUES (-1, 'Buddy', 'Dog', 'MALE', true, 'HEALTHY'),
        (-2, 'Molly', 'Cat', 'FEMALE', false, 'SICK');
 
 -- Insert users
+-- password is '1234'
 INSERT INTO users (id, login, password, role, creation_date)
-VALUES (-1, 'superuser', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'SUPERUSER', '2023-01-01'),
-       (-2, 'customer', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'CUSTOMER', '2023-01-01'),
-       (-3, 'emanager', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'EXPENSE_MANAGER', '2023-01-01'),
-       (-4, 'amanager', '$2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG', 'ADOPTION_MANAGER', '2023-01-01');
+VALUES (-1, 'superuser', '$2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m', 'SUPERUSER', '2023-01-01'),
+       (-2, 'customer', '$2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m', 'CUSTOMER', '2023-01-01'),
+       (-3, 'emanager', '$2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m', 'EXPENSE_MANAGER', '2023-01-01'),
+       (-4, 'amanager', '$2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m', 'ADOPTION_MANAGER', '2023-01-01');
 
 -- Insert customer
 INSERT INTO customer (id, gender, address, phone)

@@ -34,12 +34,20 @@ import javax.crypto.SecretKey
 @EnableReactiveMethodSecurity
 @EnableWebFluxSecurity
 class WebFluxSecurityConfig @Autowired constructor(
-    @Value("\${jwt.secret.sign}") private val  jwtAccessSecret: String
+    @Value("\${jwt.secret.sign}") private val jwtAccessSecret: String
 ) {
     companion object {
         val EXCLUDED_PATHS = arrayOf(
-            "/api/v1/auth/register", "/api/v1/auth/login", "/", "/static/**", "/index.html", "/favicon.ico",
-            "/docs/**", "/docs.yaml", "/webjars/**",
+            "/api/v1/auth/register",
+            "/api/v1/auth/login",
+            "/api/v1/auth/token",
+            "/",
+            "/static/**",
+            "/index.html",
+            "/favicon.ico",
+            "/docs/**",
+            "/docs.yaml",
+            "/webjars/**",
         )
         val log = KotlinLogging.logger {}
     }
@@ -63,7 +71,7 @@ class WebFluxSecurityConfig @Autowired constructor(
 //            addFilterAt(jwtFilter, SecurityWebFiltersOrder.HTTP_BASIC)
         }
 
-    fun jwtDecoder(jwtAccessSecret : String): ReactiveJwtDecoder {
+    fun jwtDecoder(jwtAccessSecret: String): ReactiveJwtDecoder {
         val publicKey: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
         return NimbusReactiveJwtDecoder.withSecretKey(publicKey)
             .macAlgorithm(MacAlgorithm.HS512)

@@ -158,7 +158,7 @@ class TestAnimal @Autowired constructor(
         @Suppress("MagicNumber")
         val invalidId = 9999
 
-        defaultJsonRequestSpec().withJwt(adoptionManagerToken).get("/api/v1/animals/$invalidId").then().log()
+        defaultJsonRequestSpec().withJwt(adoptionManagerToken).get("$animalApiUrlBasePath/$invalidId").then().log()
             .ifValidationFails(LogDetail.BODY)
             .statusCode(HttpStatus.NOT_FOUND.value())
             .body(CoreMatchers.equalTo("Animal with ID $invalidId not found"))
