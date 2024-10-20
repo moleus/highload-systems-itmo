@@ -46,7 +46,7 @@ jobs:
 
     - name: Start and run
       run: |
-        docker compose up -d --wait -f docker-compose.yml --env-file env-ci
+        docker compose --env-file env-ci -f docker-compose.yml up -d --wait
 
     - name: Execute HTTP requests
       uses: madhead/intellij-http-client-action@latest
