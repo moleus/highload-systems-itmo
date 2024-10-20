@@ -28,9 +28,11 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.r2dbc.connection.init.ScriptUtils
+import org.springframework.test.annotation.DirtiesContext
 import reactor.core.publisher.Mono
 
 @R2dbcIntegrationTestContext
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class TestTransactions @Autowired constructor(
     private val connectionFactory: ConnectionFactory,
     jwtUtils: JwtUtils
@@ -66,33 +68,33 @@ class TestTransactions @Autowired constructor(
         RestAssured.defaultParser = Parser.JSON
     }
 
-//    @Test
-//    fun `test add donation`() {
-//        val transactionMoney = 200
-//        val transactionDto = TransactionDto(
-//            purposeId = -1, moneyAmount = transactionMoney
-//        )
-//
-//        val response = defaultJsonRequestSpec().withJwt(customerToken).body(transactionDto).post(donationApiUrlBasePath)
-//
-//        response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
-//            .body("money_amount", equalTo(transactionMoney))
-//    }
-//
-//    @Test
-//    fun `test get all donations`() {
-//        val expectedTransactionResponse = listOf(
-//            TransactionResponseFixture.of()
-//        )
-//
-//        val actualTransactionResponse = defaultJsonRequestSpec().withJwt(managerToken).get(donationApiUrlBasePath)
-//            .then().log().ifValidationFails(LogDetail.BODY)
-//            .statusCode(HttpStatus.OK.value())
-//            .extract().`as`(Array<TransactionResponse>::class.java).toList()
-//
-//        assertThat(actualTransactionResponse).containsExactlyInAnyOrderElementsOf(expectedTransactionResponse)
-//    }
-//
+    @Test
+    fun `test add donation`() {
+        val transactionMoney = 200
+        val transactionDto = TransactionDto(
+            purposeId = -1, moneyAmount = transactionMoney
+        )
+
+        val response = defaultJsonRequestSpec().withJwt(customerToken).body(transactionDto).post(donationApiUrlBasePath)
+
+        response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
+            .body("money_amount", equalTo(transactionMoney))
+    }
+
+    @Test
+    fun `test get all donations`() {
+        val expectedTransactionResponse = listOf(
+            TransactionResponseFixture.of()
+        )
+
+        val actualTransactionResponse = defaultJsonRequestSpec().withJwt(managerToken).get(donationApiUrlBasePath)
+            .then().log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(Array<TransactionResponse>::class.java).toList()
+
+        assertThat(actualTransactionResponse).containsExactlyInAnyOrderElementsOf(expectedTransactionResponse)
+    }
+
     @Test
     fun `test add expense`() {
         val transactionMoney = 300
