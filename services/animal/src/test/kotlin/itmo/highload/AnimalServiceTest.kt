@@ -12,10 +12,10 @@ import itmo.highload.repository.AnimalRepository
 import itmo.highload.service.AdoptionService
 import itmo.highload.service.AnimalService
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
+import kotlin.test.assertTrue
 
 class AnimalServiceTest {
 
@@ -43,13 +43,17 @@ class AnimalServiceTest {
         )
 
         every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
-        every { animalRepository.save(existingAnimal) } returns Mono.just(existingAnimal.copy(isCastrated = false))
+        every { animalRepository.save(existingAnimal) } returns Mono.just(existingAnimal.copy(
+            name = "Bobik",
+            isCastrated = true,
+            healthStatus = HealthStatus.RECOVERING
+        ))
 
         animalService.update(1, request).subscribe { updatedAnimal ->
-            assertEquals("Buddy", updatedAnimal.name)
+            assertEquals("Bobik", updatedAnimal.name)
             assertEquals("Dog", updatedAnimal.typeOfAnimal)
-            assertEquals(true, updatedAnimal.isCastrated)
-            assertFalse(updatedAnimal.isCastrated)
+            assertTrue(updatedAnimal.isCastrated)
+            assertEquals(HealthStatus.RECOVERING, updatedAnimal.healthStatus)
             verify { animalRepository.save(existingAnimal) }
         }
     }

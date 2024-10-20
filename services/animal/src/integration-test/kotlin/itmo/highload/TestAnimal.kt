@@ -1,5 +1,8 @@
 package itmo.highload
 
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.stubFor
+import com.github.tomakehurst.wiremock.client.WireMock.get
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
@@ -24,12 +27,15 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.r2dbc.connection.init.ScriptUtils
 import reactor.core.publisher.Mono
 
+
 @R2dbcIntegrationTestContext
+@AutoConfigureWireMock(port = 8085)
 class TestAnimal @Autowired constructor(
     private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
 ) : TestContainerIntegrationTest() {
@@ -80,6 +86,35 @@ class TestAnimal @Autowired constructor(
 
         val actualAnimalResponse =
             defaultJsonRequestSpec().withJwt(customerToken).get(animalApiUrlBasePath).then().log()
+                .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
+                .`as`(Array<AnimalResponse>::class.java).toList()
+
+        assertThat(actualAnimalResponse).containsExactlyInAnyOrderElementsOf(expectedAnimalResponse)
+    }
+
+    @Test
+    fun `test get all not adopted animals`() {
+        stubFor(get("/api/v1/ownerships/animals")
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("[-1]")
+            )
+        )
+
+        val expectedAnimalResponse = listOf(
+            AnimalResponseFixture.of(
+                id = -2,
+                name = "Molly",
+                type = "Cat",
+                gender = Gender.FEMALE,
+                isCastrated = false,
+                healthStatus = HealthStatus.SICK
+            )
+        )
+
+        val actualAnimalResponse =
+            defaultJsonRequestSpec().withJwt(customerToken).queryParam("isNotAdopted", true).get(animalApiUrlBasePath).then().log()
                 .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
                 .`as`(Array<AnimalResponse>::class.java).toList()
 
