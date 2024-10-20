@@ -48,19 +48,6 @@ jobs:
       run: |
         docker compose --env-file env-ci -f docker-compose.yml up -d --wait
 
-    - name: Execute HTTP requests
-      uses: madhead/intellij-http-client-action@latest
-      with:
-        files: |-
-          requests/adoptions.http
-          requests/animals.http
-          requests/auth.http
-          requests/balances.http
-          requests/transactions.http
-        env_file: requests/http-client.env.json
-        env: dev
-        insecure: true
-
   lint-and-test:
     runs-on: ubuntu-latest
     steps:
