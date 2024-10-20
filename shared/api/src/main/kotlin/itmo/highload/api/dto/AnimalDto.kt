@@ -10,11 +10,11 @@ import jakarta.validation.constraints.Size
 data class AnimalDto(
 
     @field:Size(min = 1, max = 50)
-    @field:NotBlank
+    @field:NotBlank(message = "must not be empty")
     val name: String,
 
     @field:Size(min = 1, max = 50)
-    @field:NotBlank
+    @field:NotBlank(message = "must not be empty")
     val type: String,
 
     @field:NotNull
