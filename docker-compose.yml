@@ -20,8 +20,9 @@ services:
       timeout: 5s
       retries: 5
 
-  liquibase-migrations:
+  init-db:
     image: liquibase/liquibase:4.29
+    restart: no
     depends_on:
       db:
         condition: service_healthy
@@ -66,6 +67,8 @@ services:
     depends_on:
       cloud-config:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
     healthcheck:
@@ -81,6 +84,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     entrypoint: ["bash"]
     command:
       - -c
@@ -95,6 +100,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
     networks:
@@ -117,6 +124,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
     networks:
@@ -127,6 +136,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
     networks:
