@@ -18,8 +18,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("\${app.base-url}/adoptions")
 class AdoptionRequestController(
-    private val adoptionRequestService: AdoptionRequestService,
-    private val jwtUtils: JwtUtils
+    private val adoptionRequestService: AdoptionRequestService, private val jwtUtils: JwtUtils
 ) {
     private val logger = KotlinLogging.logger { }
 
@@ -31,7 +30,7 @@ class AdoptionRequestController(
     ): Flux<AdoptionRequestResponse> {
         val userId = jwtUtils.extractUserId(token)
         val role = jwtUtils.extractRole(token)
-        logger.info { "User $userId is trying to get adoption requests" }
+        logger.info { "User $userId with role $role requested all adoptions" }
 
         return if (role == Role.ADOPTION_MANAGER) {
             adoptionRequestService.getAll(status).map { AdoptionRequestMapper.toResponse(it) }
@@ -53,7 +52,7 @@ class AdoptionRequestController(
         @PathVariable animalId: Int, @RequestHeader("Authorization") token: String
     ): Mono<AdoptionRequestResponse> {
         val userId = jwtUtils.extractUserId(token)
-        logger.info {"User $userId is trying to adopt animal $animalId" }
+        logger.info { "Customer $userId requested adoption of animal $animalId" }
         return adoptionRequestService.save(userId, animalId).map { AdoptionRequestMapper.toResponse(it) }
     }
 
@@ -61,9 +60,9 @@ class AdoptionRequestController(
     @PreAuthorize("hasAuthority('ADOPTION_MANAGER')")
     fun updateAdoptionRequest(
         @RequestBody @Valid request: UpdateAdoptionRequestStatusDto, @RequestHeader("Authorization") token: String
-        ): Mono<AdoptionRequestResponse> {
+    ): Mono<AdoptionRequestResponse> {
         val managerId = jwtUtils.extractUserId(token)
-            return adoptionRequestService.update(managerId, request).map { AdoptionRequestMapper.toResponse(it) }
+        return adoptionRequestService.update(managerId, request).map { AdoptionRequestMapper.toResponse(it) }
     }
 
     @DeleteMapping("/{animalId}")

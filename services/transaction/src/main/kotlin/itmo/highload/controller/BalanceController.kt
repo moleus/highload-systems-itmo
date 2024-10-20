@@ -38,6 +38,7 @@ class BalanceController(
 
     @PostMapping("/purposes")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
     fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) name: String): Mono<PurposeResponse> {
         return balanceService.addPurpose(name).map { BalanceMapper.toPurposeResponse(it) }
     }
