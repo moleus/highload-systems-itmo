@@ -34,10 +34,12 @@ class AnimalDtoValidationTest {
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(2, violations.size)
 
-        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank" }
+        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
+            .simpleName == "NotBlank" }
         assertEquals("не должно быть пустым", notBlankViolation?.message)
 
-        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
+        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
+            .simpleName == "Size" }
         assertEquals("размер должен находиться в диапазоне от 1 до 50", sizeViolation?.message)
     }
 
@@ -54,10 +56,12 @@ class AnimalDtoValidationTest {
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(2, violations.size)
 
-        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank" }
+        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
+            .simpleName == "NotBlank" }
         assertEquals("не должно быть пустым", notBlankViolation?.message)
 
-        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
+        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
+            .simpleName == "Size" }
         assertEquals("размер должен находиться в диапазоне от 1 до 50", sizeViolation?.message)
     }
 
