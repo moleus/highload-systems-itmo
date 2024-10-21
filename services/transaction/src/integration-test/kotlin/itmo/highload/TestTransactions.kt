@@ -215,7 +215,7 @@ class TestTransactions @Autowired constructor(
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
             .`as`(Array<PurposeResponse>::class.java).toList()
 
-        assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose) }
+        assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose.name) }
         val initialPurposeSize = allPurposes.size
 
         defaultJsonRequestSpec().withJwt(managerToken).body(newPurpose).post("$balanceApiUrlBasePath/purposes").then().log()
