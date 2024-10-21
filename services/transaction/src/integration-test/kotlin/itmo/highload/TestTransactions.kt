@@ -5,6 +5,7 @@ import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
+import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
@@ -208,7 +209,7 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `test add purpose`() {
-        val newPurpose = "New Purpose"
+        val newPurpose = PurposeRequestDto(name = "New Purpose")
 
         val allPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
@@ -226,6 +227,6 @@ class TestTransactions @Autowired constructor(
             .`as`(Array<PurposeResponse>::class.java).toList()
 
         assertThat(updatedPurposes).hasSize(initialPurposeSize + 1)
-        assertThat(updatedPurposes).anyMatch { it.name == newPurpose }
+        assertThat(updatedPurposes).anyMatch { it.name == newPurpose.name }
     }
 }
