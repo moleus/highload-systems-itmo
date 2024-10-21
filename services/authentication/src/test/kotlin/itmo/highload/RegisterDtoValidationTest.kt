@@ -7,7 +7,12 @@ import jakarta.validation.ConstraintViolation
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.ValidatorFactory
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -34,6 +39,7 @@ class RegisterDtoValidationTest {
 
         val notBlankViolation =
             violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank" }
+        assertTrue(notBlankViolation?.constraintDescriptor?.annotation is NotBlank)
         assertEquals("must not be empty", notBlankViolation?.message)
     }
 
@@ -50,6 +56,7 @@ class RegisterDtoValidationTest {
 
         val notBlankViolation =
             violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank" }
+        assertTrue(notBlankViolation?.constraintDescriptor?.annotation is NotBlank)
         assertEquals("must not be empty", notBlankViolation?.message)
     }
 
@@ -64,9 +71,9 @@ class RegisterDtoValidationTest {
         val violations: Set<ConstraintViolation<RegisterDto>> = validator.validate(registerDto)
         assertEquals(1, violations.size)
 
-        val sizeViolation =
-            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
-        assertEquals("size must be between 4 and 50", sizeViolation?.message)
+        val sizeViolation = violations.first()
+        assertTrue(sizeViolation.constraintDescriptor.annotation is Size)
+        assertEquals("size must be between 4 and 50", sizeViolation.message)
     }
 
     @Test
@@ -80,9 +87,9 @@ class RegisterDtoValidationTest {
         val violations: Set<ConstraintViolation<RegisterDto>> = validator.validate(registerDto)
         assertEquals(1, violations.size)
 
-        val patternViolation =
-            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Pattern" }
-        assertEquals("must match \"^[a-zA-Z0-9_]*$\"", patternViolation?.message)
+        val patternViolation = violations.first()
+        assertTrue(patternViolation.constraintDescriptor.annotation is Pattern)
+        assertEquals("must match \"^[a-zA-Z0-9_]*$\"", patternViolation.message)
     }
 
     @Test
@@ -96,9 +103,9 @@ class RegisterDtoValidationTest {
         val violations: Set<ConstraintViolation<RegisterDto>> = validator.validate(registerDto)
         assertEquals(1, violations.size)
 
-        val sizeViolation =
-            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
-        assertEquals("size must be between 3 and 50", sizeViolation?.message)
+        val sizeViolation = violations.first()
+        assertTrue(sizeViolation.constraintDescriptor.annotation is Size)
+        assertEquals("size must be between 3 and 50", sizeViolation.message)
     }
 
     @Test
@@ -112,9 +119,9 @@ class RegisterDtoValidationTest {
         val violations: Set<ConstraintViolation<RegisterDto>> = validator.validate(registerDto)
         assertEquals(1, violations.size)
 
-        val patternViolation =
-            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Pattern" }
-        assertEquals("must match \"^[a-zA-Z0-9_]*$\"", patternViolation?.message)
+        val patternViolation = violations.first()
+        assertTrue(patternViolation.constraintDescriptor.annotation is Pattern)
+        assertEquals("must match \"^[a-zA-Z0-9_]*$\"", patternViolation.message)
     }
 
     @Test
@@ -128,8 +135,8 @@ class RegisterDtoValidationTest {
         val violations: Set<ConstraintViolation<RegisterDto>> = validator.validate(registerDto)
         assertEquals(1, violations.size)
 
-        val notNullViolation =
-            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "NotNull" }
-        assertEquals("must not be null", notNullViolation?.message)
+        val notNullViolation = violations.first()
+        assertTrue(notNullViolation.constraintDescriptor.annotation is NotNull)
+        assertEquals("must not be null", notNullViolation.message)
     }
 }

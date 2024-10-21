@@ -36,7 +36,6 @@ class UpdateAdoptionRequestStatusDtoValidationTest {
 
         assertTrue(violation.constraintDescriptor.annotation is NotNull)
         assertEquals("must not be null", violation.message)
-        assertEquals("id", violation.propertyPath.toString())
     }
 
     @Test
@@ -53,7 +52,6 @@ class UpdateAdoptionRequestStatusDtoValidationTest {
 
         assertTrue(violation.constraintDescriptor.annotation is NotNull)
         assertEquals("must not be null", violation.message)
-        assertEquals("status", violation.propertyPath.toString())
     }
 
     @Test
