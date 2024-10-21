@@ -11,16 +11,16 @@ import jakarta.validation.constraints.Size
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class RegisterDto(
 
-    @field:NotBlank
-    @field:Size(min = 4, max = 50)
-    @field:Pattern(regexp = "^[a-zA-Z0-9_]*$")
+    @field:NotBlank(message = "must not be empty")
+    @field:Size(min = 4, max = 50, message = "size must be between 4 and 50")
+    @field:Pattern(regexp = "^[a-zA-Z0-9_]*$", message = "must match \"^[a-zA-Z0-9_]*$\"")
     val login: String,
 
-    @field:NotBlank
-    @field:Size(min = 3, max = 50)
-    @field:Pattern(regexp = "^[a-zA-Z0-9_]*$")
+    @field:NotBlank(message = "must not be empty")
+    @field:Size(min = 3, max = 50, message = "size must be between 3 and 50")
+    @field:Pattern(regexp = "^[a-zA-Z0-9_]*$", message = "must match \"^[a-zA-Z0-9_]*$\"")
     val password: String,
 
-    @field:NotNull
+    @field:NotNull(message = "must not be null")
     val role: Role?
 )
