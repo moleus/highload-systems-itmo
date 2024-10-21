@@ -93,10 +93,6 @@ services:
         condition: service_healthy
       init-db:
         condition: service_completed_successfully
-    entrypoint: ["bash"]
-    command:
-      - -c
-      - sleep 1000
     env_file:
       - .env
     <<: *default-healthcheck
