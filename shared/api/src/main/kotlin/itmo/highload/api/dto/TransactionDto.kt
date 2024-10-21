@@ -8,10 +8,10 @@ import jakarta.validation.constraints.NotNull
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class TransactionDto(
 
-    @field:NotNull
+    @field:NotNull(message = "must not be null")
     val purposeId: Int?,
 
-    @field:NotNull
-    @field:Min(1)
+    @field:NotNull(message = "must not be null")
+    @field:Min(1, message = "must be greater than or equal to 1")
     val moneyAmount: Int?
 )
