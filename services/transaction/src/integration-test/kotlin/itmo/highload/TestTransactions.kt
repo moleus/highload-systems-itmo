@@ -5,6 +5,7 @@ import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
+import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
@@ -42,7 +43,7 @@ class TestTransactions @Autowired constructor(
     private var port: Int = 0
     private val donationApiUrlBasePath = "/api/v1/transactions/donations"
     private val expenseApiUrlBasePath = "/api/v1/transactions/expenses"
-    private val balanceApiUrlBasePath = "/api/v1/balances"
+    private val balanceApiUrlBasePath = "/api/v1/transactions/balances"
 
     private val managerToken = jwtUtils.generateAccessToken(
         "emanager",
@@ -62,7 +63,7 @@ class TestTransactions @Autowired constructor(
     }
 
     @BeforeEach
-    fun rollOutTestData(@Value("classpath:/test-data.sql") script: Resource) {
+    fun rollOutTestData(@Value("classpath:/changelog/test-data.sql") script: Resource) {
         executeScriptBlocking(script)
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
@@ -208,24 +209,24 @@ class TestTransactions @Autowired constructor(
 
     @Test
     fun `test add purpose`() {
-        val newPurpose = "New Purpose"
+        val newPurpose = PurposeRequestDto(name = "New Purpose")
 
         val allPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
             .`as`(Array<PurposeResponse>::class.java).toList()
 
-        assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose) }
+        assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose.name) }
         val initialPurposeSize = allPurposes.size
 
         defaultJsonRequestSpec().withJwt(managerToken).body(newPurpose).post("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
-            .body("name", equalTo(newPurpose))
+            .body("name", equalTo(newPurpose.name))
 
         val updatedPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
             .`as`(Array<PurposeResponse>::class.java).toList()
 
         assertThat(updatedPurposes).hasSize(initialPurposeSize + 1)
-        assertThat(updatedPurposes).anyMatch { it.name == newPurpose }
+        assertThat(updatedPurposes).anyMatch { it.name == newPurpose.name }
     }
 }

@@ -1,3 +1,10 @@
+x-defaults: &default-healthcheck
+  healthcheck:
+    test: ["CMD-SHELL", "curl -f http://localhost:${APP_SERVER_PORT}/actuator/health || exit 1"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
 services:
   db:
     image: postgres:15
@@ -20,13 +27,14 @@ services:
       timeout: 5s
       retries: 5
 
-  liquibase-migrations:
+  init-db:
     image: liquibase/liquibase:4.29
+    restart: no
     depends_on:
       db:
         condition: service_healthy
     command:
-      - --changeLogFile=changelog/changelog-root.yaml
+      - --changeLogFile=${DB_CHANGE_LOG_FILE:-changelog/changelog-root.yaml}
       - --url=jdbc:postgresql://db:5432/postgres
       - --username=postgres
       - --password=postgres
@@ -66,6 +74,8 @@ services:
     depends_on:
       cloud-config:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
     healthcheck:
@@ -81,12 +91,11 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
-    entrypoint: ["bash"]
-    command:
-      - -c
-      - sleep 1000
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
       - backend
 
@@ -95,8 +104,11 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
       - backend
 
@@ -109,6 +121,11 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - backend
 
@@ -117,18 +134,24 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
-        - backend
+      - backend
 
   transaction:
     image: moleus/highload/transaction:dev
     depends_on:
       eureka-server:
         condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
     env_file:
       - .env
+    <<: *default-healthcheck
     networks:
       - backend
 

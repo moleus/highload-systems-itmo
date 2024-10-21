@@ -59,7 +59,10 @@ testing {
                 kotlin {
                     srcDir("src/integration-test/kotlin")
                 }
-                resources.srcDir(project(":shared:integration-tests").file("src/main/resources"))
+                resources.srcDirs(
+//                    project(":shared:db-migrations").file("src/main/resources"),
+                    project(":shared:integration-tests").file("src/main/resources")
+                )
             }
 
             // run integration tests after unit tests

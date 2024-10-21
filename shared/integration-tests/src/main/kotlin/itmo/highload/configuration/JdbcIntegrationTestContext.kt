@@ -13,7 +13,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ActiveProfiles(profiles=["test"])
 @AutoConfigureWebMvc
 @Testcontainers
-@Sql("/test-data.sql")
+@Sql("/changelog/test-data.sql")
 @Target(AnnotationTarget.CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 annotation class JdbcIntegrationTestContext
