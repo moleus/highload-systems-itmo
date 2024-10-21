@@ -11,7 +11,7 @@ databaseChangeLog:
                   value: superuser
               - column:
                   name: password
-                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
               - column:
                   name: role
                   value: SUPERUSER
@@ -27,7 +27,7 @@ databaseChangeLog:
                   value: customer
               - column:
                   name: password
-                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
               - column:
                   name: role
                   value: CUSTOMER
@@ -43,7 +43,7 @@ databaseChangeLog:
                   value: emanager
               - column:
                   name: password
-                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
               - column:
                   name: role
                   value: EXPENSE_MANAGER
@@ -59,7 +59,7 @@ databaseChangeLog:
                   value: amanager
               - column:
                   name: password
-                  value: $2a$10$vQDZDHzuXMXRMDqilDvQxu.8lPD2YyeI9Se5aDgog/roV1whaWWgG
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
               - column:
                   name: role
                   value: ADOPTION_MANAGER
