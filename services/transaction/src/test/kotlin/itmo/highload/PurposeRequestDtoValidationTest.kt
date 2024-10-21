@@ -50,5 +50,4 @@ class PurposeRequestDtoValidationTest {
         assertTrue(notBlankViolation.constraintDescriptor.annotation is Size)
         assertEquals("size must be between 1 and 50", notBlankViolation.message)
     }
-
 }
