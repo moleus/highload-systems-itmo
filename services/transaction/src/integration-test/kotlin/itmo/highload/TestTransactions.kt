@@ -42,7 +42,7 @@ class TestTransactions @Autowired constructor(
     private var port: Int = 0
     private val donationApiUrlBasePath = "/api/v1/transactions/donations"
     private val expenseApiUrlBasePath = "/api/v1/transactions/expenses"
-    private val balanceApiUrlBasePath = "/api/v1/balances"
+    private val balanceApiUrlBasePath = "/api/v1/transactions/balances"
 
     private val managerToken = jwtUtils.generateAccessToken(
         "emanager",
