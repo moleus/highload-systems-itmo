@@ -38,13 +38,14 @@ class AnimalDtoValidationTest {
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(2, violations.size)
 
-        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
-            .simpleName == "NotBlank" }
+        val notBlankViolation = violations.firstOrNull {
+            it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank"
+        }
         assertEquals("must not be empty", notBlankViolation?.message)
         assertTrue(notBlankViolation?.constraintDescriptor?.annotation is NotBlank)
 
-        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
-            .simpleName == "Size" }
+        val sizeViolation =
+            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
         assertEquals("size must be between 1 and 50", sizeViolation?.message)
         assertTrue(sizeViolation?.constraintDescriptor?.annotation is Size)
     }
@@ -62,13 +63,14 @@ class AnimalDtoValidationTest {
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(2, violations.size)
 
-        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
-            .simpleName == "NotBlank" }
+        val notBlankViolation = violations.firstOrNull {
+            it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank"
+        }
         assertEquals("must not be empty", notBlankViolation?.message)
         assertTrue(notBlankViolation?.constraintDescriptor?.annotation is NotBlank)
 
-        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
-            .simpleName == "Size" }
+        val sizeViolation =
+            violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
         assertEquals("size must be between 1 and 50", sizeViolation?.message)
         assertTrue(sizeViolation?.constraintDescriptor?.annotation is Size)
     }
