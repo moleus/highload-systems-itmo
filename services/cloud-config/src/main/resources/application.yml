@@ -12,6 +12,8 @@ spring:
           clone-on-start: true
           default-label: main
           strict-host-key-checking: false
+        native:
+          search-locations: file:./config/
 server:
   port: 8888
 
