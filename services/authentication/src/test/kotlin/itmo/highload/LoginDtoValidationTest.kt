@@ -44,7 +44,8 @@ class LoginDtoValidationTest {
         val violations: Set<ConstraintViolation<LoginDto>> = validator.validate(loginDto)
         assertEquals(2, violations.size)
 
-        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "NotBlank" }
+        val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
+            .simpleName == "NotBlank" }
         assertEquals("must not be empty", notBlankViolation?.message)
     }
 
@@ -88,7 +89,8 @@ class LoginDtoValidationTest {
         val violations: Set<ConstraintViolation<LoginDto>> = validator.validate(loginDto)
         assertEquals(1, violations.size)
 
-        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass.simpleName == "Size" }
+        val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
+            .simpleName == "Size" }
         assertEquals("size must be between 3 and 50", sizeViolation?.message)
     }
 
