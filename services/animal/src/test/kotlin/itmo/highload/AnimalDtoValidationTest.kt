@@ -7,7 +7,11 @@ import jakarta.validation.ConstraintViolation
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import jakarta.validation.ValidatorFactory
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -37,10 +41,12 @@ class AnimalDtoValidationTest {
         val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
             .simpleName == "NotBlank" }
         assertEquals("must not be empty", notBlankViolation?.message)
+        assertTrue(notBlankViolation?.constraintDescriptor?.annotation is NotBlank)
 
         val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
             .simpleName == "Size" }
         assertEquals("size must be between 1 and 50", sizeViolation?.message)
+        assertTrue(sizeViolation?.constraintDescriptor?.annotation is Size)
     }
 
     @Test
@@ -59,10 +65,12 @@ class AnimalDtoValidationTest {
         val notBlankViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
             .simpleName == "NotBlank" }
         assertEquals("must not be empty", notBlankViolation?.message)
+        assertTrue(notBlankViolation?.constraintDescriptor?.annotation is NotBlank)
 
         val sizeViolation = violations.firstOrNull { it.constraintDescriptor.annotation.annotationClass
             .simpleName == "Size" }
         assertEquals("size must be between 1 and 50", sizeViolation?.message)
+        assertTrue(sizeViolation?.constraintDescriptor?.annotation is Size)
     }
 
     @Test
@@ -77,7 +85,10 @@ class AnimalDtoValidationTest {
 
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(1, violations.size)
-        assertEquals("size must be between 1 and 50", violations.first().message)
+
+        val sizeViolation = violations.first()
+        assertEquals("size must be between 1 and 50", sizeViolation.message)
+        assertTrue(sizeViolation.constraintDescriptor.annotation is Size)
     }
 
     @Test
@@ -92,7 +103,10 @@ class AnimalDtoValidationTest {
 
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(1, violations.size)
-        assertEquals("size must be between 1 and 50", violations.first().message)
+
+        val sizeViolation = violations.first()
+        assertEquals("size must be between 1 and 50", sizeViolation.message)
+        assertTrue(sizeViolation.constraintDescriptor.annotation is Size)
     }
 
     @Test
@@ -107,7 +121,10 @@ class AnimalDtoValidationTest {
 
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(1, violations.size)
-        assertEquals("must not be null", violations.first().message)
+
+        val notNullViolation = violations.first()
+        assertEquals("must not be null", notNullViolation.message)
+        assertTrue(notNullViolation.constraintDescriptor.annotation is NotNull)
     }
 
     @Test
@@ -122,7 +139,10 @@ class AnimalDtoValidationTest {
 
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(1, violations.size)
-        assertEquals("must not be null", violations.first().message)
+
+        val notNullViolation = violations.first()
+        assertEquals("must not be null", notNullViolation.message)
+        assertTrue(notNullViolation.constraintDescriptor.annotation is NotNull)
     }
 
     @Test
@@ -137,7 +157,10 @@ class AnimalDtoValidationTest {
 
         val violations: Set<ConstraintViolation<AnimalDto>> = validator.validate(animalDto)
         assertEquals(1, violations.size)
-        assertEquals("must not be null", violations.first().message)
+
+        val notNullViolation = violations.first()
+        assertEquals("must not be null", notNullViolation.message)
+        assertTrue(notNullViolation.constraintDescriptor.annotation is NotNull)
     }
 
     @Test

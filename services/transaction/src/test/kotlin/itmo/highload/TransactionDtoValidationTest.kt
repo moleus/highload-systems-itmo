@@ -36,6 +36,7 @@ class TransactionDtoValidationTest {
 
         assertTrue(violation.constraintDescriptor.annotation is NotNull)
         assertEquals("purposeId", violation.propertyPath.toString())
+        assertEquals("must not be null", violation.message)
     }
 
     @Test
@@ -52,6 +53,7 @@ class TransactionDtoValidationTest {
 
         assertTrue(violation.constraintDescriptor.annotation is NotNull)
         assertEquals("moneyAmount", violation.propertyPath.toString())
+        assertEquals("must not be null", violation.message)
     }
 
     @Test
@@ -68,6 +70,7 @@ class TransactionDtoValidationTest {
 
         assertTrue(violation.constraintDescriptor.annotation is Min)
         assertEquals("moneyAmount", violation.propertyPath.toString())
+        assertEquals("must be greater than or equal to 1", violation.message)
     }
 
     @Test
