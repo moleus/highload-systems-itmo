@@ -1,4 +1,5 @@
-### Add new animal
+### Add new animal (send 2 requests for the correctness of further tests)
+
 POST http://localhost:8080/api/v1/animals
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
@@ -12,24 +13,41 @@ Content-Type: application/json
 }
 
 > {%
-    client.test("Successfully added new animal", function () {
-        client.assert(response.status === 201, "Expected status code to be 201");
-        client.assert(response.body.name === "Барсик2", "Expected name to be 'Барсик2'");
-        client.assert(response.body.type === "Кот", "Expected type to be 'Кот'");
-        client.assert(response.body.gender === "MALE", "Expected type to be 'MALE'");
-        client.assert(response.body.is_castrated === true, "Expected is_castrated to be true");
-        client.assert(response.body.health_status === "HEALTHY", "Expected health_status to be 'HEALTHY'");
+    client.test("Test status code", function() {
+        client.assert(response.status === 201, "Response status is not 201");
     });
-%}
 
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(responseBody.name === "Барсик2", "Name is not correct");
+        client.assert(responseBody.type === "Кот", "Type is not correct");
+        client.assert(responseBody.gender === "MALE", "Gender is not correct");
+        client.assert(responseBody.is_castrated === true, "Castration status is not correct");
+        client.assert(responseBody.health_status === "HEALTHY", "Health status is not correct");
+        client.assert(responseBody.id !== undefined, "ID is missing");
+    });
+
+%}
 
 ### Get all animals
 GET http://localhost:8080/api/v1/animals
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 ### Get animal with id 1
 GET http://localhost:8080/api/v1/animals/1
 Authorization: Bearer {{$auth.token("customer-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
 
 ### Change fields of animal 1
 PUT http://localhost:8080/api/v1/animals/1
@@ -44,6 +62,24 @@ Content-Type: application/json
   "health_status": "SICK"
 }
 
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(responseBody.name === "Барсик", "Name is not correct");
+        client.assert(responseBody.type === "Кот", "Type is not correct");
+        client.assert(responseBody.type === "Кот", "Type is not correct");
+        client.assert(responseBody.gender === "MALE", "Gender is not correct");
+        client.assert(responseBody.is_castrated === true, "Castration status is not correct");
+        client.assert(responseBody.health_status === "SICK", "Health status is not correct");
+        client.assert(responseBody.id !== undefined, "ID is missing");
+    });
+%}
+
+
 ### Shows that we can't change animal's gender
 PUT http://localhost:8080/api/v1/animals/1
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
@@ -56,6 +92,17 @@ Content-Type: application/json
   "is_castrated": true,
   "health_status": "SICK"
 }
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+    });
+
+    client.test("Test error message", function() {
+        client.assert(response.body === "Can't change gender");
+    });
+%}
+
 
 ### Shows that we can't change animal's gender
 PUT http://localhost:8080/api/v1/animals/1
@@ -70,10 +117,37 @@ Content-Type: application/json
   "health_status": "SICK"
 }
 
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+    });
+
+    client.test("Test error message", function() {
+        client.assert(response.body === "Can't cancel castration of an animal");
+    });
+%}
+
 ### Delete animal that doesn't exist
-DELETE http://localhost:8080/api/v1/animals/2
+DELETE http://localhost:8080/api/v1/animals/222
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
+
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+    });
+
+    client.test("Test error message", function() {
+        client.assert(response.body === "Animal with ID 222 not found");
+    });
+%}
 
 ### Delete initial animal
 DELETE http://localhost:8080/api/v1/animals/1
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}

@@ -8,14 +8,63 @@ Content-Type: application/json
   "money_amount": 100
 }
 
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(responseBody.purpose.id === 1, "Purpose ID is not correct");
+        client.assert(responseBody.purpose.name === "Медикаменты", "Name is not correct");
+        client.assert(responseBody.user_id === 2, "ID is not correct");
+        client.assert(responseBody.money_amount === 100, "Money amount is not correct");
+        client.assert(responseBody.is_donation === true, "Donation is not correct");
+    });
+%}
+
 ### Get all donations
 GET http://localhost:8080/api/v1/transactions/donations
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(Array.isArray(responseBody), "Response body is not an array");
+        client.assert(responseBody.length > 0, "No donations found");
+    });
+%}
 
 ### Get donations by purpose ID
 GET http://localhost:8080/api/v1/transactions/donations?purposeID=1
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(Array.isArray(responseBody), "Response body is not an array");
+        client.assert(responseBody.length > 0, "No donations found for the specified purpose ID");
+
+        responseBody.forEach(donation => {
+            client.assert(donation.date_time !== undefined, "Date time is missing");
+            client.assert(donation.purpose !== undefined, "Purpose is missing");
+            client.assert(donation.purpose.id === 1, "Purpose ID is not correct");
+            client.assert(donation.purpose.name === "Медикаменты", "Purpose name is not correct");
+            client.assert(donation.user_id !== undefined, "User ID is missing");
+            client.assert(donation.money_amount !== undefined, "Money amount is missing");
+            client.assert(donation.is_donation === true, "Is donation flag is not correct");
+        });
+    });
+%}
 ### Add a new expense
 POST http://localhost:8080/api/v1/transactions/expenses
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
@@ -23,13 +72,60 @@ Content-Type: application/json
 
 {
   "purpose_id": 1,
-  "money_amount": 200
+  "money_amount": 100
 }
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+
+        // Проверяем наличие всех полей в ответе
+        client.assert(responseBody.purpose !== undefined, "Purpose is missing");
+        client.assert(responseBody.purpose.id === 1, "Purpose ID is not correct");
+        client.assert(responseBody.purpose.name === "Медикаменты", "Purpose name is not correct");
+
+        client.assert(responseBody.user_id !== undefined, "User ID is missing");
+        client.assert(responseBody.user_id > 0, "User ID should be a positive number");
+
+        client.assert(responseBody.money_amount === 100, "Money amount is not correct");
+        client.assert(responseBody.date_time !== undefined, "Date time is missing");
+
+        client.assert(responseBody.is_donation === false, "Is donation flag should be false");
+    });
+%}
 
 ### Get all expenses
 GET http://localhost:8080/api/v1/transactions/expenses
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(Array.isArray(responseBody), "Response body is not an array");
+        client.assert(responseBody.length > 0, "No expenses found");
+    });
+%}
+
 ### Get expenses by purpose ID
 GET http://localhost:8080/api/v1/transactions/expenses?purposeID=1
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(Array.isArray(responseBody), "Response body is not an array");
+        client.assert(responseBody.length > 0, "No expenses found for the specified purpose ID");
+    });
+%}

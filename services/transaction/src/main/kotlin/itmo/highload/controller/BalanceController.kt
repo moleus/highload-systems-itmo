@@ -1,11 +1,11 @@
 package itmo.highload.controller
 
+import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.model.BalanceMapper
 import itmo.highload.service.BalanceService
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("\${app.base-url}/balances")
+@RequestMapping("\${app.base-url}/transactions/balances")
 class BalanceController(
     private val balanceService: BalanceService
 ) {
@@ -39,7 +39,7 @@ class BalanceController(
     @PostMapping("/purposes")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('EXPENSE_MANAGER')")
-    fun addPurpose(@RequestBody @NotBlank @Size(min = 1, max = 50) name: String): Mono<PurposeResponse> {
-        return balanceService.addPurpose(name).map { BalanceMapper.toPurposeResponse(it) }
+    fun addPurpose(@RequestBody @Valid purposeRequestDto: PurposeRequestDto): Mono<PurposeResponse> {
+        return balanceService.addPurpose(purposeRequestDto.name).map { BalanceMapper.toPurposeResponse(it) }
     }
 }
