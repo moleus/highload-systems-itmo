@@ -220,7 +220,7 @@ class TestTransactions @Autowired constructor(
 
         defaultJsonRequestSpec().withJwt(managerToken).body(newPurpose).post("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
-            .body("name", equalTo(newPurpose))
+            .body("name", equalTo(newPurpose.name))
 
         val updatedPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
