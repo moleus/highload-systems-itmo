@@ -14,8 +14,7 @@ spring:
         max-page-size: 50
   r2dbc:
     url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
-    # username: ${DB_USERNAME:postgres}
-    username: user
+    username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
 
 eureka:
