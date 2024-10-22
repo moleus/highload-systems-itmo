@@ -2,6 +2,7 @@ package itmo.highload.api
 
 import jakarta.validation.ConstraintViolation
 import jakarta.validation.ConstraintViolationException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
@@ -22,6 +23,14 @@ class ValidationErrorController {
             violation.propertyPath.toString() to violation.message
         }
     }
+
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    fun onDataIntegrityViolationException(): Map<String, String> {
+        return mapOf("error" to "Id not found")
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
