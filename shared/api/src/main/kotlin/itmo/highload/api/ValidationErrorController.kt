@@ -27,7 +27,7 @@ class ValidationErrorController {
     @ExceptionHandler(DataIntegrityViolationException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    fun onDataIntegrityViolationException(e: DataIntegrityViolationException): Map<String, String> {
+    fun onDataIntegrityViolationException(): Map<String, String> {
         return mapOf("error" to "Id not found")
     }
 
