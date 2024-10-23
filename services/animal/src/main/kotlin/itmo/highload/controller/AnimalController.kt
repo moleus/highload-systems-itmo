@@ -1,5 +1,11 @@
 package itmo.highload.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.response.AnimalResponse
 import itmo.highload.model.AnimalMapper
@@ -16,6 +22,23 @@ import reactor.core.publisher.Mono
 class AnimalController(val animalService: AnimalService) {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    @Operation(
+        summary = "Get all animals",
+        description = "Retrieve a list of all animals with optional filters for name and adoption status.",
+    )
+    @SecurityRequirement(name = "bearer-key")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "List of animals retrieved", content = [
+                Content(
+                    schema = Schema(implementation = AnimalResponse::class)
+                )
+            ]),
+            ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
+            ApiResponse(responseCode = "403", description = "No authority for this operation")
+        ]
+    )
     fun getAll(
         @RequestParam(required = false) name: String?,
         @RequestParam(required = false) isNotAdopted: Boolean?,
