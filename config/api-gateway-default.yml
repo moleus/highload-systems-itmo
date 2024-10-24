@@ -35,3 +35,16 @@ eureka:
     serviceUrl:
       defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /gateway-api/v3/api-docs
+  swagger-ui:
+    enabled: true
+    urls:
+    -   name: gateway-service
+        url: /gateway-api/v3/api-docs
+    -   name: animal-service
+        url: http://localhost:8086/animal-api/v3/api-docs
+    -   name: adoption-service
+        url: http://localhost:8085/adoption-api/v3/api-docs

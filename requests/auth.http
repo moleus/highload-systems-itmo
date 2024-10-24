@@ -4,9 +4,19 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "login": "customer3",
+  "login": "customer",
   "password": "1234"
 }
+
+###
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+"login": "amanager",
+"password": "1234"
+}
+
 
 ### register
 

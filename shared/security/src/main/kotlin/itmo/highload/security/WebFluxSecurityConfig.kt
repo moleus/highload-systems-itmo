@@ -26,8 +26,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.reactive.CorsWebFilter
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import reactor.core.publisher.Mono
 import javax.crypto.SecretKey
+
 
 @Profile("!disable-security")
 @Configuration
@@ -53,7 +57,12 @@ class WebFluxSecurityConfig @Autowired constructor(
             "/swagger-doc/v3/api-docs/**",
             "/swagger-doc/swagger-config/**",
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/animal-swagger-ui.html",
+            "/animal-swagger-ui/**",
+            "/animal-api/v3/api-docs/**",
+            "/adoption-api/v3/api-docs/**",
+            "/adoption-swagger-ui.html",
+            "/adoption-swagger-ui/**",
         )
         val log = KotlinLogging.logger {}
     }
@@ -76,6 +85,20 @@ class WebFluxSecurityConfig @Autowired constructor(
             }
 //            addFilterAt(jwtFilter, SecurityWebFiltersOrder.HTTP_BASIC)
         }
+
+    @Bean
+    fun corsFilter(): CorsWebFilter {
+        val source =
+            UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.allowCredentials = true
+        config.addAllowedOriginPattern("*")
+        config.addAllowedHeader("*")
+        config.addAllowedMethod("*")
+        source.registerCorsConfiguration("/**", config)
+        return CorsWebFilter(source)
+    }
+
 
     fun jwtDecoder(jwtAccessSecret: String): ReactiveJwtDecoder {
         val publicKey: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
@@ -103,6 +126,7 @@ class WebFluxSecurityConfig @Autowired constructor(
             return listOf(SimpleGrantedAuthority(authority.toString()))
         }
     }
+
 }
 
 @Profile("disable-security")

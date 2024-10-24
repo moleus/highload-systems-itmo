@@ -21,6 +21,8 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
+
 }
 
 highloadApp {
