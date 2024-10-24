@@ -54,3 +54,9 @@ docker-compose up db
         - procedures.yaml
       - ...
 ```
+
+## Progress
+
+- [x] Lab1 complete
+- [x] Lab2 complete
+- [ ] Lab3 in progress
