@@ -48,3 +48,7 @@ springdoc:
         url: http://localhost:8086/animal-api/v3/api-docs
     -   name: adoption-service
         url: http://localhost:8085/adoption-api/v3/api-docs
+    -   name: transaction-service
+        url: http://localhost:8088/transaction-api/v3/api-docs
+    -   name: auth-service
+        url: http://localhost:8087/auth-api/v3/api-docs

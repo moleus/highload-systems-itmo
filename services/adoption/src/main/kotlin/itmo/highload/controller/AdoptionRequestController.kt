@@ -1,6 +1,8 @@
 package itmo.highload.controller
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
@@ -17,6 +19,11 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/adoptions")
+@OpenAPIDefinition(
+    servers = [
+        Server(url = "http://localhost:8080")
+    ]
+)
 class AdoptionRequestController(
     private val adoptionRequestService: AdoptionRequestService, private val jwtUtils: JwtUtils
 ) {

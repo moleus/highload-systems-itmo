@@ -1,5 +1,7 @@
 package itmo.highload.controller
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.dto.LoginDto
 import itmo.highload.dto.RegisterDto
 import itmo.highload.security.dto.JwtResponse
@@ -18,6 +20,11 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/auth")
+@OpenAPIDefinition(
+    servers = [
+        Server(url = "http://localhost:8080")
+    ]
+)
 class AuthController(private val authService: AuthService) {
 
     @PostMapping("/login")

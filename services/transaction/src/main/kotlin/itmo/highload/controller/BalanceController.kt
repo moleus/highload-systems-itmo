@@ -1,5 +1,7 @@
 package itmo.highload.controller
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
@@ -14,6 +16,11 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/transactions/balances")
+@OpenAPIDefinition(
+    servers = [
+        Server(url = "http://localhost:8080")
+    ]
+)
 class BalanceController(
     private val balanceService: BalanceService
 ) {

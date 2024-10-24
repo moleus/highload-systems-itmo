@@ -63,6 +63,12 @@ class WebFluxSecurityConfig @Autowired constructor(
             "/adoption-api/v3/api-docs/**",
             "/adoption-swagger-ui.html",
             "/adoption-swagger-ui/**",
+            "/transaction-api/v3/api-docs/**",
+            "/transaction-swagger-ui.html",
+            "/transaction-swagger-ui/**",
+            "/auth-api/v3/api-docs/**",
+            "/auth-swagger-ui.html",
+            "/auth-swagger-ui/**",
         )
         val log = KotlinLogging.logger {}
     }

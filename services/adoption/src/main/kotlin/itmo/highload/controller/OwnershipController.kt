@@ -1,5 +1,7 @@
 package itmo.highload.controller
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.service.OwnershipService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,6 +11,11 @@ import reactor.core.publisher.Flux
 
 @RestController
 @RequestMapping("\${app.base-url}/ownerships")
+@OpenAPIDefinition(
+    servers = [
+        Server(url = "http://localhost:8080")
+    ]
+)
 class OwnershipController(private val ownershipService: OwnershipService) {
 
     @GetMapping("/animals")
