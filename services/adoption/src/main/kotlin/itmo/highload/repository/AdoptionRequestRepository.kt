@@ -11,4 +11,5 @@ interface AdoptionRequestRepository : JpaRepository<AdoptionRequest, Int> {
     fun findAllByStatus(status: AdoptionStatus): List<AdoptionRequest>
     fun findByCustomerIdAndAnimalId(customerId: Int, animalId: Int): Optional<AdoptionRequest>
     fun findAllByCustomerId(customerId: Int): List<AdoptionRequest>
+    fun findAllByCustomerIdAndStatus(customerId: Int, status: AdoptionStatus): List<AdoptionRequest>
 }

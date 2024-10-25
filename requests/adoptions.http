@@ -1,5 +1,5 @@
 ###
-POST http://localhost:8080/api/v1/adoptions/2
+POST http://localhost:8080/api/v1/adoptions/5
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
 > {%
@@ -77,3 +77,11 @@ Content-Type: application/json
         client.assert(responseBody.date_time !== undefined, "Date time is missing");
     });
 %}
+
+###
+GET http://127.0.0.1:8080/api/v1/adoptions?status=DENIED
+Authorization: Bearer {{$auth.token("customer-auth")}}
+
+###
+GET http://127.0.0.1:8080/api/v1/adoptions?status=PENDING
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
