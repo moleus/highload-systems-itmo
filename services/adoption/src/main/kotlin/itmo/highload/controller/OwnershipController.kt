@@ -1,6 +1,11 @@
 package itmo.highload.controller
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.service.OwnershipService
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,6 +25,18 @@ class OwnershipController(private val ownershipService: OwnershipService) {
 
     @GetMapping("/animals")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    @Operation(
+        summary = "Get all adopted animal IDs",
+        description = "Retrieve a list of IDs of all animals that have been adopted."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "List of adopted animal IDs",
+                content = [Content(schema = Schema(implementation = Int::class))]),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
+            ApiResponse(responseCode = "403", description = "No authority for this operation")
+        ]
+    )
     fun getAllAdoptedAnimalsId(): Flux<Int> {
         return ownershipService.getAllAnimalsId()
     }

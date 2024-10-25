@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.response.AnimalResponse
@@ -21,7 +20,6 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/animals")
-@CrossOrigin(origins = ["http://localhost:8080"])
 @OpenAPIDefinition(
     servers = [
         Server(url = "http://localhost:8080")
@@ -35,7 +33,6 @@ class AnimalController(val animalService: AnimalService) {
         description = "Retrieve a list of all animals with optional filters for name and adoption status.",
 
     )
-    @SecurityRequirement(name = "bearer-key")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "List of animals retrieved", content = [
