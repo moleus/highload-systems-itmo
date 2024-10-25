@@ -37,6 +37,7 @@ class AdoptionRequestServiceTest {
 
         every { adoptionRequestRepository.findByCustomerIdAndAnimalId(1, 1) } returns Optional.empty()
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
+        every { adoptionProducer.sendMessageToCreatedTopic(any()) } returns Unit
 
         adoptionRequestService.save(1, 1).subscribe {
             assertEquals(adoptionRequest, it)
@@ -79,6 +80,7 @@ class AdoptionRequestServiceTest {
 
         every { adoptionRequestRepository.findById(1) } returns Optional.of(adoptionRequest)
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
+        every { adoptionProducer.sendMessageToChangedTopic(any()) } returns Unit
 
         adoptionRequestService.update(managerId, requestDto).test().assertNext {
             assertEquals(AdoptionStatus.DENIED, it.status)
@@ -98,6 +100,7 @@ class AdoptionRequestServiceTest {
         every { adoptionRequestRepository.findById(1) } returns Optional.of(adoptionRequest)
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
         every { ownershipRepository.save(any()) } returns Ownership(1, 1)
+        every { adoptionProducer.sendMessageToCreatedTopic(any()) } returns Unit
 
         adoptionRequestService.update(1, requestDto).subscribe { result ->
             assertEquals(AdoptionStatus.APPROVED, result.status)

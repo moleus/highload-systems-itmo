@@ -45,11 +45,13 @@ class TransactionServiceTest {
 
         every { balanceService.getById(transactionDto.purposeId!!) } returns Mono.just(balance)
         every { transactionRepository.save(any()) } returns Mono.just(transaction)
+        every { transactionProducer.sendMessageToNewDonationTopic(any()) } returns Unit
         every {
             balanceService.changeMoneyAmount(
                 transactionDto.purposeId!!, true, transactionDto.moneyAmount!!
             )
         } returns Mono.just(balance)
+
 
         val result = transactionService.addTransaction(transactionDto, userId, isDonation = true).block()
 
