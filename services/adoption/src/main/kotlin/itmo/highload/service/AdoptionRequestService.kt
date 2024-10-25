@@ -99,8 +99,6 @@ class AdoptionRequestService(
     }
 
     fun getAllByCustomer(customerId: Int, status: AdoptionStatus?): Flux<AdoptionRequest> {
-//        return Flux.fromStream { adoptionRequestRepository.findAllByCustomerId(customerId).stream() }
-//            .subscribeOn(Schedulers.boundedElastic())
         return (status?.let {
             Flux.fromStream { adoptionRequestRepository.findAllByCustomerIdAndStatus(customerId, it).stream() }
                 .subscribeOn(Schedulers.boundedElastic())
