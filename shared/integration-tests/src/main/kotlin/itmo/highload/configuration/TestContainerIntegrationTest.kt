@@ -20,7 +20,6 @@ abstract class TestContainerIntegrationTest {
                 .withPassword("test")
                 .withTmpFs(mapOf("/testtmpfs" to "rw"))
                 .withReuse(true)
-//                .withMinimumRunningDuration(Duration.ofSeconds(5L))
         }
     }
 }

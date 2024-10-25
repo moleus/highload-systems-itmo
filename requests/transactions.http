@@ -83,7 +83,6 @@ Content-Type: application/json
     client.test("Test response body", function() {
         const responseBody = response.body;
 
-        // Проверяем наличие всех полей в ответе
         client.assert(responseBody.purpose !== undefined, "Purpose is missing");
         client.assert(responseBody.purpose.id !== undefined, "Purpose ID is missing");
         client.assert(responseBody.purpose.name === "Медикаменты", "Purpose name is not correct");

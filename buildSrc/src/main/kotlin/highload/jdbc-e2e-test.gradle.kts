@@ -54,7 +54,6 @@ testing {
                     srcDir("src/integration-test/kotlin")
                 }
                 resources.srcDirs(
-//                    project(":shared:db-migrations").file("src/main/resources"),
                     project(":shared:integration-tests").file("src/main/resources")
                 )
             }
