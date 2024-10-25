@@ -1,19 +1,16 @@
 spring:
   application:
-    name: transaction-service
-  r2dbc:
-    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    name: notification-service
 
   kafka:
     bootstrap-servers: localhost:9092
-    producer:
+    consumer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
   port: ${APP_SERVER_PORT:8088}
+
 app.base-url: /api/v1
 
 jwt:
@@ -24,12 +21,3 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
-
-springdoc:
-  api-docs:
-    enabled: true
-    path: /transaction-api/v3/api-docs
-  swagger-ui:
-    enabled: true
-    path: /transaction-swagger-ui.html
-    url: /transaction-api/v3/api-docs

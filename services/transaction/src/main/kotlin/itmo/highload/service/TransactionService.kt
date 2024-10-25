@@ -2,6 +2,7 @@ package itmo.highload.service
 
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
+import itmo.highload.kafka.TransactionProducer
 import itmo.highload.model.TransactionMapper
 import itmo.highload.repository.TransactionRepository
 import org.springframework.stereotype.Service
@@ -10,7 +11,9 @@ import reactor.core.publisher.Mono
 
 @Service
 class TransactionService(
-    private val transactionRepository: TransactionRepository, private val balanceService: BalanceService
+    private val transactionRepository: TransactionRepository,
+    private val balanceService: BalanceService,
+    private val transactionProducer: TransactionProducer
 ) {
 
     fun getExpenses(purposeId: Int?): Flux<TransactionResponse> {
@@ -56,7 +59,15 @@ class TransactionService(
                     }
             }.flatMap { transaction ->
                 balanceService.getById(transaction.balanceId)
-                    .map { balance -> TransactionMapper.toResponse(transaction, balance) }
+                    .map { balance ->
+                        val transactionResponse = TransactionMapper.toResponse(transaction, balance)
+
+                        if (isDonation) {
+                            transactionProducer.sendMessageToNewDonationTopic(
+                                "New donation for purpose \"${balance.purpose}\", amount: ${donationDto.moneyAmount}"
+                            )
+                        }
+                        transactionResponse }
             }
     }
 }

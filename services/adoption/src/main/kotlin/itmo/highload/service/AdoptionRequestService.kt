@@ -4,6 +4,7 @@ import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.exceptions.EntityAlreadyExistsException
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
+import itmo.highload.kafka.AdoptionRequestProducer
 import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.model.Ownership
@@ -19,7 +20,8 @@ import reactor.core.scheduler.Schedulers
 @Service
 class AdoptionRequestService(
     private val adoptionRequestRepository: AdoptionRequestRepository,
-    private val ownershipRepository: OwnershipRepository
+    private val ownershipRepository: OwnershipRepository,
+    private val adoptionRequestProducer: AdoptionRequestProducer
 ) {
     private val logger = LoggerFactory.getLogger(AdoptionRequestService::class.java)
 
@@ -39,6 +41,11 @@ class AdoptionRequestService(
                 logger.info("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic())
+                    .doOnSuccess {
+                        adoptionRequestProducer.sendMessageToCreatedTopic(
+                            "Adoption request created for customer ID: $customerId, animal ID: $animalId"
+                        )
+                    }
             }
         }
     }
@@ -64,6 +71,12 @@ class AdoptionRequestService(
             } else {
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic())
+                    .doOnSuccess {
+                        adoptionRequestProducer.sendMessageToChangedTopic(
+                            "Adoption request ${adoptionRequest.status} for customer ID: " +
+                                    "${adoptionRequest.customerId}, animal ID: ${adoptionRequest.animalId}"
+                        )
+                    }
             }
             saveMono
         }

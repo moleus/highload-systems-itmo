@@ -13,6 +13,12 @@ spring:
   main:
     web-application-type: reactive
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 app.base-url: /api/v1
 
 server:
