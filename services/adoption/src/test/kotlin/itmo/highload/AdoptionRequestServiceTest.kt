@@ -6,6 +6,7 @@ import io.mockk.verify
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
+import itmo.highload.kafka.AdoptionRequestProducer
 import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.Ownership
 import itmo.highload.repository.AdoptionRequestRepository
@@ -22,8 +23,9 @@ class AdoptionRequestServiceTest {
 
     private val adoptionRequestRepository: AdoptionRequestRepository = mockk()
     private val ownershipRepository: OwnershipRepository = mockk()
+    private val adoptionProducer: AdoptionRequestProducer = mockk()
     private val adoptionRequestService = AdoptionRequestService(
-        adoptionRequestRepository, ownershipRepository
+        adoptionRequestRepository, ownershipRepository, adoptionProducer
     )
 
     @Test

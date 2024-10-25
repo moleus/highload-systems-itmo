@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.exceptions.NegativeBalanceException
+import itmo.highload.kafka.TransactionProducer
 import itmo.highload.model.Balance
 import itmo.highload.model.Transaction
 import itmo.highload.repository.TransactionRepository
@@ -22,7 +23,8 @@ class TransactionServiceTest {
 
     private val transactionRepository: TransactionRepository = mockk()
     private val balanceService: BalanceService = mockk()
-    private val transactionService = TransactionService(transactionRepository, balanceService)
+    private val transactionProducer: TransactionProducer = mockk()
+    private val transactionService = TransactionService(transactionRepository, balanceService, transactionProducer)
 
     private val userId = -1
 
