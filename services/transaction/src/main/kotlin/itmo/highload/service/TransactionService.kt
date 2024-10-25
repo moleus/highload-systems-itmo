@@ -63,9 +63,8 @@ class TransactionService(
                         val transactionResponse = TransactionMapper.toResponse(transaction, balance)
 
                         if (isDonation) {
-                            transactionProducer.sendMessageToNewDonationTopic(
-                                "New donation for purpose \"${balance.purpose}\", amount: ${donationDto.moneyAmount}"
-                            )
+                            val message = TransactionMapper.toResponse(transaction, balance)
+                            transactionProducer.sendMessageToNewDonationTopic(message)
                         }
                         transactionResponse }
             }

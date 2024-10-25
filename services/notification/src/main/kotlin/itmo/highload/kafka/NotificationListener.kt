@@ -1,35 +1,38 @@
 package itmo.highload.kafka
 
+import itmo.highload.api.dto.response.AdoptionRequestResponse
+import itmo.highload.api.dto.response.TransactionResponse
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class NotificationListener {
+class NotificationListener(private val messagingTemplate: SimpMessagingTemplate) {
 
     private val logger = LoggerFactory.getLogger(NotificationListener::class.java)
 
     @KafkaListener(topics = ["new_donation"])
-    fun listen(record: ConsumerRecord<String, String>) {
-        val message = record.value()
-        val key = record.key()
+    fun listenToNewDonationTopic(donation: TransactionResponse) {
+        logger.info("Received message from Kafka: $donation")
 
-        logger.info("Received message from Kafka - Key: $key, Value: $message")
+        val message = "New donation for purpose \"${donation.purpose.name}\", amount: ${donation.moneyAmount}"
+        messagingTemplate.convertAndSend("/topic/donations", message)
     }
 
     @KafkaListener(topics = ["adoption_request_created"])
-    fun listen(record: ConsumerRecord<String, String>) {
-        val message = record.value()
-        val key = record.key()
+    fun listenToAdoptionRequestCreatedTopic(adoptionRequest: AdoptionRequestResponse) {
+        logger.info("Received message from Kafka: $adoptionRequest")
 
-        logger.info("Received message from Kafka - Key: $key, Value: $message")
+        val message =  "New adoption request"
+        messagingTemplate.convertAndSend("/topic/adoption_requests", message)
     }
 
     @KafkaListener(topics = ["adoption_request_changed"])
-    fun listen(record: ConsumerRecord<String, String>) {
-        val message = record.value()
-        val key = record.key()
+    fun listenToAdoptionRequestChangedTopic(adoptionRequest: AdoptionRequestResponse) {
+        logger.info("Received message from Kafka: $adoptionRequest")
 
-        logger.info("Received message from Kafka - Key: $key, Value: $message")
+        val message = "Adoption request ${adoptionRequest.status}"
+        messagingTemplate.convertAndSend("/topic/adoption_requests/${adoptionRequest.customerId}", message)
     }
 }

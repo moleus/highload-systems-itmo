@@ -42,9 +42,8 @@ class AdoptionRequestService(
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic())
                     .doOnSuccess {
-                        adoptionRequestProducer.sendMessageToCreatedTopic(
-                            "Adoption request created for customer ID: $customerId, animal ID: $animalId"
-                        )
+                        val message = AdoptionRequestMapper.toResponse(adoptionRequest)
+                        adoptionRequestProducer.sendMessageToCreatedTopic(message)
                     }
             }
         }
@@ -71,14 +70,11 @@ class AdoptionRequestService(
             } else {
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic())
-                    .doOnSuccess {
-                        adoptionRequestProducer.sendMessageToChangedTopic(
-                            "Adoption request ${adoptionRequest.status} for customer ID: " +
-                                    "${adoptionRequest.customerId}, animal ID: ${adoptionRequest.animalId}"
-                        )
-                    }
             }
-            saveMono
+            saveMono.doOnSuccess {
+                val message = AdoptionRequestMapper.toResponse(adoptionRequest)
+                adoptionRequestProducer.sendMessageToChangedTopic(message)
+            }
         }
     }
 
