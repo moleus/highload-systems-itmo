@@ -38,7 +38,8 @@ class AdoptionRequestController(
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     @Operation(
         summary = "Get all adoption requests",
-        description = "Retrieve all adoption requests, filtered by status if specified. Accessible to Adoption Managers and Customers."
+        description = "Retrieve all adoption requests, filtered by status if specified. " +
+                "Accessible to Adoption Managers and Customers."
     )
     @ApiResponses(
         value = [
