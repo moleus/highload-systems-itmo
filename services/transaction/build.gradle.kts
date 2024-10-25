@@ -20,6 +20,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
 }
 
 highloadApp {

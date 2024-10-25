@@ -28,3 +28,12 @@ server:
 jwt:
   secret:
     sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /animal-api/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /animal-swagger-ui.html
+    url: /animal-api/v3/api-docs

@@ -36,3 +36,12 @@ logging:
 jwt:
   secret:
     sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /adoption-api/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /adoption-swagger-ui.html
+    url: /adoption-api/v3/api-docs

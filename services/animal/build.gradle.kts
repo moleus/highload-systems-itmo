@@ -34,6 +34,8 @@ dependencies {
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
     implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
 }
 
 highloadApp {

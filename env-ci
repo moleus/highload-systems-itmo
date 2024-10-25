@@ -3,6 +3,10 @@
 ## applications
 CLOUD_CONFIG_HOST=cloud-config
 EUREKA_HOST=eureka-server
+ADOPTION_HOST=adoption
+TRANSACTION_HOST=transaction
+AUTHENTICATION_HOST=authentication
+ANIMAL_HOST=animal
 DB_HOST=db
 DB_PORT=5432
 JVM_OPTS=-Xms64m -Xmx128m
