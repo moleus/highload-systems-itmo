@@ -89,7 +89,6 @@ class WebFluxSecurityConfig @Autowired constructor(
                     jwtAuthenticationConverter = grantedAuthoritiesExtractor()
                 }
             }
-//            addFilterAt(jwtFilter, SecurityWebFiltersOrder.HTTP_BASIC)
         }
 
     @Bean
@@ -115,8 +114,6 @@ class WebFluxSecurityConfig @Autowired constructor(
 
     fun grantedAuthoritiesExtractor(): Converter<Jwt, Mono<AbstractAuthenticationToken>> {
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
-//        val grantedAuthoritiesConverter = GrantedAuthoritiesExtractor()
-//        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(GrantedAuthoritiesExtractor())
         return ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter)
     }
