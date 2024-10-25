@@ -11,22 +11,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SwaggerConfig {
-//    @Bean
-//    fun customOpenAPI(): OpenAPI {
-//        return OpenAPI()
-//            .components(
-//                Components()
-//                    .addSecuritySchemes(
-//                        "bearer-key",
-//                        SecurityScheme()
-//                            .type(SecurityScheme.Type.HTTP)
-//                            .scheme("bearer")
-//                            .bearerFormat("JWT")
-//                    )
-//            )
-
-//    }
-
     @Bean
     fun openAPI(): OpenAPI {
         return OpenAPI().addSecurityItem(

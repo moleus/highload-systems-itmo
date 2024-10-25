@@ -45,10 +45,10 @@ springdoc:
     -   name: gateway-service
         url: /gateway-api/v3/api-docs
     -   name: animal-service
-        url: http://localhost:8086/animal-api/v3/api-docs
+        url: http://${ANIMAL_HOST:localhost:8086}/animal-api/v3/api-docs
     -   name: adoption-service
-        url: http://localhost:8085/adoption-api/v3/api-docs
+        url: http://${ADOPTION_HOST:localhost:8085}/adoption-api/v3/api-docs
     -   name: transaction-service
-        url: http://localhost:8088/transaction-api/v3/api-docs
+        url: http://${TRANSACTION_HOST:localhost:8088}/transaction-api/v3/api-docs
     -   name: auth-service
-        url: http://localhost:8087/auth-api/v3/api-docs
+        url: http://${AUTHENTICATION_HOST:localhost:8087}/auth-api/v3/api-docs
