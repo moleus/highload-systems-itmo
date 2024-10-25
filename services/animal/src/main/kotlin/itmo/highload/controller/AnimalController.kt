@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/animals")
+@CrossOrigin(origins = ["http://localhost:8080"])
 @OpenAPIDefinition(
     servers = [
         Server(url = "http://localhost:8080")
@@ -66,6 +67,7 @@ class AnimalController(val animalService: AnimalService) {
                 description = "Animal details successfully retrieved",
                 content = [Content(schema = Schema(implementation = AnimalResponse::class))]
             ),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "404", description = "Animal not found"),
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
@@ -89,6 +91,7 @@ class AnimalController(val animalService: AnimalService) {
                 content = [Content(schema = Schema(implementation = AnimalResponse::class))]
             ),
             ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
     )
@@ -110,6 +113,7 @@ class AnimalController(val animalService: AnimalService) {
                 content = [Content(schema = Schema(implementation = AnimalResponse::class))]
             ),
             ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "404", description = "Animal not found"),
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
@@ -128,6 +132,7 @@ class AnimalController(val animalService: AnimalService) {
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "204", description = "Animal successfully deleted"),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "404", description = "Animal not found"),
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
