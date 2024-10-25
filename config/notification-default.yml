@@ -11,9 +11,7 @@ spring:
       spring.json.trusted.packages: "*"
 
 server:
-  port: ${APP_SERVER_PORT:8088}
-
-app.base-url: /api/v1
+  port: ${APP_SERVER_PORT:8089}
 
 jwt:
   secret:
