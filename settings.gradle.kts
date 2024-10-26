@@ -16,6 +16,7 @@ include(
     "shared:api",
     "shared:db-migrations",
     "shared:integration-tests",
+    "shared:minio",
 )
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
