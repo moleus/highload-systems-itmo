@@ -4,6 +4,7 @@
 plugins {
     id("highload.jdbc-e2e-test")
     id("highload.application")
+    id("highload.web")
     id("highload.db")
     id("highload.common")
 }
