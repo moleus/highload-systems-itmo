@@ -29,9 +29,10 @@ class MinioStorage @Autowired constructor(
 
     override fun putObject(bucketName: String, fileName: String, fileType: String, data: ByteArray) {
         minioClient.putObject(
-            io.minio.PutObjectArgs.builder()
+            PutObjectArgs.builder()
                 .bucket(bucketName)
                 .`object`(fileName)
+                .contentType(fileType)
                 .stream(data.inputStream(), data.size.toLong(), -1)
                 .build()
         )

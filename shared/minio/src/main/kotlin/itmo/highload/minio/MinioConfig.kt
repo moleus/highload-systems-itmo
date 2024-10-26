@@ -19,7 +19,7 @@ class MinioConfig @Autowired constructor(
     @Value("\${minio.bucketName}")
     var defaultBucketName: String,
     @Value("\${minio.defaultFolder}")
-    var defaultBaseFolder: String,
+    var defaultBaseFolder: String? = null,
 ) {
     private val minioSecure = false
 
