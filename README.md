@@ -59,14 +59,14 @@ docker-compose up db
 
 Просмотр лидера кластера
 ```bash
-docker compose exec kafka1 kafka-metadata-shell.sh \
+docker compose exec kafka-1 kafka-metadata-shell.sh \
   --snapshot /bitnami/kafka/data/__cluster_metadata-0/00000000000000000000.log \
   cat /metadataQuorum/leader
 ```
 
 Проверка доступности данных на другой реплике
 ```bash
-docker compose exec kafka5 bash
+docker compose exec kafka-2 bash
 $ kafka-console-consumer.sh --topic events --bootstrap-server localhost:9092 --from-beginning
 ```
 
