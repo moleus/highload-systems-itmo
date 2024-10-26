@@ -10,12 +10,9 @@ spring:
     properties:
       spring.json.trusted.packages: "*"
 
+# TODO почему то игнорирует порт запускается 8080
 server:
   port: ${APP_SERVER_PORT:8089}
-
-jwt:
-  secret:
-    sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}
 
 eureka:
   client:
