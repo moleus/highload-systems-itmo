@@ -15,6 +15,15 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost:9092}
+    admin:
+      auto-create: true
+    topics:
+      - name: adoption_request_created
+        partitions: 3
+        replicas: 1
+      - name: adoption_request_changed
+        partitions: 3
+        replicas: 1
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
