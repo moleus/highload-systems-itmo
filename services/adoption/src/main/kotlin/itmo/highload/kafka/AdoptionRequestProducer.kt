@@ -2,6 +2,7 @@ package itmo.highload.kafka
 
 import itmo.highload.api.dto.response.AdoptionRequestResponse
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 
@@ -10,13 +11,19 @@ class AdoptionRequestProducer(private val kafkaTemplate: KafkaTemplate<String, A
 
     private val logger = LoggerFactory.getLogger(AdoptionRequestProducer::class.java)
 
-    fun sendMessageToCreatedTopic(adoptionRequest: AdoptionRequestResponse) {
-        kafkaTemplate.send("adoption_request_created", adoptionRequest)
-        logger.info("Sent to Kafka adoption_request_created: $adoptionRequest")
+    @Value("\${spring.kafka.producer.adoption-request-created-topic}")
+    lateinit var adoptionRequestCreatedTopic: String
+
+    @Value("\${spring.kafka.producer.adoption-request-changed-topic}")
+    lateinit var adoptionRequestChangedTopic: String
+
+    fun sendMessageToAdoptionRequestCreatedTopic(adoptionRequest: AdoptionRequestResponse) {
+        kafkaTemplate.send(adoptionRequestCreatedTopic, adoptionRequest)
+        logger.info("Sent to Kafka $adoptionRequestCreatedTopic: $adoptionRequest")
     }
 
-    fun sendMessageToChangedTopic(adoptionRequest: AdoptionRequestResponse) {
-        kafkaTemplate.send("adoption_request_changed", adoptionRequest)
-        logger.info("Sent to Kafka adoption_request_changed: $adoptionRequest")
+    fun sendMessageToAdoptionRequestChangedTopic(adoptionRequest: AdoptionRequestResponse) {
+        kafkaTemplate.send(adoptionRequestChangedTopic, adoptionRequest)
+        logger.info("Sent to Kafka $adoptionRequestChangedTopic: $adoptionRequest")
     }
 }

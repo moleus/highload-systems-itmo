@@ -58,6 +58,7 @@ class TransactionServiceTest {
         assertNotNull(result)
         verify { transactionRepository.save(any()) }
         verify { balanceService.changeMoneyAmount(transactionDto.purposeId!!, true, transactionDto.moneyAmount!!) }
+        verify { transactionProducer.sendMessageToNewDonationTopic(any()) }
     }
 
     @Test

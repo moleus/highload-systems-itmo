@@ -43,7 +43,7 @@ class AdoptionRequestService(
                     .subscribeOn(Schedulers.boundedElastic())
                     .doOnSuccess {
                         val message = AdoptionRequestMapper.toResponse(adoptionRequest)
-                        adoptionRequestProducer.sendMessageToCreatedTopic(message)
+                        adoptionRequestProducer.sendMessageToAdoptionRequestCreatedTopic(message)
                     }
             }
         }
@@ -73,7 +73,7 @@ class AdoptionRequestService(
             }
             saveMono.doOnSuccess {
                 val message = AdoptionRequestMapper.toResponse(adoptionRequest)
-                adoptionRequestProducer.sendMessageToChangedTopic(message)
+                adoptionRequestProducer.sendMessageToAdoptionRequestChangedTopic(message)
             }
         }
     }

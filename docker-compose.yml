@@ -220,6 +220,17 @@ services:
     networks:
       - backend
 
+  notification:
+    image: moleus/highload/notification:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    <<: *default-healthcheck
+    networks:
+      - backend
+
 volumes:
   postgres-data:
   kafka-1-data:

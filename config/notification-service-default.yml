@@ -7,6 +7,9 @@ spring:
     consumer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      new-donation-topic: "new_donation"
+      adoption-request-created-topic: "adoption_request_created"
+      adoption-request-changed-topic: "adoption_request_changed"
     properties:
       spring.json.trusted.packages: "*"
 

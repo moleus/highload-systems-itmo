@@ -27,6 +27,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      adoption-request-created-topic: "adoption_request_created"
+      adoption-request-changed-topic: "adoption_request_changed"
 
 app.base-url: /api/v1
 

@@ -18,7 +18,10 @@ class NotificationListener(
 
     private val logger = LoggerFactory.getLogger(NotificationListener::class.java)
 
-    @KafkaListener(topics = ["new_donation"], groupId = "donation_group")
+    @KafkaListener(
+        topics = ["\${spring.kafka.consumer.new-donation-topic}"],
+        groupId = "donation_group"
+    )
     fun listenToNewDonationTopic(@Payload message: String) {
         try {
             val donation = parseMessage(message, TransactionMessage::class.java)
@@ -30,7 +33,10 @@ class NotificationListener(
         }
     }
 
-    @KafkaListener(topics = ["adoption_request_created"], groupId = "request_created_group")
+    @KafkaListener(
+        topics = ["\${spring.kafka.consumer.adoption-request-created-topic}"],
+        groupId = "request_created_group"
+    )
     fun listenToAdoptionRequestCreatedTopic(@Payload message: String) {
         try {
             parseMessage(message, AdoptionRequestMessage::class.java)
@@ -42,11 +48,14 @@ class NotificationListener(
         }
     }
 
-    @KafkaListener(topics = ["adoption_request_changed"], groupId = "request_changed_group")
+    @KafkaListener(
+        topics = ["\${spring.kafka.consumer.adoption-request-changed-topic}"],
+        groupId = "request_changed_group"
+    )
     fun listenToAdoptionRequestChangedTopic(@Payload message: String) {
         try {
             val adoptionRequest = parseMessage(message, AdoptionRequestMessage::class.java)
-            val notification = "Adoption request ${adoptionRequest.status}"
+            val notification = "Hey! Your request for an adoption has changed. New status: ${adoptionRequest.status}"
             sendNotification(notification, "/topic/adoption_requests/${adoptionRequest.customerId}")
 
         } catch (e: JsonProcessingException) {
