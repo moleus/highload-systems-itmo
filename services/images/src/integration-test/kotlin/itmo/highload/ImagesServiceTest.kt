@@ -1,4 +1,3 @@
-// File: `src/test/kotlin/itmo/highload/ImagesControllerIntegrationTest.kt`
 package itmo.highload
 
 import io.restassured.RestAssured
