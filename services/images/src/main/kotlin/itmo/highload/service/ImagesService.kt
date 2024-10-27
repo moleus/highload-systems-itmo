@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 import java.net.ConnectException
 import java.util.*
 
-class ImageServiceException(message: String) : RuntimeException(message)
+class ImageServiceException(message: String, e: Exception) : RuntimeException(message, e)
 
 @Service
 class ImagesService @Autowired constructor(
@@ -50,7 +50,7 @@ class ImagesService @Autowired constructor(
                     minioConfig.defaultBucketName, fileName, data.headers().contentType.toString(), partDataStream
                 )
             } catch (e: ConnectException) {
-                sink.error(ImageServiceException("Failed to connect to MinIO"))
+                sink.error(ImageServiceException("Failed to connect to MinIO", e))
             }
         }.doOnNext {
             logger.info { "Uploaded ${it.size} bytes to $fileName" }

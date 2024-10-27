@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component
 @Component
 class MinioStorage @Autowired constructor(
     private val minioClient: MinioClient,
-    private val minioConfig: MinioConfig,
 ) : S3Storage {
     override fun isBucketExists(bucketName: String): Boolean {
         return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())
@@ -27,14 +26,12 @@ class MinioStorage @Autowired constructor(
         return minioClient.listBuckets().map { it.name() }
     }
 
-    override fun putObject(bucketName: String, fileName: String, fileType: String, data: PartDataStream): ObjectPutResult {
+    override fun putObject(
+        bucketName: String, fileName: String, fileType: String, data: PartDataStream
+    ): ObjectPutResult {
         val writeResponse = minioClient.putObject(
-            PutObjectArgs.builder()
-                .bucket(bucketName)
-                .`object`(fileName)
-                .contentType(fileType)
-                .stream(data.stream, data.size, data.partSize)
-                .build()
+            PutObjectArgs.builder().bucket(bucketName).`object`(fileName).contentType(fileType)
+                .stream(data.stream, data.size, data.partSize).build()
         )
         return ObjectPutResult(writeResponse.headers().size.toLong())
     }
