@@ -1,38 +1,67 @@
 package itmo.highload.kafka
 
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
 import itmo.highload.kafka.message.AdoptionRequestMessage
 import itmo.highload.kafka.message.TransactionMessage
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class NotificationListener(private val messagingTemplate: SimpMessagingTemplate) {
+class NotificationListener(
+    private val messagingTemplate: SimpMessagingTemplate,
+    private val objectMapper: ObjectMapper
+) {
 
     private val logger = LoggerFactory.getLogger(NotificationListener::class.java)
 
     @KafkaListener(topics = ["new_donation"], groupId = "donation_group")
-    fun listenToNewDonationTopic(donation: TransactionMessage) {
-        logger.info("Received message from Kafka: $donation")
+    fun listenToNewDonationTopic(@Payload message: String) {
+        try {
+            val donation = parseMessage(message, TransactionMessage::class.java)
+            val notification = "New donation for purpose \"${donation.purpose.name}\", amount: ${donation.moneyAmount}"
+            sendNotification(notification, "/topic/donations")
 
-        val message = "New donation for purpose \"${donation.purpose.name}\", amount: ${donation.moneyAmount}"
-        messagingTemplate.convertAndSend("/topic/donations", message)
+        } catch (e: JsonProcessingException) {
+            logger.error("Failed to parse Kafka message: $message", e)
+        }
     }
 
     @KafkaListener(topics = ["adoption_request_created"], groupId = "request_created_group")
-    fun listenToAdoptionRequestCreatedTopic(adoptionRequest: AdoptionRequestMessage) {
-        logger.info("Received message from Kafka: $adoptionRequest")
+    fun listenToAdoptionRequestCreatedTopic(@Payload message: String) {
+        try {
+            parseMessage(message, AdoptionRequestMessage::class.java)
+            val notification =  "New adoption request"
+            sendNotification(notification, "/topic/adoption_requests")
 
-        val message =  "New adoption request"
-        messagingTemplate.convertAndSend("/topic/adoption_requests", message)
+        } catch (e: JsonProcessingException) {
+            logger.error("Failed to parse Kafka message: $message", e)
+        }
     }
 
     @KafkaListener(topics = ["adoption_request_changed"], groupId = "request_changed_group")
-    fun listenToAdoptionRequestChangedTopic(adoptionRequest: AdoptionRequestMessage) {
-        logger.info("Received message from Kafka: $adoptionRequest")
+    fun listenToAdoptionRequestChangedTopic(@Payload message: String) {
+        try {
+            val adoptionRequest = parseMessage(message, AdoptionRequestMessage::class.java)
+            val notification = "Adoption request ${adoptionRequest.status}"
+            sendNotification(notification, "/topic/adoption_requests/${adoptionRequest.customerId}")
 
-        val message = "Adoption request ${adoptionRequest.status}"
-        messagingTemplate.convertAndSend("/topic/adoption_requests/${adoptionRequest.customerId}", message)
+        } catch (e: JsonProcessingException) {
+            logger.error("Failed to parse Kafka message: $message", e)
+        }
+    }
+
+    fun <T> parseMessage(message: String, targetType: Class<T>): T {
+        val parsedMessage: T = objectMapper.readValue(message, targetType)
+        logger.info("Received message from Kafka: $parsedMessage")
+        return parsedMessage
+    }
+
+    fun sendNotification(notification: String, topic: String) {
+        messagingTemplate.convertAndSend(topic, notification)
+        logger.info("Send notification to $topic : $notification")
     }
 }

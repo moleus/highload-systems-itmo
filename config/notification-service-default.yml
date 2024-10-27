@@ -6,11 +6,10 @@ spring:
     bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
     consumer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     properties:
       spring.json.trusted.packages: "*"
 
-# TODO почему то игнорирует порт запускается 8080
 server:
   port: ${APP_SERVER_PORT:8089}
 
