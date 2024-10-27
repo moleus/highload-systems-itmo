@@ -25,7 +25,6 @@ interface HighloadAppExtension {
 
 val applicationExtension = project.extensions.create<HighloadAppExtension>("highloadApp")
 
-val jdkVersion = 21
 val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault()).let {
     when {
         it.contains("aarch64") -> "arm64"

@@ -11,7 +11,7 @@ permissions:
   pull-requests: write
 
 env:
-  JDK_VERSION: 17
+  JDK_VERSION: 21
   GRADLE_VERSION: 8.10.2
   PGHOST: postgres
   PGPORT: 5432
