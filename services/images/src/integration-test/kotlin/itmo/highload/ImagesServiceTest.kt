@@ -22,7 +22,7 @@ import org.testcontainers.containers.MinIOContainer
 import org.testcontainers.junit.jupiter.Container
 
 @R2dbcIntegrationTestContext
-class ImagesControllerIntegrationTest @Autowired constructor(
+class ImagesServiceTest @Autowired constructor(
     jwtUtils: JwtUtils
 ) : TestContainerIntegrationTest() {
     companion object {
@@ -57,7 +57,7 @@ class ImagesControllerIntegrationTest @Autowired constructor(
             .withJwt(customerToken)
             .port(port)
             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            .multiPart("file", ClassPathResource("test-image.png").file)
+            .multiPart("file", ClassPathResource("test-image.png", ImagesServiceTest::class.java).file)
             .post("/api/v1/images")
             .then()
             .statusCode(HttpStatus.CREATED.value())
@@ -92,7 +92,7 @@ class ImagesControllerIntegrationTest @Autowired constructor(
             .port(port)
             .withJwt(customerToken)
             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            .multiPart("file", ClassPathResource("test-image.png").file)
+            .multiPart("file", ClassPathResource("test-image.png", ImagesServiceTest::class.java).file)
             .post("/api/v1/images")
             .then()
             .statusCode(HttpStatus.CREATED.value())

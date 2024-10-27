@@ -32,7 +32,7 @@ class ImagesService @Autowired constructor(
         val minioHost = minioConfig.minioUrl + ":" + minioConfig.minioPort
         val uuid = UUID.randomUUID().toString()
         val fileName = "$uuid/${data.filename()}"
-        val minioImageUrl = "http://$minioHost/$bucketName/$fileName"
+        val minioImageUrl = "$minioHost/$bucketName/$fileName"
         val imageRef = ImageRef(url = minioImageUrl)
 
         return data.content().collectList().map { parts ->
