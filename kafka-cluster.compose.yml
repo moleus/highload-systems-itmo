@@ -21,6 +21,8 @@ services:
     environment:
       <<: *kafka-cluster-envs
       KAFKA_CFG_NODE_ID: 1
+    volumes:
+      - kafka-1-data:/bitnami/kafka
 
   kafka-2:
     image: 'bitnami/kafka:3.8.0'
@@ -58,5 +60,6 @@ services:
       DYNAMIC_CONFIG_ENABLED: 'true'
 
 volumes:
+  kafka-1-data:
   kafka-2-data:
   kafka-3-data:
