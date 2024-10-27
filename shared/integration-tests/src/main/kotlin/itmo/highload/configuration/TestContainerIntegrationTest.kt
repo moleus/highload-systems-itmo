@@ -19,7 +19,7 @@ abstract class TestContainerIntegrationTest {
                 .withUsername("test")
                 .withPassword("test")
                 .withTmpFs(mapOf("/testtmpfs" to "rw"))
-                .withReuse(true)
+                .withReuse(false)
         }
     }
 }
