@@ -36,17 +36,22 @@ class AnimalService(
     }
 
     fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<Animal> {
-        val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null)
+        val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null && isNotAdopted)
             adoptionService.getAllAdoptedAnimalsId(token) else Flux.empty()
 
         return adoptedAnimalsIdFlux.collectList()
             .flatMapMany { adoptedAnimalsId ->
-                if (name != null) {
-                    animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId)
-                } else {
-                    animalRepository.findByIdNotIn(adoptedAnimalsId)
+                when {
+                    isNotAdopted == true || isNotAdopted == null -> {
+                        if (name != null) animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId)
+                        else animalRepository.findByIdNotIn(adoptedAnimalsId)
+                    }
+                    else -> {
+                        Flux.empty()
+                    }
                 }
             }
+
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {
