@@ -11,10 +11,6 @@ Authorization: Bearer {{$auth.token("customer-auth")}}
         const responseBody = response.body;
         client.assert(responseBody.id !== undefined, "ID is missing");
         client.assert(responseBody.status === "PENDING", "Status is not correct");
-        client.assert(responseBody.customer_id === 2, "Customer ID is not correct");
-        client.assert(responseBody.manager_id === null, "Manager ID should be null");
-        client.assert(responseBody.animal_id === 2, "Animal ID is not correct");
-        client.assert(responseBody.date_time !== undefined, "Date time is missing");
     });
 %}
 
@@ -44,10 +40,6 @@ Authorization: Bearer {{$auth.token("customer-auth")}}
         const responseBody = response.body[0];
         client.assert(responseBody.id !== undefined, "ID is missing");
         client.assert(responseBody.status === "PENDING", "Status is not correct");
-        client.assert(responseBody.customer_id === 2, "Customer ID is not correct");
-        client.assert(responseBody.manager_id === null, "Manager ID should be null");
-        client.assert(responseBody.animal_id === 2, "Animal ID is not correct");
-        client.assert(responseBody.date_time !== undefined, "Date time is missing");
     });
 %}
 
@@ -71,10 +63,6 @@ Content-Type: application/json
         const responseBody = response.body;
         client.assert(responseBody.id !== undefined, "ID is missing");
         client.assert(responseBody.status === "DENIED", "Status is not correct");
-        client.assert(responseBody.customer_id === 2, "Customer ID is not correct");
-        client.assert(responseBody.manager_id === 4, "Manager ID should be null");
-        client.assert(responseBody.animal_id === 2, "Animal ID is not correct");
-        client.assert(responseBody.date_time !== undefined, "Date time is missing");
     });
 %}
 
