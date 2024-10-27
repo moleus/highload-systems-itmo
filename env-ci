@@ -9,7 +9,7 @@ AUTHENTICATION_HOST=authentication
 ANIMAL_HOST=animal
 DB_HOST=db
 DB_PORT=5432
-KAFKA_HOST=kafka-1
+KAFKA_HOST=kafka-1:9092
 
 ## compose interpolation
 POSTGRES_USERNAME=postgres
