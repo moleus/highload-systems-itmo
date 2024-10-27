@@ -4,6 +4,7 @@ import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.exceptions.EntityAlreadyExistsException
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
+import itmo.highload.kafka.AdoptionRequestProducer
 import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.AdoptionRequestMapper
 import itmo.highload.model.Ownership
@@ -19,7 +20,8 @@ import reactor.core.scheduler.Schedulers
 @Service
 class AdoptionRequestService(
     private val adoptionRequestRepository: AdoptionRequestRepository,
-    private val ownershipRepository: OwnershipRepository
+    private val ownershipRepository: OwnershipRepository,
+    private val adoptionRequestProducer: AdoptionRequestProducer
 ) {
     private val logger = LoggerFactory.getLogger(AdoptionRequestService::class.java)
 
@@ -39,6 +41,10 @@ class AdoptionRequestService(
                 logger.info("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic())
+                    .doOnSuccess {
+                        val message = AdoptionRequestMapper.toResponse(adoptionRequest)
+                        adoptionRequestProducer.sendMessageToAdoptionRequestCreatedTopic(message)
+                    }
             }
         }
     }
@@ -65,7 +71,10 @@ class AdoptionRequestService(
                 Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
                     .subscribeOn(Schedulers.boundedElastic())
             }
-            saveMono
+            saveMono.doOnSuccess {
+                val message = AdoptionRequestMapper.toResponse(adoptionRequest)
+                adoptionRequestProducer.sendMessageToAdoptionRequestChangedTopic(message)
+            }
         }
     }
 

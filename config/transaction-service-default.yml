@@ -6,6 +6,19 @@ spring:
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
 
+  kafka:
+    bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
+    admin:
+      auto-create: true
+    topics:
+      - name: new_donation
+        partitions: 3
+        replicas: 1
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      new-donation-topic: "new_donation"
+
 server:
   port: ${APP_SERVER_PORT:8088}
 app.base-url: /api/v1
