@@ -27,15 +27,16 @@ class MinioStorage @Autowired constructor(
         return minioClient.listBuckets().map { it.name() }
     }
 
-    override fun putObject(bucketName: String, fileName: String, fileType: String, data: ByteArray) {
-        minioClient.putObject(
+    override fun putObject(bucketName: String, fileName: String, fileType: String, data: PartDataStream): ObjectPutResult {
+        val writeResponse = minioClient.putObject(
             PutObjectArgs.builder()
                 .bucket(bucketName)
                 .`object`(fileName)
                 .contentType(fileType)
-                .stream(data.inputStream(), data.size.toLong(), -1)
+                .stream(data.stream, data.size, data.partSize)
                 .build()
         )
+        return ObjectPutResult(writeResponse.headers().size.toLong())
     }
 
     override fun deleteObject(bucketName: String, objectName: String) {

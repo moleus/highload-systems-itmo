@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-images
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: image_ref
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: "BY DEFAULT"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

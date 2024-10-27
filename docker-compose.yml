@@ -110,7 +110,7 @@ services:
 
   minio:
     image: quay.io/minio/minio:RELEASE.2024-10-13T13-34-11Z
-    command: server --console-address ":9001" http://minio/data
+    command: server --console-address ":9001" /data
     ports:
       - "127.0.0.1:9000:9000"
       - "127.0.0.1:9001:9001"

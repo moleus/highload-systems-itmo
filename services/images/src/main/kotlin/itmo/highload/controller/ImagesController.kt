@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.model.ImageRef
 import itmo.highload.service.ImagesService
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 import reactor.core.publisher.Mono
 
 @RestController
@@ -49,7 +48,7 @@ class ImagesController(
         return imagesService.getImageById(id)
     }
 
-    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping("/upload")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADOPTION_MANAGER')")
     @Operation(
@@ -68,7 +67,7 @@ class ImagesController(
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
     )
-    fun uploadImage(@RequestParam("file") uploadedFile: MultipartFile): Mono<ImageRef> {
-        return imagesService.saveImage(uploadedFile)
+    fun uploadImage(@RequestPart("file") fileParts: Mono<FilePart>): Mono<ImageRef> {
+        return fileParts.flatMap { part -> imagesService.saveImage(part) }
     }
 }
