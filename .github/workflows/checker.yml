@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: detekt
+name: CI
 
 on:
   pull_request:
@@ -13,11 +13,6 @@ permissions:
 env:
   JDK_VERSION: 21
   GRADLE_VERSION: 8.10.2
-  PGHOST: postgres
-  PGPORT: 5432
-  PGPASSWORD: postgres
-  PGUSER: runner
-  PGOPTIONS: '--client-min-messages=warning'
 
 jobs:
   run-docker-compose:
