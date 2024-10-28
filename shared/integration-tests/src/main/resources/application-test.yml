@@ -8,12 +8,24 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-#  datasource:
-#    url: "jdbc:tc:postgresql:15:///test?TC_TMPFS=/testtmpfs:rw"
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      adoption-request-created-topic: "adoption_request_created"
+      adoption-request-changed-topic: "adoption_request_changed"
+      new-donation-topic: "new_donation"
+    consumer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      new-donation-topic: "new_donation"
+      adoption-request-created-topic: "adoption_request_created"
+      adoption-request-changed-topic: "adoption_request_changed"
   liquibase:
     show-summary-output: all
     change-log: 'classpath:changelog/test-changelog-root.yaml'
     contexts: test
+
 liquibase:
   duplicateFileMode: WARN
 
@@ -23,8 +35,4 @@ logging:
     root: INFO
     itmo:
       highload: TRACE
-#    web: TRACE
-#    org.springframework:
-#      web: TRACE
-#      security: TRACE
 debug: true

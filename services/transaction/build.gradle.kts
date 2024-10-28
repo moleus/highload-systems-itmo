@@ -26,3 +26,13 @@ dependencies {
 highloadApp {
     serviceName.set("transaction")
 }
+
+testing {
+    suites {
+        val integrationTest by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation("org.testcontainers:kafka:1.20.3")
+            }
+        }
+    }
+}

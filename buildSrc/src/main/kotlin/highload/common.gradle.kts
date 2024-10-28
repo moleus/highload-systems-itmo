@@ -16,6 +16,9 @@ group = "itmo.highload"
 version = "0.2.0"
 
 kotlin {
+    target {
+        version = JavaVersion.VERSION_21
+    }
     compilerOptions {
         // infer Kotlin types from Spring API taking into account nullability
         freeCompilerArgs.addAll("-Xjsr305=strict")
