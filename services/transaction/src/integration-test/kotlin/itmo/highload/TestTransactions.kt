@@ -30,6 +30,10 @@ import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.r2dbc.connection.init.ScriptUtils
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.kafka.KafkaContainer
 import reactor.core.publisher.Mono
 
 @R2dbcIntegrationTestContext
@@ -38,6 +42,19 @@ class TestTransactions @Autowired constructor(
     private val connectionFactory: ConnectionFactory,
     jwtUtils: JwtUtils
 ) : TestContainerIntegrationTest() {
+    companion object {
+        @Container
+        @Suppress("UnusedPrivateProperty")
+        private val kafka = KafkaContainer("apache/kafka-native:3.8.0").apply {
+            this.withTmpFs(mapOf("/testtmpfs" to "rw"))
+        }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun kafkaProps(registry: DynamicPropertyRegistry) {
+            registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers)
+        }
+    }
 
     @LocalServerPort
     private var port: Int = 0
