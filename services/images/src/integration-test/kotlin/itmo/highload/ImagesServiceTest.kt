@@ -1,6 +1,8 @@
 package itmo.highload
 
 import io.restassured.RestAssured
+import itmo.highload.api.dto.response.FileUrlResponse
+import itmo.highload.api.dto.response.UploadedFileResponse
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.model.S3ObjectRef
@@ -74,15 +76,15 @@ class ImagesServiceTest @Autowired constructor(
         val retrievedS3ObjectRef = RestAssured.given()
             .withJwt(customerToken)
             .port(port)
-            .get("/api/v1/images/{id}", imageRef.id)
+            .get("/api/v1/images/{id}", imageRef.fileID)
             .then()
             .statusCode(HttpStatus.OK.value())
             .extract()
-            .`as`(S3ObjectRef::class.java)
+            .`as`(FileUrlResponse::class.java)
 
         assertNotNull(retrievedS3ObjectRef)
-        assertEquals(imageRef.id, retrievedS3ObjectRef?.id)
-        assertEquals(imageRef.url, retrievedS3ObjectRef?.url)
+        assertEquals(imageRef.fileID, retrievedS3ObjectRef?.fileID)
+        assert(retrievedS3ObjectRef?.url?.contains("http://localhost:$port/images/") == true)
     }
 
     @Test
@@ -92,19 +94,19 @@ class ImagesServiceTest @Autowired constructor(
         RestAssured.given()
             .withJwt(customerToken)
             .port(port)
-            .delete("/api/v1/images/{id}", imageRef.id)
+            .delete("/api/v1/images/{id}", imageRef.fileID)
             .then()
             .statusCode(HttpStatus.NO_CONTENT.value())
 
         RestAssured.given()
             .withJwt(customerToken)
             .port(port)
-            .get("/api/v1/images/{id}", imageRef.id)
+            .get("/api/v1/images/{id}", imageRef.fileID)
             .then()
             .statusCode(HttpStatus.NOT_FOUND.value())
     }
 
-    private fun uploadTestImage(): S3ObjectRef {
+    private fun uploadTestImage(): UploadedFileResponse {
         return RestAssured.given()
             .port(port)
             .withJwt(customerToken)
@@ -114,6 +116,6 @@ class ImagesServiceTest @Autowired constructor(
             .then()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
-            .`as`(S3ObjectRef::class.java)
+            .`as`(UploadedFileResponse::class.java)
     }
 }
