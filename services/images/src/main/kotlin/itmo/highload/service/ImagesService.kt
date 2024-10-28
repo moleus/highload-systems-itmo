@@ -4,8 +4,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.minio.MinioConfig
 import itmo.highload.minio.PartDataStream
 import itmo.highload.minio.S3Storage
-import itmo.highload.model.ImageRef
-import itmo.highload.repository.ImageRefRepository
+import itmo.highload.model.S3ObjectRef
+import itmo.highload.repository.ImageObjectRefRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
@@ -17,23 +17,26 @@ class ImageServiceException(message: String, e: Exception) : RuntimeException(me
 
 @Service
 class ImagesService @Autowired constructor(
-    private val imageRefRepository: ImageRefRepository,
+    private val imageObjectRefRepository: ImageObjectRefRepository,
     private val minioStorage: S3Storage,
     private val minioConfig: MinioConfig
 ) {
     private val logger = KotlinLogging.logger {}
+    private val bucketName = minioConfig.defaultBucketName
 
-    fun getImageById(id: Int): Mono<ImageRef> {
-        return imageRefRepository.findById(id)
+    fun getImageById(id: Int): Mono<S3ObjectRef> {
+        return imageObjectRefRepository.findById(id)
     }
 
-    fun saveImage(data: FilePart): Mono<ImageRef> {
-        val bucketName = minioConfig.defaultBucketName
-        val minioHost = minioConfig.minioUrl + ":" + minioConfig.minioPort
+    fun saveImage(data: FilePart): Mono<S3ObjectRef> {
         val uuid = UUID.randomUUID().toString()
         val fileName = "$uuid/${data.filename()}"
-        val minioImageUrl = "$minioHost/$bucketName/$fileName"
-        val imageRef = ImageRef(url = minioImageUrl)
+        val minioImageUrl = "${minioConfig.minioUrl}/$bucketName/$fileName"
+        val s3ObjectRef = S3ObjectRef(
+            bucket = bucketName,
+            key = fileName,
+            url = minioImageUrl
+        )
 
         return data.content().collectList().map { parts ->
             val byteArray = parts.flatMap { it.asInputStream().readAllBytes().toList() }.toByteArray()
@@ -47,7 +50,7 @@ class ImagesService @Autowired constructor(
         }.handle<PartDataStream> { partDataStream, sink ->
             try {
                 minioStorage.putObject(
-                    minioConfig.defaultBucketName, fileName, data.headers().contentType.toString(), partDataStream
+                    bucketName, fileName, data.headers().contentType.toString(), partDataStream
                 )
             } catch (e: ConnectException) {
                 sink.error(ImageServiceException("Failed to connect to MinIO", e))
@@ -55,6 +58,12 @@ class ImagesService @Autowired constructor(
         }.doOnNext {
             logger.info { "Uploaded ${it.size} bytes to $fileName" }
             logger.info { "Image can be viewed in '$minioImageUrl'" }
-        }.then(imageRefRepository.save(imageRef))
+        }.then(imageObjectRefRepository.save(s3ObjectRef))
+    }
+
+    fun deleteImageById(id: Int): Mono<Unit> {
+        return imageObjectRefRepository.findById(id).map { obj ->
+            minioStorage.deleteObject(obj.bucket, obj.key)
+        }
     }
 }

@@ -3,7 +3,7 @@ package itmo.highload
 import io.restassured.RestAssured
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.configuration.TestContainerIntegrationTest
-import itmo.highload.model.ImageRef
+import itmo.highload.model.S3ObjectRef
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.withJwt
@@ -35,7 +35,6 @@ class ImagesServiceTest @Autowired constructor(
             registry.add("minio.username") { minio.userName }
             registry.add("minio.password") { minio.password }
             registry.add("minio.url") { minio.s3URL }
-            registry.add("minio.port") { minio.firstMappedPort }
             registry.add("minio.bucketName") { "images" }
             registry.add("minio.defaultFolder") { "" }
         }
@@ -61,7 +60,7 @@ class ImagesServiceTest @Autowired constructor(
             .then()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
-            .`as`(ImageRef::class.java)
+            .`as`(S3ObjectRef::class.java)
 
         assertNotNull(response)
         assertNotNull(response.id)
@@ -72,21 +71,40 @@ class ImagesServiceTest @Autowired constructor(
     fun `test get image by id`() {
         val imageRef = uploadTestImage()
 
-        val retrievedImageRef = RestAssured.given()
+        val retrievedS3ObjectRef = RestAssured.given()
             .withJwt(customerToken)
             .port(port)
             .get("/api/v1/images/{id}", imageRef.id)
             .then()
             .statusCode(HttpStatus.OK.value())
             .extract()
-            .`as`(ImageRef::class.java)
+            .`as`(S3ObjectRef::class.java)
 
-        assertNotNull(retrievedImageRef)
-        assertEquals(imageRef.id, retrievedImageRef?.id)
-        assertEquals(imageRef.url, retrievedImageRef?.url)
+        assertNotNull(retrievedS3ObjectRef)
+        assertEquals(imageRef.id, retrievedS3ObjectRef?.id)
+        assertEquals(imageRef.url, retrievedS3ObjectRef?.url)
     }
 
-    private fun uploadTestImage(): ImageRef {
+    @Test
+    fun `test delete image by id`() {
+        val imageRef = uploadTestImage()
+
+        RestAssured.given()
+            .withJwt(customerToken)
+            .port(port)
+            .delete("/api/v1/images/{id}", imageRef.id)
+            .then()
+            .statusCode(HttpStatus.NO_CONTENT.value())
+
+        RestAssured.given()
+            .withJwt(customerToken)
+            .port(port)
+            .get("/api/v1/images/{id}", imageRef.id)
+            .then()
+            .statusCode(HttpStatus.NOT_FOUND.value())
+    }
+
+    private fun uploadTestImage(): S3ObjectRef {
         return RestAssured.given()
             .port(port)
             .withJwt(customerToken)
@@ -96,6 +114,6 @@ class ImagesServiceTest @Autowired constructor(
             .then()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
-            .`as`(ImageRef::class.java)
+            .`as`(S3ObjectRef::class.java)
     }
 }
