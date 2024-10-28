@@ -17,18 +17,15 @@ class MinioConfig @Autowired constructor(
     private val password: String,
     @Value("\${minio.url}")
     val minioUrl: String,
-    @Value("\${minio.port}")
-    val minioPort: Int,
     @Value("\${minio.bucketName}")
     var defaultBucketName: String,
 ) {
-    private val minioSecure = false
 
     @Bean
     fun provideMinioClient(): MinioClient {
         val client = MinioClient.builder()
         .credentials(username, password)
-        .endpoint(minioUrl, minioPort, minioSecure)
+        .endpoint(minioUrl)
         .build()
         createDefaultBucketAndPolicy(client)
         return client

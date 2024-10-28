@@ -4,7 +4,7 @@ databaseChangeLog:
       author: Moleus
       changes:
         - createTable:
-            tableName: image_ref
+            tableName: s3_object_ref
             columns:
               - column:
                   name: id
@@ -13,6 +13,16 @@ databaseChangeLog:
                   generationType: "BY DEFAULT"
                   constraints:
                     primaryKey: true
+                    nullable: false
+              - column:
+                  name: bucket
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: key
+                  type: varchar(255)
+                  constraints:
                     nullable: false
               - column:
                   name: url
