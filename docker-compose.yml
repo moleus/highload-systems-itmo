@@ -1,9 +1,9 @@
 x-defaults: &default-healthcheck
   healthcheck:
     test: ["CMD-SHELL", "curl -f http://localhost:${APP_SERVER_PORT}/actuator/health || exit 1"]
-    interval: 10s
-    timeout: 5s
-    retries: 5
+    interval: 5s
+    timeout: 10s
+    retries: 20
 
 # а что на порту 9093?
 x-kafka-cluster-envs: &kafka-cluster-envs
