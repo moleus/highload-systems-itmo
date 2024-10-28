@@ -62,8 +62,10 @@ class ImagesService @Autowired constructor(
     }
 
     fun deleteImageById(id: Int): Mono<Unit> {
-        return imageObjectRefRepository.findById(id).map { obj ->
-            minioStorage.deleteObject(obj.bucket, obj.key)
-        }
+        return imageObjectRefRepository.findById(id)
+            .flatMap { obj ->
+                imageObjectRefRepository.deleteById(id)
+                    .then(Mono.fromCallable { minioStorage.deleteObject(obj.bucket, obj.key) })
+            }
     }
 }
