@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-animal-to-image
+      author: ivaaaaak
+      changes:
+        - createTable:
+            tableName: animal_to_image
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: "BY DEFAULT"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: animal_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_animal_to_image_animal
+                    references: animal(id)
+                    deleteCascade: true
+                    validateForeignKey: true
+              - column:
+                  name: image_id
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false

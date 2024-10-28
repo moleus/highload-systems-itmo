@@ -134,5 +134,6 @@ class AnimalController(val animalService: AnimalService) {
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
     )
-    fun deleteAnimal(@PathVariable id: Int): Mono<Void> = animalService.delete(id)
+    fun deleteAnimal(@PathVariable id: Int,
+                     @RequestHeader("Authorization") token: String): Mono<Void> = animalService.delete(id, token)
 }
