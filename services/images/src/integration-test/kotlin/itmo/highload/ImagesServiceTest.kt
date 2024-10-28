@@ -5,7 +5,6 @@ import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.configuration.TestContainerIntegrationTest
-import itmo.highload.model.S3ObjectRef
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.withJwt
@@ -51,6 +50,12 @@ class ImagesServiceTest @Autowired constructor(
         -2
     )
 
+    private val managerToken = jwtUtils.generateAccessToken(
+        "amanager",
+        Role.ADOPTION_MANAGER,
+        -3
+    )
+
     @Test
     fun `test upload image`() {
         val response = RestAssured.given()
@@ -62,11 +67,10 @@ class ImagesServiceTest @Autowired constructor(
             .then()
             .statusCode(HttpStatus.CREATED.value())
             .extract()
-            .`as`(S3ObjectRef::class.java)
+            .`as`(UploadedFileResponse::class.java)
 
         assertNotNull(response)
-        assertNotNull(response.id)
-        assertNotNull(response.url)
+        assertNotNull(response.fileID)
     }
 
     @Test
@@ -84,7 +88,7 @@ class ImagesServiceTest @Autowired constructor(
 
         assertNotNull(retrievedS3ObjectRef)
         assertEquals(imageRef.fileID, retrievedS3ObjectRef?.fileID)
-        assert(retrievedS3ObjectRef?.url?.contains("http://localhost:$port/images/") == true)
+        assert(retrievedS3ObjectRef?.url?.contains("http://localhost:$port/images/") == true) { "Actual url is: ${retrievedS3ObjectRef.url}" }
     }
 
     @Test
@@ -92,7 +96,7 @@ class ImagesServiceTest @Autowired constructor(
         val imageRef = uploadTestImage()
 
         RestAssured.given()
-            .withJwt(customerToken)
+            .withJwt(managerToken)
             .port(port)
             .delete("/api/v1/images/{id}", imageRef.fileID)
             .then()
