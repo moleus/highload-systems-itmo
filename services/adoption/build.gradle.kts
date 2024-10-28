@@ -29,3 +29,14 @@ dependencies {
 highloadApp {
     serviceName.set("adoption")
 }
+
+testing {
+    suites {
+        val integrationTest by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.4")
+                implementation("org.testcontainers:kafka:1.20.3")
+            }
+        }
+    }
+}

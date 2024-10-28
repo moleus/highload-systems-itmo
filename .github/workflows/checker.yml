@@ -89,7 +89,7 @@ jobs:
         if: always()
         with:
           name: build-reports
-          path: build/reports/
+          path: ./**/build/reports/
       - name: Add coverage report to PR
         uses: mi-kas/kover-report@5f58465b6f395c8fa3adc2665e27250bad87de50  # v1
         with:

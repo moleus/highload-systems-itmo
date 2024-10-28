@@ -23,6 +23,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.kafka.KafkaContainer
 import java.time.LocalDateTime
 
 @JdbcIntegrationTestContext
@@ -32,6 +36,20 @@ class TestAdoptionRequest @Autowired constructor(
     @LocalServerPort
     private var port: Int = 0
     private val apiUrlBasePath = "/api/v1/adoptions"
+
+    companion object {
+        @Container
+        @Suppress("UnusedPrivateProperty")
+        private val kafka = KafkaContainer("apache/kafka-native:3.8.0").apply {
+            this.withTmpFs(mapOf("/testtmpfs" to "rw"))
+        }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun kafkaProps(registry: DynamicPropertyRegistry) {
+            registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers)
+        }
+    }
 
     private val adoptionManagerToken = jwtUtils.generateAccessToken(
         "amanager",
