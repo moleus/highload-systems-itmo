@@ -1,5 +1,6 @@
 package itmo.highload.service
 
+import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.repository.ImageToAnimalRepository
 import reactor.core.publisher.Mono
 
@@ -28,5 +29,6 @@ class AnimalImageService(
 
     fun deleteAllByAnimalId(animalId: Int, token: String): Mono<Void> {
         return imageRepository.deleteAllByAnimalId(animalId)
+            .then(imageService.deleteImageById(token, ))
     }
 }

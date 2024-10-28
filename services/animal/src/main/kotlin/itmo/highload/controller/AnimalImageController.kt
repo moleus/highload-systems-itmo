@@ -2,6 +2,7 @@ package itmo.highload.controller
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.servers.Server
+import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.service.AnimalImageService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/animals/images")
@@ -25,7 +27,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     @GetMapping("/{animalId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     fun getImageByAnimalId(@PathVariable animalId: Int,
-                           @RequestHeader("Authorization") token: String) {
+                           @RequestHeader("Authorization") token: String): Mono<FileUrlResponse> {
         return animalImageService.getImageByAnimalId(animalId, token)
     }
 

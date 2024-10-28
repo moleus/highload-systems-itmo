@@ -1,5 +1,7 @@
 package itmo.highload.service
 
+import itmo.highload.api.dto.response.FileUrlResponse
+import itmo.highload.api.dto.response.UploadedFileResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -7,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import reactivefeign.spring.config.ReactiveFeignClient
-import reactor.core.publisher.Flux
 
 @ReactiveFeignClient(
     value = "image-service",
@@ -21,25 +22,25 @@ interface ImageService {
                                @PathVariable id: Int): FileUrlResponse
 
     @PostMapping("/upload")
-    fun uploadImage(@RequestHeader("Authorization") token: String): Flux<Int>
+    fun uploadImage(@RequestHeader("Authorization") token: String): UploadedFileResponse
 
     @DeleteMapping("/{id}")
     fun deleteImageById(@RequestHeader("Authorization") token: String,
-                               @PathVariable id: Int): Flux<Int>
+                               @PathVariable id: Int)
 
 }
 
 @Component
 class ImageServiceFallback : ImageService {
-    override fun getImageUrlById(token: String, id: Int): Flux<Int> {
+    override fun getImageUrlById(token: String, id: Int): FileUrlResponse {
         TODO("Not yet implemented")
     }
 
-    override fun uploadImage(token: String): Flux<Int> {
+    override fun uploadImage(token: String): UploadedFileResponse {
         TODO("Not yet implemented")
     }
 
-    override fun deleteImageById(token: String, id: Int): Flux<Int> {
+    override fun deleteImageById(token: String, id: Int) {
         TODO("Not yet implemented")
     }
 
