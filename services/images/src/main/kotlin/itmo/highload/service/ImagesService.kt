@@ -6,6 +6,7 @@ import itmo.highload.minio.PartDataStream
 import itmo.highload.minio.S3Storage
 import itmo.highload.model.S3ObjectRef
 import itmo.highload.repository.ImageObjectRefRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
@@ -26,6 +27,7 @@ class ImagesService @Autowired constructor(
 
     fun getImageById(id: Int): Mono<S3ObjectRef> {
         return imageObjectRefRepository.findById(id)
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
     }
 
     fun saveImage(data: FilePart): Mono<S3ObjectRef> {
@@ -63,6 +65,7 @@ class ImagesService @Autowired constructor(
 
     fun deleteImageById(id: Int): Mono<Unit> {
         return imageObjectRefRepository.findById(id)
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
             .flatMap { obj ->
                 imageObjectRefRepository.deleteById(id)
                     .then(Mono.fromCallable { minioStorage.deleteObject(obj.bucket, obj.key) })
