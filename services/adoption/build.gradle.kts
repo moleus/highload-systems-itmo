@@ -4,6 +4,7 @@
 plugins {
     id("highload.jdbc-e2e-test")
     id("highload.application")
+    id("highload.web")
     id("highload.db")
     id("highload.common")
 }
@@ -12,7 +13,6 @@ dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:security"))
     implementation(project(":shared:db-migrations"))
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.2")
 
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")
@@ -27,4 +27,15 @@ dependencies {
 
 highloadApp {
     serviceName.set("adoption")
+}
+
+testing {
+    suites {
+        val integrationTest by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.4")
+                implementation("org.testcontainers:kafka:1.20.3")
+            }
+        }
+    }
 }

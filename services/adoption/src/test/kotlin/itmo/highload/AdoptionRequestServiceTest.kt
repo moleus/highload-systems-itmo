@@ -6,6 +6,7 @@ import io.mockk.verify
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
+import itmo.highload.kafka.AdoptionRequestProducer
 import itmo.highload.model.AdoptionRequest
 import itmo.highload.model.Ownership
 import itmo.highload.repository.AdoptionRequestRepository
@@ -22,8 +23,9 @@ class AdoptionRequestServiceTest {
 
     private val adoptionRequestRepository: AdoptionRequestRepository = mockk()
     private val ownershipRepository: OwnershipRepository = mockk()
+    private val adoptionProducer: AdoptionRequestProducer = mockk()
     private val adoptionRequestService = AdoptionRequestService(
-        adoptionRequestRepository, ownershipRepository
+        adoptionRequestRepository, ownershipRepository, adoptionProducer
     )
 
     @Test
@@ -35,10 +37,12 @@ class AdoptionRequestServiceTest {
 
         every { adoptionRequestRepository.findByCustomerIdAndAnimalId(1, 1) } returns Optional.empty()
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
+        every { adoptionProducer.sendMessageToAdoptionRequestCreatedTopic(any()) } returns Unit
 
         adoptionRequestService.save(1, 1).subscribe {
             assertEquals(adoptionRequest, it)
             verify { adoptionRequestRepository.save(any()) }
+            verify { adoptionProducer.sendMessageToAdoptionRequestCreatedTopic(any()) }
         }
     }
 
@@ -77,12 +81,14 @@ class AdoptionRequestServiceTest {
 
         every { adoptionRequestRepository.findById(1) } returns Optional.of(adoptionRequest)
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
+        every { adoptionProducer.sendMessageToAdoptionRequestChangedTopic(any()) } returns Unit
 
         adoptionRequestService.update(managerId, requestDto).test().assertNext {
             assertEquals(AdoptionStatus.DENIED, it.status)
             assertEquals(managerId, it.managerId)
         }.verifyComplete()
         verify(exactly = 0) { ownershipRepository.save(any()) }
+        verify { adoptionProducer.sendMessageToAdoptionRequestChangedTopic(any())  }
     }
 
     @Test
@@ -96,11 +102,13 @@ class AdoptionRequestServiceTest {
         every { adoptionRequestRepository.findById(1) } returns Optional.of(adoptionRequest)
         every { adoptionRequestRepository.save(any()) } returns adoptionRequest
         every { ownershipRepository.save(any()) } returns Ownership(1, 1)
+        every { adoptionProducer.sendMessageToAdoptionRequestChangedTopic(any()) } returns Unit
 
         adoptionRequestService.update(1, requestDto).subscribe { result ->
             assertEquals(AdoptionStatus.APPROVED, result.status)
             verify { ownershipRepository.save(any()) }
             verify { adoptionRequestRepository.save(any()) }
+            verify { adoptionProducer.sendMessageToAdoptionRequestChangedTopic(any())  }
         }
     }
 

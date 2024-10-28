@@ -60,7 +60,7 @@ class AdoptionRequestController(
         return if (role == Role.ADOPTION_MANAGER) {
             adoptionRequestService.getAll(status).map { AdoptionRequestMapper.toResponse(it) }
         } else {
-            adoptionRequestService.getAllByCustomer(userId).map { AdoptionRequestMapper.toResponse(it) }
+            adoptionRequestService.getAllByCustomer(userId, status).map { AdoptionRequestMapper.toResponse(it) }
         }
     }
 

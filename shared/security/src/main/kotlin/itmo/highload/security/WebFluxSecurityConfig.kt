@@ -52,7 +52,7 @@ class WebFluxSecurityConfig @Autowired constructor(
             "/docs/**",
             "/docs.yaml",
             "/webjars/**",
-            "actuator/health",
+            "/actuator/health",
             "/swagger-ui/**",
             "/swagger-doc/v3/api-docs/**",
             "/swagger-doc/swagger-config/**",
