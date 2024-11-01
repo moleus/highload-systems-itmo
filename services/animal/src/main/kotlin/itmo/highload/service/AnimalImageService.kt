@@ -1,9 +1,14 @@
 package itmo.highload.service
 
 import itmo.highload.api.dto.response.FileUrlResponse
+import itmo.highload.api.dto.response.UploadedFileResponse
+import itmo.highload.model.AnimalToImage
 import itmo.highload.repository.ImageToAnimalRepository
+import org.springframework.http.codec.multipart.FilePart
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
+@Service
 class AnimalImageService(
     private val imageRepository: ImageToAnimalRepository,
     private val imageService: ImageService
@@ -11,24 +16,43 @@ class AnimalImageService(
     fun getImageByAnimalId(animalId: Int, token: String): Mono<FileUrlResponse> {
         return imageRepository.findByAnimalId(animalId)
             .flatMap { image ->
-                Mono.fromCallable { imageService.getImageUrlById(token, image.imageId) }
+                imageService.getImageUrlById(token, image.imageId)
             }
     }
 
-    fun saveImageByAnimalId(animalId: Int, token: String) {
-        imageRepository.findByAnimalId(animalId).flatMap {  }
 
+    fun saveImageByAnimalId(animalId: Int, token: String, imageData: FilePart): Mono<UploadedFileResponse> {
+        return imageService.uploadImage(token)
+            .flatMap { uploadedFileResponse ->
+                val imageToAnimal = AnimalToImage(
+                    animalId = animalId,
+                    imageId = uploadedFileResponse.fileID
+                )
+                imageRepository.save(imageToAnimal).thenReturn(uploadedFileResponse)
+            }
     }
 
-    fun updateImageByAnimalId(animalId: Int, token: String) {
-        imageRepository.findByAnimalId(animalId).flatMap {
-            imageService.
-        }
-
+    fun updateImageByAnimalId(animalId: Int, token: String, newImageData: FilePart): Mono<UploadedFileResponse> {
+        return imageRepository.findByAnimalId(animalId)
+            .flatMap { existingImage ->
+                imageService.deleteImageById(token, existingImage.imageId) // Удаляем старое изображение
+                    .then(imageService.uploadImage(token)) // Загружаем новое изображение
+            }
+            .flatMap { newUploadedImage ->
+                val updatedImage = AnimalToImage(
+                    animalId = animalId,
+                    imageId = newUploadedImage.fileID
+                )
+                imageRepository.save(updatedImage).thenReturn(newUploadedImage)
+            }
     }
 
     fun deleteAllByAnimalId(animalId: Int, token: String): Mono<Void> {
-        return imageRepository.deleteAllByAnimalId(animalId)
-            .then(imageService.deleteImageById(token, ))
+        return imageRepository.findByAnimalId(animalId)
+            .flatMap { image ->
+                imageService.deleteImageById(token, image.imageId)
+                    .then(imageRepository.delete(image))
+            }
+            .then()
     }
 }
