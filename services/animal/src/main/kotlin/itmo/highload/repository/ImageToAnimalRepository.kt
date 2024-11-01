@@ -7,5 +7,4 @@ import reactor.core.publisher.Mono
 interface ImageToAnimalRepository : R2dbcRepository<AnimalToImage, Int> {
     fun findByAnimalId(animalId: Int): Mono<AnimalToImage>
 
-    fun deleteAllByAnimalId(animalId: Int): Mono<Void>
 }

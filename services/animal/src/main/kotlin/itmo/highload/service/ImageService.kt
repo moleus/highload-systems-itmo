@@ -2,12 +2,9 @@ package itmo.highload.service
 
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.*
 import reactivefeign.spring.config.ReactiveFeignClient
 import reactor.core.publisher.Mono
 
@@ -22,7 +19,9 @@ interface ImageService {
                         @PathVariable id: Int): Mono<FileUrlResponse>
 
     @PostMapping("/images/upload")
-    fun uploadImage(@RequestHeader("Authorization") token: String): Mono<UploadedFileResponse>
+    fun uploadImage(@RequestHeader("Authorization") token: String,
+                    @RequestPart("file") filePart: Mono<FilePart>
+    ): Mono<UploadedFileResponse>
 
     @DeleteMapping("/images/{id}")
     fun deleteImageById(@RequestHeader("Authorization") token: String,
@@ -41,7 +40,7 @@ class ImageServiceFallback : ImageService {
         return Mono.just(fallbackResponse)
     }
 
-    override fun uploadImage(token: String): Mono<UploadedFileResponse> {
+    override fun uploadImage(token: String, filePart: Mono<FilePart>): Mono<UploadedFileResponse> {
         val fallbackResponse = UploadedFileResponse(
             fileID = -1,
 //            message = "Image upload service is currently unavailable."
