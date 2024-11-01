@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 
 @ReactiveFeignClient(
     value = "image-service",
-    url = "\${services.endpoints.images:http://localhost:8089/api/v1}",
+    url = "\${services.endpoints.images:http://localhost:8090/api/v1}",
     fallback = ImageServiceFallback::class
 )
 interface ImageService {
