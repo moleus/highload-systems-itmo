@@ -1,12 +1,11 @@
 package itmo.highload.repository
 
-import itmo.highload.model.ImageToAnimal
+import itmo.highload.model.AnimalToImage
 import org.springframework.data.r2dbc.repository.R2dbcRepository
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-interface ImageToAnimalRepository : R2dbcRepository<ImageToAnimal, Int> {
-    fun findByAnimalId(animalId: Int): Mono<ImageToAnimal>
+interface ImageToAnimalRepository : R2dbcRepository<AnimalToImage, Int> {
+    fun findByAnimalId(animalId: Int): Mono<AnimalToImage>
 
     fun deleteAllByAnimalId(animalId: Int): Mono<Void>
 }

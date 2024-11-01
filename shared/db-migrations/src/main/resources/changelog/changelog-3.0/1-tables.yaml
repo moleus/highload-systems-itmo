@@ -37,14 +37,6 @@ databaseChangeLog:
             tableName: animal_to_image
             columns:
               - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  generationType: "BY DEFAULT"
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
                   name: animal_id
                   type: BIGINT
                   constraints:
@@ -58,3 +50,7 @@ databaseChangeLog:
                   type: VARCHAR(200)
                   constraints:
                     nullable: false
+        - addPrimaryKey:
+            tableName: animal_to_image
+            columnNames: "animal_id, image_id"
+            constraintName: pk_animal_to_image
