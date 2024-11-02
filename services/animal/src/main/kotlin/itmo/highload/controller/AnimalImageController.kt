@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
 import itmo.highload.service.AnimalImageService
+import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -45,7 +46,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         return animalImageService.getImageByAnimalId(animalId, token)
     }
 
-    @PostMapping("/{animalId}")
+    @PostMapping("/{animalId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
     @Operation(summary = "Add image for animal", description = "Upload a new image for the specified animal.")
     @ApiResponses(
@@ -61,9 +62,8 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     fun addImageByAnimalId(
         @PathVariable animalId: Int,
         @RequestHeader("Authorization") token: String,
-        @Parameter(description = "Image file to be uploaded", content = [Content(schema = Schema(type = "string",
-            format = "binary"))])
-        @RequestPart("file") imageData: FilePart
+        @Parameter(description = "Image file to be uploaded", content = [Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)])
+        @RequestPart("file") imageData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
         return animalImageService.saveImageByAnimalId(animalId, token, imageData)
     }

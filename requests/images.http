@@ -1,4 +1,4 @@
-POST http://localhost:8089/api/v1/images/upload
+POST http://localhost:8090/api/v1/images/upload
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
 Content-Type: multipart/form-data; boundary=boundary

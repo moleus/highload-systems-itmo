@@ -21,8 +21,8 @@ class AnimalImageService(
     }
 
 
-    fun saveImageByAnimalId(animalId: Int, token: String, imageData: FilePart): Mono<UploadedFileResponse> {
-        return imageService.uploadImage(token, Mono.just(imageData))
+    fun saveImageByAnimalId(animalId: Int, token: String, imageData: Mono<FilePart>): Mono<UploadedFileResponse> {
+        return imageService.uploadImage(token, imageData)
             .flatMap { uploadedFileResponse ->
                 val imageToAnimal = AnimalToImage(
                     animalId = animalId,

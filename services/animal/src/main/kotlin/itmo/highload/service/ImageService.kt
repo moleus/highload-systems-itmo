@@ -20,7 +20,7 @@ interface ImageService {
 
     @PostMapping("/images/upload")
     fun uploadImage(@RequestHeader("Authorization") token: String,
-                    @RequestPart("file") filePart: Mono<FilePart>
+                    @RequestPart("file") fileParts: Mono<FilePart>
     ): Mono<UploadedFileResponse>
 
     @DeleteMapping("/images/{id}")
@@ -40,7 +40,7 @@ class ImageServiceFallback : ImageService {
         return Mono.just(fallbackResponse)
     }
 
-    override fun uploadImage(token: String, filePart: Mono<FilePart>): Mono<UploadedFileResponse> {
+    override fun uploadImage(token: String, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
         val fallbackResponse = UploadedFileResponse(
             fileID = -1,
 //            message = "Image upload service is currently unavailable."
