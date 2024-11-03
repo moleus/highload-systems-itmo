@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 
 @ReactiveFeignClient(
     value = "image-service",
-    url = "\${services.endpoints.images:http://localhost:8090/api/v1}",
+    url = "http://\${services.endpoints.images:localhost:8090}/api/v1",
     fallback = ImageServiceFallback::class
 )
 interface ImageService {
@@ -20,7 +20,7 @@ interface ImageService {
 
     @PostMapping("/images/upload")
     fun uploadImage(@RequestHeader("Authorization") token: String,
-                    @RequestPart("file") fileParts: Mono<FilePart>
+                    fileParts: Mono<FilePart>
     ): Mono<UploadedFileResponse>
 
     @DeleteMapping("/images/{id}")
@@ -41,11 +41,14 @@ class ImageServiceFallback : ImageService {
     }
 
     override fun uploadImage(token: String, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
+        // TODO: тут нужно как-то бросать ошибку, чтобы принимающая сторона поняла, что сервис недоступен.
+        // Сейчас в базу сохраняется -1
         val fallbackResponse = UploadedFileResponse(
             fileID = -1,
 //            message = "Image upload service is currently unavailable."
         )
-        return Mono.just(fallbackResponse)
+        return Mono.error { throw Error("Image upload service is currently unavailable.", Exception()) }
+//        return Mono.just(fallbackResponse)
     }
 
     override fun deleteImageById(token: String, id: Int): Mono<Void> {
