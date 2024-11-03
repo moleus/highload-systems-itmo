@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Listener</title>
+</head>
+<body>
+<h1>WebSocket Client</h1>
+<div>
+    <h2>Messages</h2>
+    <ul id="messages"></ul>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    // Подключение к серверу WebSocket через SockJS
+    const socket = new SockJS('http://localhost:8080/api/v1/notifications/ws');
+    const stompClient = Stomp.over(socket);
+
+    // Функция для добавления сообщений на страницу
+    function showMessage(message) {
+        const messageList = document.getElementById("messages");
+        const messageElement = document.createElement("li");
+        messageElement.textContent = message;
+        messageList.appendChild(messageElement);
+    }
+
+    // Подключение к WebSocket и подписка на топики
+    stompClient.connect({}, function (frame) {
+        console.log("Connected: " + frame);
+
+        // Подписка на топик /topic/donations
+        stompClient.subscribe('/topic/donations', function (message) {
+            showMessage("Donations TOPIC: " + message.body);
+        });
+
+        // Подписка на топик /topic/adoption_requests
+        stompClient.subscribe('/topic/adoption_requests', function (message) {
+            showMessage("Request CREATED TOPIC: " + message.body);
+        });
+
+        // Подписка на топик /topic/adoption_requests/*
+        stompClient.subscribe('/topic/adoption_requests/*', function (message) {
+            showMessage("Request CHANGED TOPIC: " + message.body);
+        });
+    });
+
+    // Закрытие WebSocket соединения
+    window.onbeforeunload = function() {
+        if (stompClient) {
+            stompClient.disconnect();
+        }
+    };
+</script>
+</body>
+</html>

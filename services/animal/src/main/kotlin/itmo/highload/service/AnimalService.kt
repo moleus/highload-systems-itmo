@@ -14,7 +14,9 @@ import reactor.core.publisher.Mono
 @Service
 class AnimalService(
     private val animalRepository: AnimalRepository,
-    private val adoptionService: AdoptionService) {
+    private val adoptionService: AdoptionService,
+    private val animalImageService: AnimalImageService
+) {
 
     fun getById(animalId: Int): Mono<Animal> = animalRepository.findById(animalId)
         .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
@@ -31,8 +33,9 @@ class AnimalService(
         }
     }
 
-    fun delete(animalId: Int): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
+    fun delete(animalId: Int, token: String): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
         animalRepository.delete(existingAnimal)
+            .then(animalImageService.deleteAllByAnimalId(existingAnimal.id, token))
     }
 
     fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<Animal> {

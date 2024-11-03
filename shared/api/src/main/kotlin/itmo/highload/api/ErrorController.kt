@@ -1,9 +1,6 @@
 package itmo.highload.api
 
-import itmo.highload.exceptions.EntityAlreadyExistsException
-import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
-import itmo.highload.exceptions.InvalidAnimalUpdateException
-import itmo.highload.exceptions.NegativeBalanceException
+import itmo.highload.exceptions.*
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
@@ -55,4 +52,19 @@ class ErrorController {
     fun onInvalidAnimalUpdateException(e: InvalidAnimalUpdateException): String? {
         return e.message
     }
+
+    @ExceptionHandler(ImageNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    fun onImageNotFoundException(e: ImageNotFoundException): String? {
+        return e.message
+    }
+
+    @ExceptionHandler(ImageServiceUnavailableException::class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ResponseBody
+    fun onImageServiceUnavailableException(e: ImageServiceUnavailableException): String? {
+        return e.message
+    }
+
 }

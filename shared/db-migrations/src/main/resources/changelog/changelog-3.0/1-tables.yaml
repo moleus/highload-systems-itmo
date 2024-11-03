@@ -29,3 +29,32 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+  - changeSet:
+      id: create-animal-to-image
+      author: Korako2
+      changes:
+        - createTable:
+            tableName: animal_to_image
+            columns:
+              - column:
+                  name: animal_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_animal_to_image_animal
+                    references: animal(id)
+                    deleteCascade: true
+                    validateForeignKey: true
+              - column:
+                  name: image_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: animal_to_image
+            columnNames: "animal_id, image_id"
+            constraintName: pk_animal_to_image
+        - addUniqueConstraint:
+            tableName: animal_to_image
+            columnNames: "image_id"
+            constraintName: uq_animal_to_image_image_id

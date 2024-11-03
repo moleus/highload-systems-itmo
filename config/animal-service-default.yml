@@ -37,3 +37,14 @@ springdoc:
     enabled: true
     path: /animal-swagger-ui.html
     url: /animal-api/v3/api-docs
+
+
+logging:
+  level:
+    itmo:
+      highload: DEBUG
+    web: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG

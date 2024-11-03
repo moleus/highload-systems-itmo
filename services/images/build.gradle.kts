@@ -42,5 +42,5 @@ testing {
 }
 
 highloadApp {
-    serviceName.set("transaction")
+    serviceName.set("images")
 }
