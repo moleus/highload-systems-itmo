@@ -49,8 +49,7 @@ class ImageServiceFallback : ImageService {
     override fun uploadImage(token: String, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
         return Mono.error {
             ImageServiceUnavailableException(
-                "Image upload service is currently unavailable.",
-                Exception()
+                "Image upload service is currently unavailable."
             )
         }
     }
