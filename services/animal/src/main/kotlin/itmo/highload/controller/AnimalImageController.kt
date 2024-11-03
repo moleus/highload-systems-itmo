@@ -134,17 +134,4 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     ):
             Mono<Void> = animalImageService.deleteByImageId(imageId, token)
 
-    @GetMapping("/all/{animalId}")
-    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    @Operation(
-        summary = "Get all images id by animal ID",
-        description = "Retrieve the IDs of all images associated with the specified animal."
-    )
-    //todo док
-
-    fun getAllImagesIdByAnimalId(
-        @PathVariable animalId: Int,
-    ): Flux<Int> {
-        return animalImageService.getAllImagesIdByAnimalId(animalId)
-    }
 }
