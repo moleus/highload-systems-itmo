@@ -47,7 +47,7 @@ databaseChangeLog:
                     validateForeignKey: true
               - column:
                   name: image_id
-                  type: VARCHAR(200)
+                  type: BIGINT
                   constraints:
                     nullable: false
         - addPrimaryKey:

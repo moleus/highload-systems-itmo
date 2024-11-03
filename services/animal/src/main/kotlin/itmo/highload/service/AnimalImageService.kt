@@ -6,6 +6,7 @@ import itmo.highload.model.AnimalToImage
 import itmo.highload.repository.ImageToAnimalRepository
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
@@ -13,10 +14,11 @@ class AnimalImageService(
     private val imageRepository: ImageToAnimalRepository,
     private val imageService: ImageService
 ) {
-    fun getImageByAnimalId(animalId: Int, token: String): Mono<FileUrlResponse> {
+    fun getImagesByAnimalId(animalId: Int, token: String): Flux<FileUrlResponse> {
         return imageRepository.findByAnimalId(animalId)
             .flatMap { image ->
                 imageService.getImageUrlById(token, image.imageId)
+                    .map { url -> FileUrlResponse(fileID = image.imageId, url = url.url) }
             }
     }
 
@@ -32,8 +34,8 @@ class AnimalImageService(
             }
     }
 
-    fun updateImageByAnimalId(animalId: Int, token: String, newImageData: Mono<FilePart>): Mono<UploadedFileResponse> {
-        return imageRepository.findByAnimalId(animalId)
+    fun updateImageByAnimalId(animalId: Int, token: String, newImageData: Mono<FilePart>, oldImageId: Int): Mono<UploadedFileResponse> {
+        return imageRepository.findByAnimalIdAndImageId(animalId, oldImageId)
             .flatMap { existingImage ->
                 imageService.deleteImageById(token, existingImage.imageId)
                     .then(imageService.uploadImage(token, newImageData))
@@ -46,6 +48,7 @@ class AnimalImageService(
                 imageRepository.save(updatedImage).thenReturn(newUploadedImage)
             }
     }
+
 
     fun deleteAllByAnimalId(animalId: Int, token: String): Mono<Void> {
         return imageRepository.findByAnimalId(animalId)
