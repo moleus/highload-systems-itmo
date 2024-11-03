@@ -87,7 +87,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         @RequestHeader("Authorization") token: String,
         @Parameter(description = "New image file to be uploaded", content = [Content(schema = Schema(type = "string",
             format = "binary"))])
-        @RequestPart("file") newFileData: FilePart
+        @RequestPart("file") newFileData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
         return animalImageService.updateImageByAnimalId(animalId, token, newFileData)
     }

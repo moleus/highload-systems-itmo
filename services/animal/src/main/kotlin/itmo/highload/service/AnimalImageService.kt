@@ -32,11 +32,11 @@ class AnimalImageService(
             }
     }
 
-    fun updateImageByAnimalId(animalId: Int, token: String, newImageData: FilePart): Mono<UploadedFileResponse> {
+    fun updateImageByAnimalId(animalId: Int, token: String, newImageData: Mono<FilePart>): Mono<UploadedFileResponse> {
         return imageRepository.findByAnimalId(animalId)
             .flatMap { existingImage ->
                 imageService.deleteImageById(token, existingImage.imageId)
-                    .then(imageService.uploadImage(token, Mono.just(newImageData)))
+                    .then(imageService.uploadImage(token, newImageData))
             }
             .flatMap { newUploadedImage ->
                 val updatedImage = AnimalToImage(
