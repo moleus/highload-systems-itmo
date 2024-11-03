@@ -11,4 +11,6 @@ interface ImageToAnimalRepository : R2dbcRepository<AnimalToImage, Int> {
     fun findByAnimalIdAndImageId(animalId: Int, imageId: Int): Mono<AnimalToImage>
 
     fun findByImageId(imageId: Int): Mono<AnimalToImage>
+
+    fun deleteAnimalToImageByImageId(imageId: Int): Mono<Void>
 }

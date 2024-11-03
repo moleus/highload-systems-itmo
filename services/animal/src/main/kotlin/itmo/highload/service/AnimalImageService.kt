@@ -62,7 +62,7 @@ class AnimalImageService(
                 logger.info{"Изображение найдено: $image, ${image.imageId}. Начинаем удаление изображения из сервиса."}
                 imageService.deleteImageById(token, image.imageId)
                     .doOnSuccess { logger.info("Изображение с ID: ${image.imageId} успешно удалено из сервиса.") }
-                    .then(imageRepository.delete(image))
+                    .then(imageRepository.deleteAnimalToImageByImageId(image.imageId))
                     .doOnSuccess { logger.info("Изображение с ID: ${image.imageId} успешно удалено из репозитория.") }
             }
             .then()
