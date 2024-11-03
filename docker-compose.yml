@@ -181,7 +181,7 @@ services:
       init-db:
         condition: service_completed_successfully
     environment:
-      <<: *small-jvm-heap-envs
+      <<: *medium-jvm-heap-envs
     env_file:
       - .env
     <<: *default-healthcheck
