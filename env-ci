@@ -6,10 +6,11 @@ EUREKA_HOST=eureka-server
 ADOPTION_HOST=adoption
 TRANSACTION_HOST=transaction
 AUTHENTICATION_HOST=authentication
+MINIO_HOST=minio:9000
 ANIMAL_HOST=animal
 DB_HOST=db
 DB_PORT=5432
-KAFKA_HOST=kafka-1:9092
+KAFKA_HOST=kafka-1:9092,kafka-2:9092,kafka-3:9092
 
 ## compose interpolation
 POSTGRES_USERNAME=postgres
