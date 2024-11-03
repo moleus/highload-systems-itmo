@@ -4,7 +4,9 @@ import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
 import itmo.highload.exceptions.ImageNotFoundException
 import itmo.highload.model.AnimalToImage
+import itmo.highload.repository.AnimalRepository
 import itmo.highload.repository.ImageToAnimalRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -14,6 +16,7 @@ import reactor.core.publisher.Mono
 class AnimalImageService(
     private val imageRepository: ImageToAnimalRepository,
     private val imageService: ImageService,
+    private val animalRepository: AnimalRepository
 ) {
 
     fun getImagesByAnimalId(animalId: Int, token: String): Flux<FileUrlResponse> {
@@ -25,15 +28,21 @@ class AnimalImageService(
     }
 
     fun saveImageByAnimalId(animalId: Int, token: String, imageData: Mono<FilePart>): Mono<UploadedFileResponse> {
-        return imageService.uploadImage(token, imageData)
-            .flatMap { uploadedFileResponse ->
-                val imageToAnimal = AnimalToImage(
-                    animalId = animalId,
-                    imageId = uploadedFileResponse.fileID
-                )
-                imageRepository.save(imageToAnimal).thenReturn(uploadedFileResponse)
+        return animalRepository.findById(animalId)
+            .flatMap { _ ->
+                imageService.uploadImage(token, imageData)
+                    .flatMap { uploadedFileResponse ->
+                        val imageToAnimal = AnimalToImage(
+                            animalId = animalId,
+                            imageId = uploadedFileResponse.fileID
+                        )
+                        imageRepository.save(imageToAnimal)
+                            .thenReturn(uploadedFileResponse)
+                    }
             }
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found."))) // Если животное не найдено, выбрасываем исключение
     }
+
 
     fun updateImageByImageId(imageId: Int, token: String, newImageData: Mono<FilePart>): Mono<UploadedFileResponse> {
         return imageRepository.findByImageId(imageId)
@@ -62,10 +71,6 @@ class AnimalImageService(
             .then()
     }
 
-    fun getAllImagesIdByAnimalId(animalId: Int): Flux<Int> {
-        return imageRepository.findByAnimalId(animalId)
-            .map { image -> image.imageId }
-    }
 
     fun deleteAllByAnimalId(animalId: Int, token: String): Mono<Void> {
         return imageRepository.findByAnimalId(animalId)

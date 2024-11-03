@@ -60,5 +60,11 @@ class ErrorController {
         return e.message
     }
 
+    @ExceptionHandler(ImageServiceUnavailableException::class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ResponseBody
+    fun onImageServiceUnavailableException(e: ImageServiceUnavailableException): String? {
+        return e.message
+    }
 
 }
