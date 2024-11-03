@@ -2,6 +2,7 @@ package itmo.highload.service
 
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
+import itmo.highload.exceptions.ImageServiceUnavailableException
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
@@ -15,17 +16,22 @@ import reactor.core.publisher.Mono
 )
 interface ImageService {
     @GetMapping("/images/{id}")
-    fun getImageUrlById(@RequestHeader("Authorization") token: String,
-                        @PathVariable id: Int): Mono<FileUrlResponse>
+    fun getImageUrlById(
+        @RequestHeader("Authorization") token: String,
+        @PathVariable id: Int
+    ): Mono<FileUrlResponse>
 
     @PostMapping("/images/upload")
-    fun uploadImage(@RequestHeader("Authorization") token: String,
-                    fileParts: Mono<FilePart>
+    fun uploadImage(
+        @RequestHeader("Authorization") token: String,
+        fileParts: Mono<FilePart>
     ): Mono<UploadedFileResponse>
 
     @DeleteMapping("/images/{id}")
-    fun deleteImageById(@RequestHeader("Authorization") token: String,
-                        @PathVariable id: Int): Mono<Void>
+    fun deleteImageById(
+        @RequestHeader("Authorization") token: String,
+        @PathVariable id: Int
+    ): Mono<Void>
 
 }
 
@@ -41,14 +47,12 @@ class ImageServiceFallback : ImageService {
     }
 
     override fun uploadImage(token: String, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
-        // TODO: тут нужно как-то бросать ошибку, чтобы принимающая сторона поняла, что сервис недоступен.
-        // Сейчас в базу сохраняется -1
-        val fallbackResponse = UploadedFileResponse(
-            fileID = -1,
-//            message = "Image upload service is currently unavailable."
-        )
-        return Mono.error { throw Error("Image upload service is currently unavailable.", Exception()) }
-//        return Mono.just(fallbackResponse)
+        return Mono.error {
+            ImageServiceUnavailableException(
+                "Image upload service is currently unavailable.",
+                Exception()
+            )
+        }
     }
 
     override fun deleteImageById(token: String, id: Int): Mono<Void> {

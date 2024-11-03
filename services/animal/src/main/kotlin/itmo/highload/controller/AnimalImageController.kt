@@ -28,12 +28,17 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
 
     @GetMapping("/{animalId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
-    @Operation(summary = "Get image by animal ID", description = "Retrieve the URL of the image associated with the specified animal.")
+    @Operation(
+        summary = "Get image by animal ID",
+        description = "Retrieve the URL of the image associated with the specified animal."
+    )
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Image URL retrieved successfully", content = [
-                Content(schema = Schema(implementation = FileUrlResponse::class))
-            ]),
+            ApiResponse(
+                responseCode = "200", description = "Image URL retrieved successfully", content = [
+                    Content(schema = Schema(implementation = FileUrlResponse::class))
+                ]
+            ),
             ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "404", description = "Animal image not found"),
             ApiResponse(responseCode = "403", description = "No authority for this operation")
@@ -51,9 +56,11 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     @Operation(summary = "Add image for animal", description = "Upload a new image for the specified animal.")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "201", description = "Image uploaded successfully", content = [
-                Content(schema = Schema(implementation = UploadedFileResponse::class))
-            ]),
+            ApiResponse(
+                responseCode = "201", description = "Image uploaded successfully", content = [
+                    Content(schema = Schema(implementation = UploadedFileResponse::class))
+                ]
+            ),
             ApiResponse(responseCode = "400", description = "Invalid file format"),
             ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "403", description = "No authority for this operation")
@@ -62,7 +69,10 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     fun addImageByAnimalId(
         @PathVariable animalId: Int,
         @RequestHeader("Authorization") token: String,
-        @Parameter(description = "Image file to be uploaded", content = [Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)])
+        @Parameter(
+            description = "Image file to be uploaded",
+            content = [Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)]
+        )
         @RequestPart("file") imageData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
         return animalImageService.saveImageByAnimalId(animalId, token, imageData)
@@ -70,12 +80,17 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
 
     @PutMapping("/{animalId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
-    @Operation(summary = "Update image for animal", description = "Replace the existing image for the specified animal with a new one.")
+    @Operation(
+        summary = "Update image for animal",
+        description = "Replace the existing image for the specified animal with a new one."
+    )
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Image updated successfully", content = [
-                Content(schema = Schema(implementation = UploadedFileResponse::class))
-            ]),
+            ApiResponse(
+                responseCode = "200", description = "Image updated successfully", content = [
+                    Content(schema = Schema(implementation = UploadedFileResponse::class))
+                ]
+            ),
             ApiResponse(responseCode = "400", description = "Invalid file format"),
             ApiResponse(responseCode = "401", description = "Unauthorized request"),
             ApiResponse(responseCode = "404", description = "Animal image not found"),
@@ -85,8 +100,14 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     fun updateImageByAnimalId(
         @PathVariable animalId: Int,
         @RequestHeader("Authorization") token: String,
-        @Parameter(description = "New image file to be uploaded", content = [Content(schema = Schema(type = "string",
-            format = "binary"))])
+        @Parameter(
+            description = "New image file to be uploaded", content = [Content(
+                schema = Schema(
+                    type = "string",
+                    format = "binary"
+                )
+            )]
+        )
         @RequestPart("file") newFileData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
         return animalImageService.updateImageByAnimalId(animalId, token, newFileData)
@@ -94,7 +115,10 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
 
     @DeleteMapping("/{animalId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
-    @Operation(summary = "Delete image for animal", description = "Delete the image associated with the specified animal.")
+    @Operation(
+        summary = "Delete image for animal",
+        description = "Delete the image associated with the specified animal."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Image deleted successfully"),
