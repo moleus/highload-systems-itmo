@@ -8,6 +8,7 @@ TRANSACTION_HOST=transaction
 AUTHENTICATION_HOST=authentication
 MINIO_HOST=minio:9000
 ANIMAL_HOST=animal
+IMAGES_HOST=images
 DB_HOST=db
 DB_PORT=5432
 KAFKA_HOST=kafka-1:9092,kafka-2:9092,kafka-3:9092

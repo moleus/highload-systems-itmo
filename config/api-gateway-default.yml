@@ -58,3 +58,5 @@ springdoc:
         url: http://${TRANSACTION_HOST:localhost:8088}/transaction-api/v3/api-docs
     -   name: auth-service
         url: http://${AUTHENTICATION_HOST:localhost:8087}/auth-api/v3/api-docs
+    -   name: images-service
+        url: http://${IMAGES_HOST:localhost:8090}/images-api/v3/api-docs
