@@ -45,7 +45,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
     )
-    fun getImageByAnimalId(
+    fun getImagesByAnimalId(
         @PathVariable animalId: Int,
         @RequestHeader("Authorization") token: String
     ): Flux<FileUrlResponse> {
@@ -79,7 +79,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         return animalImageService.saveImageByAnimalId(animalId, token, imageData)
     }
 
-    @PutMapping("/{animalId}/{imageId}")
+    @PutMapping("/{imageId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
     @Operation(
         summary = "Update image for animal",
@@ -98,8 +98,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
     )
-    fun updateImageByAnimalId(
-        @PathVariable animalId: Int,
+    fun updateImageById(
         @PathVariable imageId: Int,
         @RequestHeader("Authorization") token: String,
         @Parameter(
@@ -112,14 +111,14 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         )
         @RequestPart("file") newFileData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
-        return animalImageService.updateImageByAnimalId(animalId, token, newFileData, imageId)
+        return animalImageService.updateImageByImageId(imageId, token, newFileData)
     }
 
-    @DeleteMapping("/{animalId}")
+    @DeleteMapping("/{imageId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
     @Operation(
-        summary = "Delete image for animal",
-        description = "Delete the image associated with the specified animal."
+        summary = "Delete image by id.",
+        description = "Delete the image by id."
     )
     @ApiResponses(
         value = [
@@ -129,10 +128,23 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
             ApiResponse(responseCode = "403", description = "No authority for this operation")
         ]
     )
-    fun deleteImageByAnimalId(
-        @PathVariable animalId: Int,
+    fun deleteImageById(
+        @PathVariable imageId: Int,
         @RequestHeader("Authorization") token: String
     ):
-            Mono<Void> = animalImageService.deleteAllByAnimalId(animalId, token)
+            Mono<Void> = animalImageService.deleteByImageId(imageId, token)
 
+    @GetMapping("/all/{animalId}")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
+    @Operation(
+        summary = "Get all images id by animal ID",
+        description = "Retrieve the IDs of all images associated with the specified animal."
+    )
+    //todo док
+
+    fun getAllImagesIdByAnimalId(
+        @PathVariable animalId: Int,
+    ): Flux<Int> {
+        return animalImageService.getAllImagesIdByAnimalId(animalId)
+    }
 }

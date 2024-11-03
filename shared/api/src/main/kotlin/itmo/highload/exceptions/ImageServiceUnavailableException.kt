@@ -1,3 +1,3 @@
 package itmo.highload.exceptions
 
-class ImageServiceUnavailableException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+class ImageServiceUnavailableException(message: String) : RuntimeException(message)

@@ -9,4 +9,6 @@ interface ImageToAnimalRepository : R2dbcRepository<AnimalToImage, Int> {
     fun findByAnimalId(animalId: Int): Flux<AnimalToImage>
 
     fun findByAnimalIdAndImageId(animalId: Int, imageId: Int): Mono<AnimalToImage>
+
+    fun findByImageId(imageId: Int): Mono<AnimalToImage>
 }

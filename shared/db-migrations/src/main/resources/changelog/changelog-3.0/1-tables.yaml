@@ -31,7 +31,7 @@ databaseChangeLog:
                     nullable: false
   - changeSet:
       id: create-animal-to-image
-      author: ivaaaaak
+      author: Korako2
       changes:
         - createTable:
             tableName: animal_to_image
@@ -54,3 +54,7 @@ databaseChangeLog:
             tableName: animal_to_image
             columnNames: "animal_id, image_id"
             constraintName: pk_animal_to_image
+        - addUniqueConstraint:
+            tableName: animal_to_image
+            columnNames: "image_id"
+            constraintName: uq_animal_to_image_image_id
