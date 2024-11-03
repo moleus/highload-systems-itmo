@@ -38,7 +38,7 @@ class ValidationErrorController {
                 return "Entity with id = $id doesn't exist"
             }
         }
-        return "Data integrity exception occurred"
+        return "Data integrity exception occurred: $e"
     }
 
     fun extractKeyIdFromErrorMessage(message: String): String? {
