@@ -1,6 +1,5 @@
 package itmo.highload.service
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
 import itmo.highload.exceptions.ImageNotFoundException
@@ -16,7 +15,6 @@ class AnimalImageService(
     private val imageRepository: ImageToAnimalRepository,
     private val imageService: ImageService,
 ) {
-    private val logger = KotlinLogging.logger { }
 
     fun getImagesByAnimalId(animalId: Int, token: String): Flux<FileUrlResponse> {
         return imageRepository.findByAnimalId(animalId)
@@ -25,7 +23,6 @@ class AnimalImageService(
                     .map { url -> FileUrlResponse(fileID = image.imageId, url = url.url) }
             }
     }
-
 
     fun saveImageByAnimalId(animalId: Int, token: String, imageData: Mono<FilePart>): Mono<UploadedFileResponse> {
         return imageService.uploadImage(token, imageData)
@@ -42,7 +39,7 @@ class AnimalImageService(
         return imageRepository.findByImageId(imageId)
             .flatMap { existingImage ->
                 imageService.deleteImageById(token, existingImage.imageId)
-                    .then(imageRepository.delete(existingImage))
+                    .then(imageRepository.deleteAnimalToImageByImageId(existingImage.imageId))
                     .then(imageService.uploadImage(token, newImageData))
                     .flatMap { newUploadedImage ->
                         val updatedImage = AnimalToImage(
@@ -59,11 +56,8 @@ class AnimalImageService(
     fun deleteByImageId(imageId: Int, token: String): Mono<Void> {
         return imageRepository.findByImageId(imageId)
             .flatMap { image ->
-                logger.info{"Изображение найдено: $image, ${image.imageId}. Начинаем удаление изображения из сервиса."}
                 imageService.deleteImageById(token, image.imageId)
-                    .doOnSuccess { logger.info("Изображение с ID: ${image.imageId} успешно удалено из сервиса.") }
                     .then(imageRepository.deleteAnimalToImageByImageId(image.imageId))
-                    .doOnSuccess { logger.info("Изображение с ID: ${image.imageId} успешно удалено из репозитория.") }
             }
             .then()
     }
