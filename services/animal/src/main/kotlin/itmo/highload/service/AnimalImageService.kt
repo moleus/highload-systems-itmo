@@ -40,7 +40,7 @@ class AnimalImageService(
                             .thenReturn(uploadedFileResponse)
                     }
             }
-            .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found."))) // Если животное не найдено, выбрасываем исключение
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found.")))
     }
 
 
