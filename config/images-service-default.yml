@@ -39,10 +39,10 @@ springdoc:
 logging:
   level:
     itmo:
-      highload: TRACE
-    web: TRACE
+      highload: DEBUG
+    web: DEBUG
     org:
       springframework:
-        security: TRACE
-        web: TRACE
+        security: DEBUG
+        web: DEBUG
 
