@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
@@ -30,7 +31,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")
     @Operation(
         summary = "Get image by animal ID",
-        description = "Retrieve the URL of the image associated with the specified animal."
+        description = "Retrieve the URLs of the images associated with the specified animal."
     )
     @ApiResponses(
         value = [
@@ -47,8 +48,8 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     fun getImageByAnimalId(
         @PathVariable animalId: Int,
         @RequestHeader("Authorization") token: String
-    ): Mono<FileUrlResponse> {
-        return animalImageService.getImageByAnimalId(animalId, token)
+    ): Flux<FileUrlResponse> {
+        return animalImageService.getImagesByAnimalId(animalId, token)
     }
 
     @PostMapping("/{animalId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -78,7 +79,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         return animalImageService.saveImageByAnimalId(animalId, token, imageData)
     }
 
-    @PutMapping("/{animalId}")
+    @PutMapping("/{animalId}/{imageId}")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
     @Operation(
         summary = "Update image for animal",
@@ -99,6 +100,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
     )
     fun updateImageByAnimalId(
         @PathVariable animalId: Int,
+        @PathVariable imageId: Int,
         @RequestHeader("Authorization") token: String,
         @Parameter(
             description = "New image file to be uploaded", content = [Content(
@@ -110,7 +112,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         )
         @RequestPart("file") newFileData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
-        return animalImageService.updateImageByAnimalId(animalId, token, newFileData)
+        return animalImageService.updateImageByAnimalId(animalId, token, newFileData, imageId)
     }
 
     @DeleteMapping("/{animalId}")
