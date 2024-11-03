@@ -242,6 +242,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      minio:
+        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     env_file:
