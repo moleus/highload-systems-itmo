@@ -79,7 +79,7 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         return animalImageService.saveImageByAnimalId(animalId, token, imageData)
     }
 
-    @PutMapping("/{imageId}")
+    @PutMapping("/{imageId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
     @Operation(
         summary = "Update image for animal",
@@ -102,12 +102,8 @@ class AnimalImageController(private val animalImageService: AnimalImageService) 
         @PathVariable imageId: Int,
         @RequestHeader("Authorization") token: String,
         @Parameter(
-            description = "New image file to be uploaded", content = [Content(
-                schema = Schema(
-                    type = "string",
-                    format = "binary"
-                )
-            )]
+            description = "Image file to be uploaded",
+            content = [Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)]
         )
         @RequestPart("file") newFileData: Mono<FilePart>
     ): Mono<UploadedFileResponse> {
