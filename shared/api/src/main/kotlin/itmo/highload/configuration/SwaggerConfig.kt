@@ -16,6 +16,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer
 class CorsGlobalConfiguration : WebFluxConfigurer {
     private val allowedOrigins = arrayOf("http://localhost:*")
     override fun addCorsMappings(corsRegistry: CorsRegistry) {
+        @Suppress("SpreadOperator")
         corsRegistry.addMapping("/**")
             .allowedOrigins(*allowedOrigins)
             .allowedMethods("*")
