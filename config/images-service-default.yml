@@ -40,10 +40,10 @@ springdoc:
 logging:
   level:
     itmo:
-      highload: DEBUG
-    web: DEBUG
+      highload: INFO
+    web: INFO
     org:
       springframework:
-        security: DEBUG
-        web: DEBUG
-
+        security: INFO
+        web: INFO
+        web.cors.reactive.DefaultCorsProcessor: DEBUG

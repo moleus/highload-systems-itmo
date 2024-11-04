@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: remove-url-column-from-images
+      author: Moleus
+      changes:
+          - dropColumn:
+              tableName: s3_object_ref
+              columnName: url

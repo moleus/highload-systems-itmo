@@ -13,7 +13,7 @@ data class PartDataStream(
 )
 
 data class ObjectPutResult(
-    val size: Long,
+    val etag: String,
 )
 
 interface S3Storage {

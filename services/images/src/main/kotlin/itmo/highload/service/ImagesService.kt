@@ -53,21 +53,27 @@ class ImagesService @Autowired constructor(
             logger.info { "Uploading ${it.size} bytes to $fileName" }
         }.handle<PartDataStream> { partDataStream, sink ->
             try {
-                minioStorage.putObject(
+                val putResult = minioStorage.putObject(
                     bucketName, fileName, data.headers().contentType.toString(), partDataStream
                 )
+                logger.info { "Uploaded object with etag ${putResult.etag} to $fileName" }
             } catch (e: ConnectException) {
+                logger.warn { "Failed to connect to MinIO: $e" }
                 sink.error(ImageServiceException("Failed to connect to MinIO", e))
             }
-        }.doOnNext {
-            logger.info { "Uploaded ${it.size} bytes to $fileName" }
-        }.then(imageObjectRefRepository.save(s3ObjectRef))
+        }.then(try {
+            imageObjectRefRepository.save(s3ObjectRef)
+        } catch (e: Exception) {
+            logger.error { "Failed to save image reference: $e" }
+            Mono.error(ImageServiceException("Failed to save image reference", e))
+        }).doOnNext {
+                logger.info { "Saved image reference with ID ${it.id}" }
+            }
     }
 
     fun deleteImageById(id: Int): Mono<Unit> {
         return imageObjectRefRepository.findById(id)
-            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
-            .flatMap { obj ->
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found"))).flatMap { obj ->
                 imageObjectRefRepository.deleteById(id)
                     .then(Mono.fromCallable { minioStorage.deleteObject(obj.bucket, obj.key) })
             }

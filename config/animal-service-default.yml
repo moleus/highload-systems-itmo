@@ -43,8 +43,9 @@ logging:
   level:
     itmo:
       highload: DEBUG
-    web: DEBUG
+    web: INFO
     org:
       springframework:
-        security: DEBUG
-        web: DEBUG
+        security: INFO
+        web: INFO
+        web.cors.reactive.DefaultCorsProcessor: DEBUG
