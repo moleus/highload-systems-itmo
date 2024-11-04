@@ -8,6 +8,7 @@ import itmo.highload.model.S3ObjectRef
 import itmo.highload.repository.ImageObjectRefRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataAccessException
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -63,7 +64,7 @@ class ImagesService @Autowired constructor(
             }
         }.then(try {
             imageObjectRefRepository.save(s3ObjectRef)
-        } catch (e: Exception) {
+        } catch (e: DataAccessException) {
             logger.error { "Failed to save image reference: $e" }
             Mono.error(ImageServiceException("Failed to save image reference", e))
         }).doOnNext {
