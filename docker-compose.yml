@@ -21,7 +21,7 @@ x-kafka-cluster-envs: &kafka-cluster-envs
   KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093"
 
 x-small-jvm-heap-envs: &small-jvm-heap-envs
-  JAVA_TOOL_OPTIONS: "-Xms16m -Xmx48m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
+  JAVA_TOOL_OPTIONS: "-Xms64m -Xmx168m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
 
 x-medium-jvm-heap-envs: &medium-jvm-heap-envs
   JAVA_TOOL_OPTIONS: "-Xms128m -Xmx256m -XX:+UseSerialGC -Xss512k -XX:MaxRAM=350m"
@@ -104,6 +104,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?error}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?error}
+      MINIO_SERVICE_PUBLIC_ENDPOINT: ${MINIO_SERVICE_PUBLIC_ENDPOINT:?error}
     healthcheck:
       test: [ "CMD", "mc", "ready", "local" ]
       interval: 5s
@@ -166,7 +167,7 @@ services:
       init-db:
         condition: service_completed_successfully
     environment:
-      <<: *small-jvm-heap-envs
+      <<: *medium-jvm-heap-envs
     env_file:
       - .env
     <<: *default-healthcheck
@@ -181,7 +182,7 @@ services:
       init-db:
         condition: service_completed_successfully
     environment:
-      <<: *small-jvm-heap-envs
+      <<: *medium-jvm-heap-envs
     env_file:
       - .env
     <<: *default-healthcheck

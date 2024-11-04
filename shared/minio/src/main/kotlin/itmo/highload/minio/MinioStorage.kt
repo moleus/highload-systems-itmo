@@ -33,7 +33,7 @@ class MinioStorage @Autowired constructor(
             PutObjectArgs.builder().bucket(bucketName).`object`(fileName).contentType(fileType)
                 .stream(data.stream, data.size, data.partSize).build()
         )
-        return ObjectPutResult(writeResponse.headers().size.toLong())
+        return ObjectPutResult(writeResponse.etag())
     }
 
     override fun deleteObject(bucketName: String, objectName: String) {

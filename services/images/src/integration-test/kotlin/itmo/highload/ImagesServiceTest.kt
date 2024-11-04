@@ -38,6 +38,7 @@ class ImagesServiceTest @Autowired constructor(
             registry.add("minio.url") { minio.s3URL }
             registry.add("minio.bucketName") { "images" }
             registry.add("minio.defaultFolder") { "" }
+            registry.add("minio.publicEndpoint") { "http://localhost:${minio.firstMappedPort}/images" }
         }
     }
 

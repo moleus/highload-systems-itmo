@@ -10,6 +10,7 @@ minio:
   username: ${MINIO_USERNAME:minio}
   password: ${MINIO_PASSWORD:minio123}
   url: http://${MINIO_HOST:localhost:9000}
+  publicEndpoint: ${MINIO_SERVICE_PUBLIC_ENDPOINT:http://localhost:9000}
   bucketName: ${MINIO_BUCKET_NAME:images}
   defaultFolder: ${MINIO_DEFAULT_FOLDER:}
 
@@ -30,19 +31,19 @@ eureka:
 springdoc:
   api-docs:
     enabled: true
-    path: /images-api/v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /images-swagger-ui.html
-    url: /images-api/v3/api-docs
+    path: /swagger-ui.html
+    url: /v3/api-docs
 
 logging:
   level:
     itmo:
-      highload: DEBUG
-    web: DEBUG
+      highload: INFO
+    web: INFO
     org:
       springframework:
-        security: DEBUG
-        web: DEBUG
-
+        security: INFO
+        web: INFO
+        web.cors.reactive.DefaultCorsProcessor: DEBUG

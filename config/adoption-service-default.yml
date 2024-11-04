@@ -57,8 +57,8 @@ jwt:
 springdoc:
   api-docs:
     enabled: true
-    path: /adoption-api/v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /adoption-swagger-ui.html
-    url: /adoption-api/v3/api-docs
+    path: /swagger-ui.html
+    url: /v3/api-docs

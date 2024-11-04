@@ -39,7 +39,10 @@ class ImagesController(
             responseCode = "401", description = "Unauthorized request"
         ), ApiResponse(responseCode = "403", description = "No authority for this operation")]
     )
-    fun getImageUrlById(@PathVariable id: Int) = imagesService.getImageById(id).map { FileUrlResponse(it.id, it.url) }
+    fun getImageUrlById(@PathVariable id: Int): Mono<FileUrlResponse> {
+        return imagesService.getImageById(id)
+            .map { FileUrlResponse(it.id, imagesService.constructPublicEndpointFromPath(it)) }
+    }
 
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.CREATED)

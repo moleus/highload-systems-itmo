@@ -8,6 +8,7 @@ import itmo.highload.model.S3ObjectRef
 import itmo.highload.repository.ImageObjectRefRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataAccessException
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -30,14 +31,16 @@ class ImagesService @Autowired constructor(
             .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
     }
 
+    fun constructPublicEndpointFromPath(objectRef: S3ObjectRef): String {
+        return "${minioConfig.publicEndpoint}/${objectRef.bucket}/${objectRef.key}"
+    }
+
     fun saveImage(data: FilePart): Mono<S3ObjectRef> {
         val uuid = UUID.randomUUID().toString()
         val fileName = "$uuid/${data.filename()}"
-        val minioImageUrl = "${minioConfig.minioUrl}/$bucketName/$fileName"
         val s3ObjectRef = S3ObjectRef(
             bucket = bucketName,
             key = fileName,
-            url = minioImageUrl
         )
 
         return data.content().collectList().map { parts ->
@@ -51,22 +54,27 @@ class ImagesService @Autowired constructor(
             logger.info { "Uploading ${it.size} bytes to $fileName" }
         }.handle<PartDataStream> { partDataStream, sink ->
             try {
-                minioStorage.putObject(
+                val putResult = minioStorage.putObject(
                     bucketName, fileName, data.headers().contentType.toString(), partDataStream
                 )
+                logger.info { "Uploaded object with etag ${putResult.etag} to $fileName" }
             } catch (e: ConnectException) {
+                logger.warn { "Failed to connect to MinIO: $e" }
                 sink.error(ImageServiceException("Failed to connect to MinIO", e))
             }
-        }.doOnNext {
-            logger.info { "Uploaded ${it.size} bytes to $fileName" }
-            logger.info { "Image can be viewed in '$minioImageUrl'" }
-        }.then(imageObjectRefRepository.save(s3ObjectRef))
+        }.then(try {
+            imageObjectRefRepository.save(s3ObjectRef)
+        } catch (e: DataAccessException) {
+            logger.error { "Failed to save image reference: $e" }
+            Mono.error(ImageServiceException("Failed to save image reference", e))
+        }).doOnNext {
+                logger.info { "Saved image reference with ID ${it.id}" }
+            }
     }
 
     fun deleteImageById(id: Int): Mono<Unit> {
         return imageObjectRefRepository.findById(id)
-            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
-            .flatMap { obj ->
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found"))).flatMap { obj ->
                 imageObjectRefRepository.deleteById(id)
                     .then(Mono.fromCallable { minioStorage.deleteObject(obj.bucket, obj.key) })
             }

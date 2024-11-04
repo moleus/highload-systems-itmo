@@ -35,8 +35,8 @@ eureka:
 springdoc:
   api-docs:
     enabled: true
-    path: /transaction-api/v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /transaction-swagger-ui.html
-    url: /transaction-api/v3/api-docs
+    path: /swagger-ui.html
+    url: /v3/api-docs
