@@ -37,8 +37,8 @@ spring:
             - Path=/api/v1/notifications/ws/**
           filters:
             - RewritePath=/api/v1/notifications/ws/(?<segment>/?.*), /ws/$\{segment}
-        - id: image-service
-          uri: lb://NOTIFICATION-SERVICE
+        - id: images-service
+          uri: lb://IMAGES-SERVICE
           predicates:
             - Path=/images-api-service/**
           filters:
