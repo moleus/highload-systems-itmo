@@ -37,6 +37,12 @@ spring:
             - Path=/api/v1/notifications/ws/**
           filters:
             - RewritePath=/api/v1/notifications/ws/(?<segment>/?.*), /ws/$\{segment}
+        - id: image-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/images-api-service/**
+          filters:
+            - RewritePath=/images-api-service/(?<segment>/?.*), /$\{segment}
       discovery:
         locator:
           enabled: true
@@ -66,3 +72,5 @@ springdoc:
         url: /transaction-api-service/v3/api-docs
     -   name: auth-service
         url: /auth-api-service/v3/api-docs
+    -   name: images-service
+        url: /images-api-service/v3/api-docs
