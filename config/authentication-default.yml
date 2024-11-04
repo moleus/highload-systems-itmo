@@ -36,8 +36,8 @@ eureka:
 springdoc:
   api-docs:
     enabled: true
-    path: /auth-api/v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /auth-swagger-ui.html
-    url: /auth-api/v3/api-docs
+    path: /swagger-ui.html
+    url: /v3/api-docs

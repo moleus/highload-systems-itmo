@@ -32,11 +32,11 @@ jwt:
 springdoc:
   api-docs:
     enabled: true
-    path: /animal-api/v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /animal-swagger-ui.html
-    url: /animal-api/v3/api-docs
+    path: /swagger-ui.html
+    url: /v3/api-docs
 
 
 logging:

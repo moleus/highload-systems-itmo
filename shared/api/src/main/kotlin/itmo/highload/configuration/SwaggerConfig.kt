@@ -7,7 +7,21 @@ import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.reactive.config.CorsRegistry
+import org.springframework.web.reactive.config.EnableWebFlux
+import org.springframework.web.reactive.config.WebFluxConfigurer
 
+@Configuration
+@EnableWebFlux
+class CorsGlobalConfiguration : WebFluxConfigurer {
+    private val allowedOrigins = arrayOf("http://localhost:*")
+    override fun addCorsMappings(corsRegistry: CorsRegistry) {
+        @Suppress("SpreadOperator")
+        corsRegistry.addMapping("/**")
+            .allowedOriginPatterns(*allowedOrigins)
+            .allowedMethods("*")
+    }
+}
 
 @Configuration
 class SwaggerConfig {

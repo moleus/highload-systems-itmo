@@ -26,9 +26,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.reactive.CorsWebFilter
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import reactor.core.publisher.Mono
 import javax.crypto.SecretKey
 
@@ -53,25 +50,16 @@ class WebFluxSecurityConfig @Autowired constructor(
             "/docs.yaml",
             "/webjars/**",
             "/actuator/health",
-            "/swagger-ui/**",
             "/swagger-doc/v3/api-docs/**",
             "/swagger-doc/swagger-config/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/animal-swagger-ui.html",
-            "/animal-swagger-ui/**",
-            "/animal-api/v3/api-docs/**",
-            "/adoption-api/v3/api-docs/**",
-            "/adoption-swagger-ui.html",
-            "/adoption-swagger-ui/**",
-            "/transaction-api/v3/api-docs/**",
-            "/transaction-swagger-ui.html",
-            "/transaction-swagger-ui/**",
-            "/images-api/v3/api-docs/**",
-            "/images-swagger-ui.html",
-            "/images-swagger-ui/**",
-            "/auth-api/v3/api-docs/**",
-            "/auth-swagger-ui.html",
-            "/auth-swagger-ui/**",
+            "/animal-api-service/v3/api-docs/**",
+            "/adoption-api-service/v3/api-docs/**",
+            "/transaction-api-service/v3/api-docs/**",
+            "/auth-api-service/v3/api-docs/**",
+            "/images-api-service/v3/api-docs/**",
         )
         val log = KotlinLogging.logger {}
     }
@@ -93,20 +81,6 @@ class WebFluxSecurityConfig @Autowired constructor(
                 }
             }
         }
-
-    @Bean
-    fun corsFilter(): CorsWebFilter {
-        val source =
-            UrlBasedCorsConfigurationSource()
-        val config = CorsConfiguration()
-        config.allowCredentials = true
-        config.addAllowedOriginPattern("*")
-        config.addAllowedHeader("*")
-        config.addAllowedMethod("*")
-        source.registerCorsConfiguration("/**", config)
-        return CorsWebFilter(source)
-    }
-
 
     fun jwtDecoder(jwtAccessSecret: String): ReactiveJwtDecoder {
         val publicKey: SecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret))
