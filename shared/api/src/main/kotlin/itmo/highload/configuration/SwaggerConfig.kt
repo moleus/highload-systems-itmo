@@ -18,7 +18,7 @@ class CorsGlobalConfiguration : WebFluxConfigurer {
     override fun addCorsMappings(corsRegistry: CorsRegistry) {
         @Suppress("SpreadOperator")
         corsRegistry.addMapping("/**")
-            .allowedOrigins(*allowedOrigins)
+            .allowedOriginPatterns(*allowedOrigins)
             .allowedMethods("*")
     }
 }
