@@ -85,7 +85,8 @@ class ImagesController(
     )
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Image updated successfully", content = [Content(schema = Schema(implementation = FileUrlResponse::class))]),
+            ApiResponse(responseCode = "200", description = "Image updated successfully",
+                content = [Content(schema = Schema(implementation = FileUrlResponse::class))]),
             ApiResponse(responseCode = "404", description = "Image not found"),
             ApiResponse(responseCode = "400", description = "Invalid request parameters"),
             ApiResponse(responseCode = "401", description = "Unauthorized request"),
