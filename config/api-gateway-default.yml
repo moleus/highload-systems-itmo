@@ -43,6 +43,13 @@ spring:
             - Path=/images-api-service/**
           filters:
             - RewritePath=/images-api-service/(?<segment>/?.*), /$\{segment}
+        - id: cdn-minio-endpoint
+          uri: http://${MINIO_HOST:localhost:9000}
+          predicates:
+            - Path=/images/**
+          filters:
+            - RewritePath=/images/(?<segment>/?.*), /$\{segment}
+
       discovery:
         locator:
           enabled: true

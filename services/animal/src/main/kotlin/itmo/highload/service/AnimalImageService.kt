@@ -1,5 +1,6 @@
 package itmo.highload.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
 import itmo.highload.exceptions.ImageNotFoundException
@@ -18,6 +19,7 @@ class AnimalImageService(
     private val imageService: ImageService,
     private val animalRepository: AnimalRepository
 ) {
+    private val logger = KotlinLogging.logger {}
 
     fun getImagesByAnimalId(animalId: Int, token: String): Flux<FileUrlResponse> {
         return imageRepository.findByAnimalId(animalId)
@@ -29,9 +31,12 @@ class AnimalImageService(
 
     fun saveImageByAnimalId(animalId: Int, token: String, imageData: Mono<FilePart>): Mono<UploadedFileResponse> {
         return animalRepository.findById(animalId)
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found.")))
             .flatMap { _ ->
+                logger.info { "Uploading image for animal with ID $animalId" }
                 imageService.uploadImage(token, imageData)
                     .flatMap { uploadedFileResponse ->
+                        logger.info { "Image uploaded with ID ${uploadedFileResponse.fileID}" }
                         val imageToAnimal = AnimalToImage(
                             animalId = animalId,
                             imageId = uploadedFileResponse.fileID
@@ -40,7 +45,6 @@ class AnimalImageService(
                             .thenReturn(uploadedFileResponse)
                     }
             }
-            .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found.")))
     }
 
 
