@@ -53,7 +53,7 @@ springdoc:
     -   name: animal-service
         url: http://${ANIMAL_HOST:localhost:8086}/animal-api/v3/api-docs
     -   name: adoption-service
-        url: http://${ADOPTION_HOST:localhost}:${ADOPTION_PORT:8085}/adoption-api/v3/api-docs
+        url: http://${ADOPTION_HOST:localhost:8085}/adoption-api/v3/api-docs
     -   name: transaction-service
         url: http://${TRANSACTION_HOST:localhost:8088}/transaction-api/v3/api-docs
     -   name: auth-service

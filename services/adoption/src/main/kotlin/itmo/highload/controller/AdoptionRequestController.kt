@@ -26,10 +26,9 @@ import reactor.core.publisher.Mono
 @RequestMapping("\${app.base-url}/adoptions")
 @OpenAPIDefinition(
     servers = [
-        Server(url = "http://\${services.endpoints.api.gateway:localhost:8080}")
+        Server(url = "http://localhost:8080")
     ]
 )
-
 class AdoptionRequestController(
     private val adoptionRequestService: AdoptionRequestService, private val jwtUtils: JwtUtils
 ) {
