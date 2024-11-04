@@ -76,4 +76,27 @@ class ImagesController(
         ), ApiResponse(responseCode = "403", description = "No authority for this operation")]
     )
     fun deleteImageById(@PathVariable id: Int) = imagesService.deleteImageById(id)
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER')")
+    @Operation(
+        summary = "Update image by ID",
+        description = "Update an existing image with a new file by the specified ID."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Image updated successfully", content = [Content(schema = Schema(implementation = FileUrlResponse::class))]),
+            ApiResponse(responseCode = "404", description = "Image not found"),
+            ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            ApiResponse(responseCode = "401", description = "Unauthorized request"),
+            ApiResponse(responseCode = "403", description = "No authority for this operation")
+        ]
+    )
+    fun updateImageById(@PathVariable id: Int, @RequestPart("file") filePart: Mono<FilePart>): Mono<FileUrlResponse> {
+        return filePart.flatMap { part ->
+            imagesService.updateImageById(id, part)
+        }.map { updatedImage ->
+            FileUrlResponse(fileID = updatedImage.id, url = updatedImage.url)
+        }
+    }
 }
