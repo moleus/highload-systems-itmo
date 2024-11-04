@@ -73,16 +73,13 @@ class ImagesService @Autowired constructor(
     }
 
     fun updateImageById(id: Int, data: FilePart): Mono<S3ObjectRef> {
-        val uuid = UUID.randomUUID().toString()
-        val newFileName = "$uuid/${data.filename()}"
         return imageObjectRefRepository.findById(id)
             .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
             .flatMap { existingObject ->
-                val fileName = newFileName // Используем существующий ключ (имя файла)
+                val fileName = existingObject.key
                 val bucketName = existingObject.bucket
                 val minioImageUrl = "${minioConfig.minioUrl}/$bucketName/$fileName"
 
-                // Обновляем данные в хранилище
                 data.content().collectList().map { parts ->
                     val byteArray = parts.flatMap { it.asInputStream().readAllBytes().toList() }.toByteArray()
                     PartDataStream(
@@ -94,7 +91,6 @@ class ImagesService @Autowired constructor(
                     logger.info { "Updating ${it.size} bytes to $fileName" }
                 }.handle<PartDataStream> { partDataStream, sink ->
                     try {
-                        // Загружаем новый объект в MinIO с использованием того же имени
                         minioStorage.putObject(
                             bucketName, fileName, data.headers().contentType.toString(), partDataStream
                         )
@@ -105,7 +101,7 @@ class ImagesService @Autowired constructor(
                     logger.info { "Updated ${it.size} bytes in $fileName" }
                     logger.info { "Updated image can be viewed in '$minioImageUrl'" }
                 }.thenReturn(
-                    existingObject.copy(url = minioImageUrl) // Обновляем URL при необходимости
+                    existingObject.copy(url = minioImageUrl)
                 )
             }
     }
