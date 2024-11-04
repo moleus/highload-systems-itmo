@@ -21,7 +21,7 @@ x-kafka-cluster-envs: &kafka-cluster-envs
   KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093"
 
 x-small-jvm-heap-envs: &small-jvm-heap-envs
-  JAVA_TOOL_OPTIONS: "-Xms16m -Xmx48m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
+  JAVA_TOOL_OPTIONS: "-Xms64m -Xmx168m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
 
 x-medium-jvm-heap-envs: &medium-jvm-heap-envs
   JAVA_TOOL_OPTIONS: "-Xms128m -Xmx256m -XX:+UseSerialGC -Xss512k -XX:MaxRAM=350m"
