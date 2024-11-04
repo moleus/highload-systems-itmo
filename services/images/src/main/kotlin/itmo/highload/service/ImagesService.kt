@@ -30,14 +30,16 @@ class ImagesService @Autowired constructor(
             .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
     }
 
+    fun constructPublicEndpointFromPath(objectRef: S3ObjectRef): String {
+        return "${minioConfig.publicEndpoint}/${objectRef.bucket}/${objectRef.key}"
+    }
+
     fun saveImage(data: FilePart): Mono<S3ObjectRef> {
         val uuid = UUID.randomUUID().toString()
         val fileName = "$uuid/${data.filename()}"
-        val minioImageUrl = "${minioConfig.minioUrl}/$bucketName/$fileName"
         val s3ObjectRef = S3ObjectRef(
             bucket = bucketName,
             key = fileName,
-            url = minioImageUrl
         )
 
         return data.content().collectList().map { parts ->
@@ -59,7 +61,6 @@ class ImagesService @Autowired constructor(
             }
         }.doOnNext {
             logger.info { "Uploaded ${it.size} bytes to $fileName" }
-            logger.info { "Image can be viewed in '$minioImageUrl'" }
         }.then(imageObjectRefRepository.save(s3ObjectRef))
     }
 

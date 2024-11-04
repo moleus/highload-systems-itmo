@@ -10,6 +10,7 @@ minio:
   username: ${MINIO_USERNAME:minio}
   password: ${MINIO_PASSWORD:minio123}
   url: http://${MINIO_HOST:localhost:9000}
+  publicEndpoint: ${MINIO_SERVICE_PUBLIC_ENDPOINT:http://localhost:9000}
   bucketName: ${MINIO_BUCKET_NAME:images}
   defaultFolder: ${MINIO_DEFAULT_FOLDER:}
 

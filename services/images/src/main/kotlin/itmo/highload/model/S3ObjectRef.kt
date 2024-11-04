@@ -15,7 +15,4 @@ data class S3ObjectRef(
 
     @Column("key")
     val key: String,
-
-    @Column("url")
-    val url: String
 )
