@@ -19,7 +19,7 @@ class MinioConfig @Autowired constructor(
     val minioUrl: String,
     @Value("\${minio.bucketName}")
     var defaultBucketName: String,
-    @Value("\${minio.publicEndpoint")
+    @Value("\${minio.publicEndpoint}")
     val publicEndpoint: String,
 ) {
 
