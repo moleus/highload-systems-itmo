@@ -100,7 +100,7 @@ class ImagesController(
         return filePart.flatMap { part ->
             imagesService.updateImageById(id, part)
         }.map { updatedImage ->
-            FileUrlResponse(fileID = updatedImage.id, url = updatedImage.url)
+            FileUrlResponse(fileID = updatedImage.id, url = imagesService.constructPublicEndpointFromPath(updatedImage))
         }
     }
 }

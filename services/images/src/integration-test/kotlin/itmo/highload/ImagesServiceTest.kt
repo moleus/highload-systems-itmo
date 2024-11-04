@@ -8,8 +8,8 @@ import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.withJwt
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -38,7 +38,7 @@ class ImagesServiceTest @Autowired constructor(
             registry.add("minio.url") { minio.s3URL }
             registry.add("minio.bucketName") { "images" }
             registry.add("minio.defaultFolder") { "" }
-            registry.add("minio.publicEndpoint") { "http://localhost:${minio.firstMappedPort}/images" }
+            registry.add("minio.publicEndpoint") { "http://localhost:${minio.firstMappedPort}" }
         }
     }
 
@@ -81,6 +81,45 @@ class ImagesServiceTest @Autowired constructor(
             actualUrl.contains("http://localhost:${minio.firstMappedPort}/images/")
         ) { "Actual url is: $actualUrl" }
 
+    }
+
+    @Disabled
+    @Test
+    fun `test update image by id`() {
+        val imageRef = uploadTestImage()
+
+        val originalImageObjectContentsBytes = RestAssured.given().withJwt(customerToken).port(port).get("/api/v1/images/{id}", imageRef.fileID).then()
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(FileUrlResponse::class.java).url.toByteArray()
+
+        val gotImageRef = RestAssured.given().withJwt(customerToken).port(port).get("/api/v1/images/{id}", imageRef.fileID).then()
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(FileUrlResponse::class.java)
+
+        // convertion to ByteArray fails
+        val gotImageObjectContentsBytes = RestAssured.given().withJwt(customerToken).get(gotImageRef.url).then()
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(ByteArray::class.java)
+
+        assert(gotImageRef.url.contains("http://localhost:${minio.firstMappedPort}/images/")) { "Actual url is: ${gotImageRef.url}" }
+        assertEquals(originalImageObjectContentsBytes.size, gotImageObjectContentsBytes.size)
+        assert(originalImageObjectContentsBytes.contentEquals(gotImageObjectContentsBytes)) { "Original image contents: ${originalImageObjectContentsBytes.contentToString()}, got image contents: ${gotImageObjectContentsBytes.contentToString()}" }
+
+        val updatedImageRef = RestAssured.given().withJwt(customerToken).port(port).contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .multiPart("file", ClassPathResource("/cute-cats.jpg", ImagesServiceTest::class.java).file)
+            .put("/api/v1/images/{id}", imageRef.fileID).then()
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(FileUrlResponse::class.java)
+
+        assertEquals(gotImageRef.url, updatedImageRef.url)
+        assertEquals(gotImageRef.fileID, updatedImageRef.fileID)
+
+        val updatedImageObjectContentsBytes = RestAssured.given().withJwt(customerToken).get(updatedImageRef.url).then()
+            .statusCode(HttpStatus.OK.value())
+            .extract().`as`(ByteArray::class.java)
+
+        assertNotEquals(originalImageObjectContentsBytes.size, updatedImageObjectContentsBytes.size)
+        assert(!originalImageObjectContentsBytes.contentEquals(updatedImageObjectContentsBytes)) { "Original image contents: ${originalImageObjectContentsBytes.contentToString()}, updated image contents: ${updatedImageObjectContentsBytes.contentToString()}" }
     }
 
     @Test

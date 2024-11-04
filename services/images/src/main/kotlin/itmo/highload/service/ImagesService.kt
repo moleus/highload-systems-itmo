@@ -83,10 +83,9 @@ class ImagesService @Autowired constructor(
     fun updateImageById(id: Int, data: FilePart): Mono<S3ObjectRef> {
         return imageObjectRefRepository.findById(id)
             .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
-            .flatMap { existingObject ->
-                val fileName = existingObject.key
-                val bucketName = existingObject.bucket
-                val minioImageUrl = "${minioConfig.minioUrl}/$bucketName/$fileName"
+            .flatMap { existingObjectRef ->
+                val fileName = existingObjectRef.key
+                val bucketName = existingObjectRef.bucket
 
                 data.content().collectList().map { parts ->
                     val byteArray = parts.flatMap { it.asInputStream().readAllBytes().toList() }.toByteArray()
@@ -107,10 +106,7 @@ class ImagesService @Autowired constructor(
                     }
                 }.doOnNext {
                     logger.info { "Updated ${it.size} bytes in $fileName" }
-                    logger.info { "Updated image can be viewed in '$minioImageUrl'" }
-                }.thenReturn(
-                    existingObject.copy(url = minioImageUrl)
-                )
+                }.thenReturn(existingObjectRef)
             }
     }
 
