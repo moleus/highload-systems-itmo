@@ -79,4 +79,35 @@ class ImagesService @Autowired constructor(
                     .then(Mono.fromCallable { minioStorage.deleteObject(obj.bucket, obj.key) })
             }
     }
+
+    fun updateImageById(id: Int, data: FilePart): Mono<S3ObjectRef> {
+        return imageObjectRefRepository.findById(id)
+            .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
+            .flatMap { existingObjectRef ->
+                val fileName = existingObjectRef.key
+                val bucketName = existingObjectRef.bucket
+
+                data.content().collectList().map { parts ->
+                    val byteArray = parts.flatMap { it.asInputStream().readAllBytes().toList() }.toByteArray()
+                    PartDataStream(
+                        stream = byteArray.inputStream(),
+                        size = byteArray.size.toLong(),
+                        partSize = -1,
+                    )
+                }.doOnNext {
+                    logger.info { "Updating ${it.size} bytes to $fileName" }
+                }.handle<PartDataStream> { partDataStream, sink ->
+                    try {
+                        minioStorage.putObject(
+                            bucketName, fileName, data.headers().contentType.toString(), partDataStream
+                        )
+                    } catch (e: ConnectException) {
+                        sink.error(ImageServiceException("Failed to connect to MinIO", e))
+                    }
+                }.doOnNext {
+                    logger.info { "Updated ${it.size} bytes in $fileName" }
+                }.thenReturn(existingObjectRef)
+            }
+    }
+
 }

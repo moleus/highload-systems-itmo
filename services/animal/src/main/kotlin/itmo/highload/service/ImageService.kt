@@ -33,6 +33,13 @@ interface ImageService {
         @PathVariable id: Int
     ): Mono<Void>
 
+    @PutMapping("/images/{id}")
+    fun updateImage(
+        @RequestHeader("Authorization") token: String,
+        @PathVariable id: Int,
+        fileParts: Mono<FilePart>
+    ): Mono<UploadedFileResponse>
+
 }
 
 @Component
@@ -57,6 +64,14 @@ class ImageServiceFallback : ImageService {
     override fun deleteImageById(token: String, id: Int): Mono<Void> {
         println("Failed to delete image with ID $id. Image service is currently unavailable.")
         return Mono.empty()
+    }
+
+    override fun updateImage(token: String, id: Int, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
+        return Mono.error {
+            ImageServiceUnavailableException(
+                "Image update service is currently unavailable."
+            )
+        }
     }
 
 }

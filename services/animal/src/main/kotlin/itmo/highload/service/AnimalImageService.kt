@@ -48,18 +48,31 @@ class AnimalImageService(
     }
 
 
+//    fun updateImageByImageId(imageId: Int, token: String, newImageData: Mono<FilePart>): Mono<UploadedFileResponse> {
+//        return imageRepository.findByImageId(imageId)
+//            .flatMap { existingImage ->
+//                imageService.deleteImageById(token, existingImage.imageId)
+//                    .then(imageRepository.deleteAnimalToImageByImageId(existingImage.imageId))
+//                    .then(imageService.uploadImage(token, newImageData))
+//                    .flatMap { newUploadedImage ->
+//                        val updatedImage = AnimalToImage(
+//                            animalId = existingImage.animalId,
+//                            imageId = newUploadedImage.fileID
+//                        )
+//                        imageRepository.save(updatedImage).thenReturn(newUploadedImage)
+//                    }
+//            }
+//            .switchIfEmpty(Mono.error(ImageNotFoundException("Image with id $imageId not found")))
+//    }
+
     fun updateImageByImageId(imageId: Int, token: String, newImageData: Mono<FilePart>): Mono<UploadedFileResponse> {
         return imageRepository.findByImageId(imageId)
             .flatMap { existingImage ->
-                imageService.deleteImageById(token, existingImage.imageId)
-                    .then(imageRepository.deleteAnimalToImageByImageId(existingImage.imageId))
-                    .then(imageService.uploadImage(token, newImageData))
-                    .flatMap { newUploadedImage ->
-                        val updatedImage = AnimalToImage(
-                            animalId = existingImage.animalId,
-                            imageId = newUploadedImage.fileID
-                        )
-                        imageRepository.save(updatedImage).thenReturn(newUploadedImage)
+                // Вызываем метод updateImage для обновления существующего изображения по его ID
+                imageService.updateImage(token, existingImage.imageId, newImageData)
+                    .flatMap { updatedImage ->
+                        // Возвращаем обновленный ответ после успешного обновления
+                        Mono.just(updatedImage)
                     }
             }
             .switchIfEmpty(Mono.error(ImageNotFoundException("Image with id $imageId not found")))
