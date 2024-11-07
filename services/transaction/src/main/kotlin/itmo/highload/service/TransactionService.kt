@@ -8,6 +8,7 @@ import itmo.highload.repository.TransactionRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 @Service
 class TransactionService(
@@ -64,7 +65,9 @@ class TransactionService(
 
                         if (isDonation) {
                             val message = TransactionMapper.toResponse(transaction, balance)
-                            transactionProducer.sendMessageToNewDonationTopic(message)
+                            Mono.fromCallable { transactionProducer.sendMessageToNewDonationTopic(message) }
+                                .subscribeOn(Schedulers.boundedElastic())
+                                .subscribe()
                         }
                         transactionResponse }
             }
