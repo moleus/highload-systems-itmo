@@ -62,8 +62,11 @@ class ImageServiceFallback : ImageService {
     }
 
     override fun deleteImageById(token: String, id: Int): Mono<Void> {
-        println("Failed to delete image with ID $id. Image service is currently unavailable.")
-        return Mono.empty()
+        return Mono.error {
+            ImageServiceUnavailableException(
+                "Image upload service is currently unavailable."
+            )
+        }
     }
 
     override fun updateImage(token: String, id: Int, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
