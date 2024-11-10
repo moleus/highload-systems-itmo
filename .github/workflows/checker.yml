@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: detekt
+name: CI
 
 on:
   pull_request:
@@ -11,15 +11,8 @@ permissions:
   pull-requests: write
 
 env:
-  JDK_VERSION: 17
+  JDK_VERSION: 21
   GRADLE_VERSION: 8.10.2
-  PGHOST: postgres
-  PGPORT: 5432
-  PGPASSWORD: postgres
-  PGUSER: runner
-  PGOPTIONS: '--client-min-messages=warning'
-  GRADLE_OPTS: -Xmx2048M
-  JAVA_OPTS: -Xmx2048M
 
 jobs:
   run-docker-compose:
@@ -48,7 +41,7 @@ jobs:
       run: |
         docker compose --env-file env-ci -f docker-compose.yml up -d --wait
 
-  lint-and-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -61,35 +54,54 @@ jobs:
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v4
       with:
-        cache-read-only: false
+        cache-read-only: true
         gradle-version: ${{ env.GRADLE_VERSION }}
         build-scan-publish: true
         build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
         build-scan-terms-of-use-agree: "yes"
     - name: Run detekt
       run: ./gradlew detekt --configuration-cache
-    - name: Run unit & e2e tests
-      run: ./gradlew check --configuration-cache
-    - name: Generate kover coverage report
-      run: ./gradlew koverXmlReport
-    - name: Upload build reports
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: build-reports
-        path: build/reports/
-    - name: Add coverage report to PR
-      uses: mi-kas/kover-report@5f58465b6f395c8fa3adc2665e27250bad87de50  # v1
-      with:
-        path: |
-          ${{ github.workspace }}/services/adoption/build/reports/kover/report.xml
-          ${{ github.workspace }}/services/api-gateway/build/reports/kover/report.xml
-          ${{ github.workspace }}/services/authentication/build/reports/kover/report.xml
-          ${{ github.workspace }}/services/cloud-config/build/reports/kover/report.xml
-          ${{ github.workspace }}/services/eureka-server/build/reports/kover/report.xml
-          ${{ github.workspace }}/services/transaction/build/reports/kover/report.xml
-        title: Code Coverage
-        update-comment: true
-        min-coverage-overall: 70
-        min-coverage-changed-files: 70
-        coverage-counter-type: LINE
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+      - name: Run unit & e2e tests
+        run: ./gradlew check --configuration-cache
+      - name: Generate kover coverage report
+        run: ./gradlew koverXmlReport
+      - name: Upload build reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-reports
+          path: ./**/build/reports/
+      - name: Add coverage report to PR
+        uses: mi-kas/kover-report@5f58465b6f395c8fa3adc2665e27250bad87de50  # v1
+        with:
+          path: |
+            ${{ github.workspace }}/services/adoption/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/api-gateway/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/authentication/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/cloud-config/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/eureka-server/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/transaction/build/reports/kover/report.xml
+          title: Code Coverage
+          update-comment: true
+          min-coverage-overall: 70
+          min-coverage-changed-files: 70
+          coverage-counter-type: LINE

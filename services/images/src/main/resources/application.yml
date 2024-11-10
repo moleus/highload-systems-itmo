@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: images-service
+  config:
+    import: 'configserver:http://${CLOUD_CONFIG_HOST:localhost}:8888'

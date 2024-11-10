@@ -1,9 +1,30 @@
 x-defaults: &default-healthcheck
   healthcheck:
     test: ["CMD-SHELL", "curl -f http://localhost:${APP_SERVER_PORT}/actuator/health || exit 1"]
-    interval: 10s
-    timeout: 5s
-    retries: 5
+    interval: 5s
+    timeout: 10s
+    retries: 20
+
+# а что на порту 9093?
+x-kafka-cluster-envs: &kafka-cluster-envs
+  KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://:9092"
+  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+  KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  KAFKA_KRAFT_CLUSTER_ID: abcdefghijklmnopqrstuv
+  KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  KAFKA_CFG_PROCESS_ROLES: "controller,broker"
+  KAFKA_HEAP_OPTS: "-Xms200m -Xmx300m"
+  KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: 1  # at least 2 replicas should be in sync
+  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093"
+
+x-small-jvm-heap-envs: &small-jvm-heap-envs
+  JAVA_TOOL_OPTIONS: "-Xms64m -Xmx168m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
+
+x-medium-jvm-heap-envs: &medium-jvm-heap-envs
+  JAVA_TOOL_OPTIONS: "-Xms128m -Xmx256m -XX:+UseSerialGC -Xss512k -XX:MaxRAM=350m"
 
 services:
   db:
@@ -15,6 +36,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USERNAME:?error}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
       POSTGRES_PORT: 5432
+      POSTGRES_SHARED_BUFFERS: 4MB
+      POSTGRES_WAL_BUFFERS: 1MB
+      POSTGRES_WORK_MEM: 2MB
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -45,6 +69,52 @@ services:
     networks:
       - backend
 
+  kafka-1:
+    image: 'bitnami/kafka:3.8.0'
+    environment:
+      <<: *kafka-cluster-envs
+      KAFKA_CFG_NODE_ID: 1
+    volumes:
+      - kafka-1-data-signle-node:/bitnami/kafka
+    ports:
+      - "127.0.0.1:9092:9092"
+    networks:
+      - backend
+
+  ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    depends_on:
+      - kafka-1
+    ports:
+      - "8585:8080"
+    environment:
+      <<: *medium-jvm-heap-envs
+      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: "kafka-1:9092"
+      KAFKA_CLUSTERS_0_NAME: kafka-1
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    networks:
+      - backend
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-10-13T13-34-11Z
+    command: server --console-address ":9001" /data
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?error}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?error}
+      MINIO_SERVICE_PUBLIC_ENDPOINT: ${MINIO_SERVICE_PUBLIC_ENDPOINT:?error}
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - minio-data:/data
+    networks:
+      - backend
+
   cloud-config:
     image: moleus/highload/cloud-config:dev
     working_dir: /app
@@ -52,6 +122,7 @@ services:
       - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
       - ./config:/app/config
     environment:
+      <<: *small-jvm-heap-envs
 #      SPRING_PROFILES_ACTIVE: cloud
       SPRING_PROFILES_ACTIVE: standalone,native
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
@@ -78,6 +149,8 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    environment:
+      <<: *medium-jvm-heap-envs
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
       interval: 10s
@@ -93,6 +166,8 @@ services:
         condition: service_healthy
       init-db:
         condition: service_completed_successfully
+    environment:
+      <<: *medium-jvm-heap-envs
     env_file:
       - .env
     <<: *default-healthcheck
@@ -106,6 +181,8 @@ services:
         condition: service_healthy
       init-db:
         condition: service_completed_successfully
+    environment:
+      <<: *medium-jvm-heap-envs
     env_file:
       - .env
     <<: *default-healthcheck
@@ -121,11 +198,13 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    environment:
+      <<: *small-jvm-heap-envs
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 20
     networks:
       - backend
 
@@ -138,6 +217,8 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    environment:
+      <<: *small-jvm-heap-envs
     <<: *default-healthcheck
     networks:
       - backend
@@ -151,12 +232,48 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    environment:
+      <<: *small-jvm-heap-envs
+    <<: *default-healthcheck
+    networks:
+      - backend
+
+  images:
+    image: moleus/highload/images:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      <<: *small-jvm-heap-envs
+    <<: *default-healthcheck
+    networks:
+      - backend
+
+  notification:
+    image: moleus/highload/notification:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    ports:
+      - "8089:8080"
+    env_file:
+      - .env
+    environment:
+      <<: *small-jvm-heap-envs
     <<: *default-healthcheck
     networks:
       - backend
 
 volumes:
   postgres-data:
+  kafka-1-data-signle-node:
+  minio-data:
 
 networks:
   backend:

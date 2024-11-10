@@ -10,6 +10,7 @@ import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.model.Animal
 import itmo.highload.repository.AnimalRepository
 import itmo.highload.service.AdoptionService
+import itmo.highload.service.AnimalImageService
 import itmo.highload.service.AnimalService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -21,7 +22,8 @@ class AnimalServiceTest {
 
     private val animalRepository: AnimalRepository = mockk()
     private val adoptionService: AdoptionService = mockk()
-    private val animalService = AnimalService(animalRepository, adoptionService)
+    private val animalImageService: AnimalImageService = mockk()
+    private val animalService = AnimalService(animalRepository, adoptionService, animalImageService)
 
     private val existingAnimal = Animal(
         id = 1,

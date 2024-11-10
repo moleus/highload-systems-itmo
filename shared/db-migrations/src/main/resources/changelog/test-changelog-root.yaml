@@ -3,6 +3,10 @@ databaseChangeLog:
       path: changelog/changelog-1.0/
   - includeAll:
      path: changelog/changelog-2.0/
+  - includeAll:
+      path: changelog/changelog-3.0/
+  - includeAll:
+      path: changelog/changelog-3.1/
   - changeSet:
       id: 1
       author: moleus

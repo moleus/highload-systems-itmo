@@ -29,6 +29,7 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 import reactor.core.publisher.Mono
 import javax.crypto.SecretKey
 
+
 @Profile("!disable-security")
 @Configuration
 @EnableReactiveMethodSecurity
@@ -48,7 +49,17 @@ class WebFluxSecurityConfig @Autowired constructor(
             "/docs/**",
             "/docs.yaml",
             "/webjars/**",
-            "actuator/health",
+            "/actuator/health",
+            "/swagger-doc/v3/api-docs/**",
+            "/swagger-doc/swagger-config/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/animal-api-service/v3/api-docs/**",
+            "/adoption-api-service/v3/api-docs/**",
+            "/transaction-api-service/v3/api-docs/**",
+            "/auth-api-service/v3/api-docs/**",
+            "/images-api-service/v3/api-docs/**",
         )
         val log = KotlinLogging.logger {}
     }
@@ -69,7 +80,6 @@ class WebFluxSecurityConfig @Autowired constructor(
                     jwtAuthenticationConverter = grantedAuthoritiesExtractor()
                 }
             }
-//            addFilterAt(jwtFilter, SecurityWebFiltersOrder.HTTP_BASIC)
         }
 
     fun jwtDecoder(jwtAccessSecret: String): ReactiveJwtDecoder {
@@ -81,8 +91,6 @@ class WebFluxSecurityConfig @Autowired constructor(
 
     fun grantedAuthoritiesExtractor(): Converter<Jwt, Mono<AbstractAuthenticationToken>> {
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
-//        val grantedAuthoritiesConverter = GrantedAuthoritiesExtractor()
-//        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(GrantedAuthoritiesExtractor())
         return ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter)
     }
@@ -98,6 +106,7 @@ class WebFluxSecurityConfig @Autowired constructor(
             return listOf(SimpleGrantedAuthority(authority.toString()))
         }
     }
+
 }
 
 @Profile("disable-security")

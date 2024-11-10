@@ -18,17 +18,26 @@ jwt:
 logging:
   level:
     itmo:
-      highload: TRACE
-    web: TRACE
+      highload: INFO
+    web: INFO
     org:
       springframework:
-        security: TRACE
-        web: TRACE
-    io.r2dbc.postgresql.QUERY: DEBUG # for queries
-    io.r2dbc.postgresql.PARAM: DEBUG # for parameters
+        security: INFO
+        web: INFO
+    io.r2dbc.postgresql.QUERY: INFO
+    io.r2dbc.postgresql.PARAM: INFO
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
 
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /v3/api-docs

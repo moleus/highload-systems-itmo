@@ -8,4 +8,3 @@ interface AnimalRepository : R2dbcRepository<Animal, Int> {
     fun findByIdNotIn(ids: List<Int>): Flux<Animal>
     fun findByNameAndIdNotIn(name: String, ids: List<Int>): Flux<Animal>
 }
-

@@ -14,7 +14,9 @@ import reactor.core.publisher.Mono
 @Service
 class AnimalService(
     private val animalRepository: AnimalRepository,
-    private val adoptionService: AdoptionService) {
+    private val adoptionService: AdoptionService,
+    private val animalImageService: AnimalImageService
+) {
 
     fun getById(animalId: Int): Mono<Animal> = animalRepository.findById(animalId)
         .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
@@ -31,22 +33,28 @@ class AnimalService(
         }
     }
 
-    fun delete(animalId: Int): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
+    fun delete(animalId: Int, token: String): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
         animalRepository.delete(existingAnimal)
+            .then(animalImageService.deleteAllByAnimalId(existingAnimal.id, token))
     }
 
     fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<Animal> {
-        val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null)
+        val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null && isNotAdopted)
             adoptionService.getAllAdoptedAnimalsId(token) else Flux.empty()
 
         return adoptedAnimalsIdFlux.collectList()
             .flatMapMany { adoptedAnimalsId ->
-                if (name != null) {
-                    animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId)
-                } else {
-                    animalRepository.findByIdNotIn(adoptedAnimalsId)
+                when {
+                    isNotAdopted == true || isNotAdopted == null -> {
+                        if (name != null) animalRepository.findByNameAndIdNotIn(name, adoptedAnimalsId)
+                        else animalRepository.findByIdNotIn(adoptedAnimalsId)
+                    }
+                    else -> {
+                        Flux.empty()
+                    }
                 }
             }
+
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

@@ -25,10 +25,26 @@ class ValidationErrorController {
     }
 
     @ExceptionHandler(DataIntegrityViolationException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun onDataIntegrityViolationException(): Map<String, String> {
-        return mapOf("error" to "Id not found")
+    fun onDataIntegrityViolationException(e: DataIntegrityViolationException): String {
+        if (e.cause is org.hibernate.exception.ConstraintViolationException) {
+
+            val constraintEx = e.cause as org.hibernate.exception.ConstraintViolationException
+            val constraintName = constraintEx.constraintName
+
+            if (constraintName != null && constraintName.contains("fk")) {
+                val id = constraintEx.message?.let { extractKeyIdFromErrorMessage(it) }
+                return "Entity with id = $id doesn't exist"
+            }
+        }
+        return "Data integrity exception occurred: $e"
+    }
+
+    fun extractKeyIdFromErrorMessage(message: String): String? {
+        val regex = Regex("""\((\d+)\)""")
+        val matchResult = regex.find(message)
+        return matchResult?.groups?.get(1)?.value
     }
 
 
