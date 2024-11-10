@@ -43,8 +43,12 @@ class AdoptionRequestService(
                     .subscribeOn(Schedulers.boundedElastic())
                     .doOnSuccess {
                         val message = AdoptionRequestMapper.toResponse(adoptionRequest)
-                        adoptionRequestProducer.sendMessageToAdoptionRequestCreatedTopic(message)
-                    }
+                        Mono.fromCallable { adoptionRequestProducer.sendMessageToAdoptionRequestCreatedTopic(message) }
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .onErrorContinue { error, _ ->
+                                logger.error("Failed to send message to Kafka: ${error.message}")
+                            }
+                            .subscribe()                    }
             }
         }
     }
@@ -73,7 +77,12 @@ class AdoptionRequestService(
             }
             saveMono.doOnSuccess {
                 val message = AdoptionRequestMapper.toResponse(adoptionRequest)
-                adoptionRequestProducer.sendMessageToAdoptionRequestChangedTopic(message)
+                Mono.fromCallable { adoptionRequestProducer.sendMessageToAdoptionRequestChangedTopic(message) }
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .onErrorContinue { error, _ ->
+                        logger.error("Failed to send message to Kafka: ${error.message}")
+                    }
+                    .subscribe()
             }
         }
     }

@@ -5,9 +5,11 @@ import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.kafka.TransactionProducer
 import itmo.highload.model.TransactionMapper
 import itmo.highload.repository.TransactionRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 @Service
 class TransactionService(
@@ -15,6 +17,7 @@ class TransactionService(
     private val balanceService: BalanceService,
     private val transactionProducer: TransactionProducer
 ) {
+    private val logger = LoggerFactory.getLogger(TransactionService::class.java)
 
     fun getExpenses(purposeId: Int?): Flux<TransactionResponse> {
         return if (purposeId != null) {
@@ -64,7 +67,12 @@ class TransactionService(
 
                         if (isDonation) {
                             val message = TransactionMapper.toResponse(transaction, balance)
-                            transactionProducer.sendMessageToNewDonationTopic(message)
+                            Mono.fromCallable { transactionProducer.sendMessageToNewDonationTopic(message) }
+                                .subscribeOn(Schedulers.boundedElastic())
+                                .onErrorContinue { error, _ ->
+                                    logger.error("Failed to send donation message to Kafka: ${error.message}")
+                                }
+                                .subscribe()
                         }
                         transactionResponse }
             }
