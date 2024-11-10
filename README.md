@@ -74,4 +74,4 @@ $ kafka-console-consumer.sh --topic events --bootstrap-server localhost:9092 --f
 
 - [x] Lab1 complete
 - [x] Lab2 complete
-- [ ] Lab3 in progress
+- [x] Lab3 in progress
