@@ -1,4 +1,4 @@
-package balance
+package itmo.highload
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
