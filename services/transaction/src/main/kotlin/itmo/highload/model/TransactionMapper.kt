@@ -1,13 +1,14 @@
 package itmo.highload.model
 
 import itmo.highload.api.dto.TransactionDto
+import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
 import java.time.LocalDateTime
 
 object TransactionMapper {
 
-    fun toEntity(dto: TransactionDto, userId: Int, balance: Balance, isDonation: Boolean): Transaction {
+    fun toEntity(dto: TransactionDto, userId: Int, balance: BalanceResponse, isDonation: Boolean): Transaction {
         return Transaction(
             dateTime = LocalDateTime.now(),
             userId = userId,
@@ -17,12 +18,12 @@ object TransactionMapper {
         )
     }
 
-    fun toResponse(entity: Transaction, balance: Balance): TransactionResponse {
+    fun toResponse(entity: Transaction, balance: BalanceResponse): TransactionResponse {
         return TransactionResponse(
             dateTime = entity.dateTime,
             purpose = PurposeResponse(
                 id = balance.id,
-                name = balance.purpose
+                name = balance.purpose.name
             ),
             userId = entity.userId,
             moneyAmount = entity.moneyAmount,

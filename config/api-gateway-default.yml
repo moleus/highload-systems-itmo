@@ -49,7 +49,12 @@ spring:
             - Path=/images/**
           filters:
             - RewritePath=/images/(?<segment>/?.*), /$\{segment}
-
+        - id: balance-service
+          uri: lb://BALANCE-SERVICE
+          predicates:
+            - Path=/api/v1/balances/**,/balances-api-service/**
+          filters:
+            - RewritePath=/balances-api-service/(?<segment>/?.*), /$\{segment}
       discovery:
         locator:
           enabled: true

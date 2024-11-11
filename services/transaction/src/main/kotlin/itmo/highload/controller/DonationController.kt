@@ -7,16 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
-import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.TransactionService
-import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/transactions/donations")
@@ -47,9 +43,10 @@ class DonationController(
         ]
     )
     fun getDonations(
-        @RequestParam(required = false) purposeId: Int?
+        @RequestParam(required = false) purposeId: Int?,
+        @RequestHeader("Authorization") token: String
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getDonations(purposeId)
+        val donations = transactionService.getDonations(purposeId, token)
         return donations
     }
 
@@ -72,36 +69,37 @@ class DonationController(
         ]
     )
     fun getDonationsByCustomerForManager(
-        @PathVariable customerId: Int
+        @PathVariable customerId: Int,
+        @RequestHeader("Authorization") token: String
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId)
+        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId, token)
         return donations
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-    @Operation(
-        summary = "Add a donation",
-        description = "Submit a donation transaction."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "Donation successfully created",
-                content = [Content(schema = Schema(implementation = TransactionResponse::class))]
-            ),
-            ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            ApiResponse(responseCode = "401", description = "Unauthorized request"),
-            ApiResponse(responseCode = "403", description = "No authority for this operation")
-        ]
-    )
-    fun addDonation(
-        @RequestBody @Valid donationDto: TransactionDto,
-        @RequestHeader("Authorization") token: String
-    ): Mono<TransactionResponse> {
-        val userId = jwtUtils.extractUserId(token)
-        return transactionService.addTransaction(donationDto, userId, isDonation = true)
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+//    @Operation(
+//        summary = "Add a donation",
+//        description = "Submit a donation transaction."
+//    )
+//    @ApiResponses(
+//        value = [
+//            ApiResponse(
+//                responseCode = "201",
+//                description = "Donation successfully created",
+//                content = [Content(schema = Schema(implementation = TransactionResponse::class))]
+//            ),
+//            ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+//            ApiResponse(responseCode = "401", description = "Unauthorized request"),
+//            ApiResponse(responseCode = "403", description = "No authority for this operation")
+//        ]
+//    )
+//    fun addDonation(
+//        @RequestBody @Valid donationDto: TransactionDto,
+//        @RequestHeader("Authorization") token: String
+//    ): Mono<TransactionResponse> {
+//        val userId = jwtUtils.extractUserId(token)
+//        return transactionService.addTransaction(donationDto, userId, isDonation = true)
+//    }
 }

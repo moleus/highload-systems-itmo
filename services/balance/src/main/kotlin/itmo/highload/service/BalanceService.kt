@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 @Service
 class BalanceService(private val balanceRepository: BalanceRepository) {
 
-    fun getById(id: Int): Mono<Balance> {
+    fun getBalanceById(id: Int): Mono<Balance> {
         return balanceRepository.findById(id)
             .switchIfEmpty(Mono.error(EntityNotFoundException("Failed to find Balance with id = $id")))
     }
