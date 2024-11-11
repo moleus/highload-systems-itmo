@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 
+
 plugins {
     id("highload.web")
     id("highload.application")
@@ -21,6 +22,9 @@ dependencies {
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
 }
 
 highloadApp {
