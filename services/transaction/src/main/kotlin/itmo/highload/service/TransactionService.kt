@@ -1,10 +1,8 @@
 package itmo.highload.service
 
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.kafka.TransactionProducer
 import itmo.highload.model.TransactionMapper
 import itmo.highload.repository.TransactionRepository
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 
@@ -54,7 +52,8 @@ class TransactionService(
 //        return balanceService.getById(donationDto.purposeId!!).flatMap { balance ->
 //                val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, balance, isDonation)
 //                transactionRepository.save(transactionEntity).flatMap { savedTransaction ->
-//                        balanceService.changeMoneyAmount(donationDto.purposeId!!, isDonation, donationDto.moneyAmount!!)
+//                        balanceService.changeMoneyAmount(donationDto.purposeId!!, isDonation,
+//                        donationDto.moneyAmount!!)
 //                            .thenReturn(savedTransaction)
 //                    }
 //            }.flatMap { transaction ->

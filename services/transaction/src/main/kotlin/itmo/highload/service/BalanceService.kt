@@ -3,6 +3,7 @@ package itmo.highload.service
 import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
+import itmo.highload.exceptions.ServiceUnavailableException
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import reactivefeign.spring.config.ReactiveFeignClient
@@ -27,7 +28,6 @@ interface BalanceService {
         @PathVariable id: Int
     ): Mono<BalanceResponse>
 
-
     @GetMapping("/balances/purposes")
     fun getAllPurposes(
         @RequestHeader("Authorization") token: String,
@@ -45,19 +45,35 @@ interface BalanceService {
 class BalanceServiceFallback : BalanceService {
 
     override fun getAllBalances(token: String): Flux<BalanceResponse> {
-        return Flux.empty() //todo not implemented
+        return Flux.error {
+            ServiceUnavailableException(
+                "Balance service is currently unavailable."
+            )
+        }
     }
 
     override fun getBalanceById(token: String, id: Int): Mono<BalanceResponse> {
-        return Mono.empty() //todo not implemented
+        return Mono.error {
+            ServiceUnavailableException(
+                "Balance service is currently unavailable."
+            )
+        }
     }
 
     override fun getAllPurposes(token: String): Flux<PurposeResponse> {
-        return Flux.empty() //todo not implemented
+        return Flux.error {
+            ServiceUnavailableException(
+                "Balance service is currently unavailable."
+            )
+        }
     }
 
     override fun addPurpose(token: String, purposeRequestDto: PurposeRequestDto): Mono<PurposeResponse> {
-        return Mono.empty() //todo not implemented
+        return Mono.error {
+            ServiceUnavailableException(
+                "Balance service is currently unavailable."
+            )
+        }
     }
 
 }

@@ -2,7 +2,7 @@ package itmo.highload.service
 
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
-import itmo.highload.exceptions.ImageServiceUnavailableException
+import itmo.highload.exceptions.ServiceUnavailableException
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
@@ -55,7 +55,7 @@ class ImageServiceFallback : ImageService {
 
     override fun uploadImage(token: String, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
         return Mono.error {
-            ImageServiceUnavailableException(
+            ServiceUnavailableException(
                 "Image upload service is currently unavailable."
             )
         }
@@ -63,7 +63,7 @@ class ImageServiceFallback : ImageService {
 
     override fun deleteImageById(token: String, id: Int): Mono<Void> {
         return Mono.error {
-            ImageServiceUnavailableException(
+            ServiceUnavailableException(
                 "Image upload service is currently unavailable."
             )
         }
@@ -71,7 +71,7 @@ class ImageServiceFallback : ImageService {
 
     override fun updateImage(token: String, id: Int, fileParts: Mono<FilePart>): Mono<UploadedFileResponse> {
         return Mono.error {
-            ImageServiceUnavailableException(
+            ServiceUnavailableException(
                 "Image update service is currently unavailable."
             )
         }
