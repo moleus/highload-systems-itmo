@@ -12,9 +12,9 @@ import reactor.core.publisher.Flux
 class TransactionService(
     private val transactionRepository: TransactionRepository,
     private val balanceService: BalanceService,
-    private val transactionProducer: TransactionProducer
+//    private val transactionProducer: TransactionProducer
 ) {
-    private val logger = LoggerFactory.getLogger(TransactionService::class.java)
+//    private val logger = LoggerFactory.getLogger(TransactionService::class.java)
 
     fun getExpenses(purposeId: Int?, token: String): Flux<TransactionResponse> {
         return if (purposeId != null) {
@@ -75,3 +75,4 @@ class TransactionService(
 //            }
 //    }
 }
+

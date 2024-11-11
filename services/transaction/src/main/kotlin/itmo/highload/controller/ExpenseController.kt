@@ -23,7 +23,7 @@ import reactor.core.publisher.Flux
 )
 class ExpenseController(
     private val transactionService: TransactionService,
-    private val jwtUtils: JwtUtils,
+//    private val jwtUtils: JwtUtils,
 ) {
 
     @GetMapping
