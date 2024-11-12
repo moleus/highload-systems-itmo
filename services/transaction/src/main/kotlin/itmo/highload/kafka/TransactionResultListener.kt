@@ -21,13 +21,24 @@ class TransactionResultListener(
     fun listenToTransactionResultTopic(@Payload message: TransactionResultMessage) {
         val transactionId = message.transactionId
         if (message.success) {
-            // Завершаем транзакцию
             transactionService.confirmTransaction(transactionId)
-            logger.info("Transaction $transactionId successfully confirmed")
+                .doOnSuccess {
+                    logger.info("Transaction $transactionId successfully confirmed")
+                }
+                .doOnError { error ->
+                    logger.error("Failed to confirm transaction $transactionId: ${error.message}")
+                }
+                .subscribe()
         } else {
-            // Откатываем транзакцию
             transactionService.rollbackTransaction(transactionId)
-            logger.warn("Transaction $transactionId rolled back due to insufficient balance")
+                .doOnSuccess {
+                    logger.warn("Transaction $transactionId rolled back due to insufficient balance")
+                }
+                .doOnError { error ->
+                    logger.error("Failed to rollback transaction $transactionId: ${error.message}")
+                }
+                .subscribe()
         }
     }
+
 }
