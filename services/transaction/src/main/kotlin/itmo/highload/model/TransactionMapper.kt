@@ -43,4 +43,28 @@ object TransactionMapper {
         )
     }
 
+    fun toEntityFromTransactionDTO(dto: TransactionDto, userId: Int, isDonation: Boolean): Transaction {
+        return Transaction(
+            dateTime = LocalDateTime.now(),
+            userId = userId,
+            balanceId = dto.purposeId!!,
+            moneyAmount = dto.moneyAmount!!,
+            isDonation = isDonation,
+            status = "PENDING"
+        )
+    }
+
+    fun toResponseFromTransaction(entity: Transaction): TransactionResponse {
+        return TransactionResponse(
+            dateTime = entity.dateTime,
+            purpose = PurposeResponse(
+                id = entity.balanceId,
+                name = null
+            ),
+            userId = entity.userId,
+            moneyAmount = entity.moneyAmount,
+            isDonation = entity.isDonation
+        )
+    }
+
 }

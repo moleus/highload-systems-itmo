@@ -84,23 +84,47 @@ class TransactionService(
         isDonation: Boolean,
         token: String
     ): Mono<TransactionResponse> {
-        return balanceService.getBalanceById(token, donationDto.purposeId!!)
-            .flatMap { balance ->
-                // Создаем транзакцию, но еще не подтверждаем
-                val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, balance, isDonation)
-                transactionRepository.save(transactionEntity).flatMap { savedTransaction ->
-                    // Отправляем сообщение для проверки баланса в BalanceService через Kafka
-                    val message = TransactionMapper.toBalanceMessage(savedTransaction)
-                    Mono.fromCallable { transactionProducer.sendMessageToBalanceCheck(message) }
+        // Создаем транзакцию без использования balanceService.getBalanceById
+        val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
+
+        return transactionRepository.save(transactionEntity) // Сохраняем транзакцию в БД
+            .flatMap { savedTransaction ->
+                // Создаем сообщение для проверки баланса
+                val message = TransactionMapper.toBalanceMessage(savedTransaction)
+
+                // Отправляем сообщение в Kafka для начала саги
+                Mono.fromCallable {
+                    transactionProducer.sendMessageToBalanceCheck(message) // Отправляем сообщение на проверку баланса
+                }
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .onErrorContinue { error, _ ->
+                        logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
+                        // Если ошибка отправки в Kafka, откатываем транзакцию
+                        rollbackTransaction(savedTransaction.id) // Приводим id к Long
+                            .then(Mono.error<Void>(error)) // Завершаем ошибкой
+                    }
+                    .thenReturn(savedTransaction) // Возвращаем сохраненную транзакцию
+            }
+            .flatMap { savedTransaction ->
+                if (isDonation) {
+                    // Если это донат, отправляем сообщение в топик new_donation
+                    val donationMessage = TransactionMapper.toResponseFromTransaction(savedTransaction)
+                    Mono.fromCallable {
+                        transactionProducer.sendMessageToNewDonationTopic(donationMessage)
+                    }
                         .subscribeOn(Schedulers.boundedElastic())
                         .onErrorContinue { error, _ ->
-                            logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
-                            rollbackTransaction(savedTransaction.id) // Приводим id к Long
-                                .then(Mono.error<Void>(error))
+                            logger.error("Failed to send donation message to Kafka: ${error.message}")
                         }
-                        // Возвращаем TransactionResponse после отправки
-                        .map { TransactionMapper.toResponse(savedTransaction, balance) }
+                        .thenReturn(savedTransaction)
+                } else {
+                    Mono.just(savedTransaction) // Если не донат, просто возвращаем сохраненную транзакцию
                 }
+            }
+            .map { savedTransaction ->
+                // Преобразуем сохраненную транзакцию в TransactionResponse
+                val balance = savedTransaction.balanceId // Здесь предполагается, что баланс будет добавлен позже в саге
+                TransactionMapper.toResponseFromTransaction(savedTransaction)
             }
     }
 
