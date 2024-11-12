@@ -49,5 +49,5 @@ WITH customer AS (SELECT id
      balance AS (SELECT id
                     FROM balance
                     WHERE purpose = 'Medicine')
-INSERT INTO transaction (date_time, user_id, balance_id, money_amount, is_donation)
-VALUES ('2023-01-01', (SELECT id FROM customer), (SELECT id FROM balance), 100, true);
+INSERT INTO transaction (date_time, user_id, balance_id, money_amount, is_donation, status)
+VALUES ('2023-01-01', (SELECT id FROM customer), (SELECT id FROM balance), 100, true, 'APPROVED');
