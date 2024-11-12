@@ -1,0 +1,13 @@
+- changeSet:
+    id: add-status-to-transaction
+    author: Korako
+    changes:
+      - addColumn:
+          tableName: transaction
+          columns:
+            - column:
+                name: status
+                type: VARCHAR(50)
+                constraints:
+                  nullable: false
+                  defaultValue: 'PENDING'
