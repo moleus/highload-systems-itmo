@@ -1,9 +1,11 @@
 package itmo.highload.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.exceptions.ServiceUnavailableException
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import reactivefeign.spring.config.ReactiveFeignClient
@@ -44,35 +46,33 @@ interface BalanceService {
 @Component
 class BalanceServiceFallback : BalanceService {
 
+    private val logger = KotlinLogging.logger {}
+
     override fun getAllBalances(token: String): Flux<BalanceResponse> {
+        logger.warn { "Fallback triggered for getAllBalances" }
         return Flux.error {
-            ServiceUnavailableException(
-                "Balance service is currently unavailable."
-            )
+            ServiceUnavailableException("Balance service is currently unavailable.")
         }
     }
 
     override fun getBalanceById(token: String, id: Int): Mono<BalanceResponse> {
+        logger.warn { "${"Fallback triggered for getBalanceById, id: {}"} $id" }
         return Mono.error {
-            ServiceUnavailableException(
-                "Balance service is currently unavailable."
-            )
+            ServiceUnavailableException("Balance service is currently unavailable.")
         }
     }
 
     override fun getAllPurposes(token: String): Flux<PurposeResponse> {
+        logger.warn { "Fallback triggered for getAllPurposes" }
         return Flux.error {
-            ServiceUnavailableException(
-                "Balance service is currently unavailable."
-            )
+            ServiceUnavailableException("Balance service is currently unavailable.")
         }
     }
 
     override fun addPurpose(token: String, purposeRequestDto: PurposeRequestDto): Mono<PurposeResponse> {
+        logger.warn { "${"Fallback triggered for addPurpose, purposeRequestDto: {}"} $purposeRequestDto" }
         return Mono.error {
-            ServiceUnavailableException(
-                "Balance service is currently unavailable."
-            )
+            ServiceUnavailableException("Balance service is currently unavailable.")
         }
     }
 
