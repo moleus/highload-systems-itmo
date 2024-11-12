@@ -4,6 +4,7 @@ import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
+import itmo.highload.kafka.TransactionBalanceMessage
 import java.time.LocalDateTime
 
 object TransactionMapper {
@@ -26,6 +27,16 @@ object TransactionMapper {
                 name = balance.purpose.name
             ),
             userId = entity.userId,
+            moneyAmount = entity.moneyAmount,
+            isDonation = entity.isDonation
+        )
+    }
+
+    fun toBalanceMessage(entity: Transaction): TransactionBalanceMessage {
+        return TransactionBalanceMessage(
+            dateTime = entity.dateTime,
+            transactionId = entity.id,
+            balanceId = entity.balanceId,
             moneyAmount = entity.moneyAmount,
             isDonation = entity.isDonation
         )

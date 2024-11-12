@@ -14,6 +14,12 @@ spring:
       - name: new_donation
         partitions: 3
         replicas: 1
+      - name: balance_check
+        partitions: 3
+        replicas: 1
+      - name: transaction_result
+        partitions: 3
+        replicas: 1
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
