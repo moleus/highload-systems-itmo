@@ -24,7 +24,13 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       new-donation-topic: "new_donation"
-
+      balance-change-topic: "balance_change"
+    consumer:
+      group-id: "transaction_result_group"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      transaction-result-topic: "transaction_result"
 server:
   port: ${APP_SERVER_PORT:8088}
 app.base-url: /api/v1

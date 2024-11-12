@@ -17,7 +17,7 @@ class BalanceCheckListener(
 
     private val logger = LoggerFactory.getLogger(BalanceCheckListener::class.java)
 
-    @KafkaListener(topics = ["\${spring.kafka.consumer.balance-check-topic}"], groupId = "balance_check_group")
+    @KafkaListener(topics = ["\${spring.kafka.consumer.balance-change-topic}"], groupId = "balance_change_group")
     fun listenToBalanceCheckTopic(@Payload message: TransactionBalanceMessage) {
         balanceService.checkAndAdjustBalance(message.balanceId, message.isDonation, message.moneyAmount)
             .doOnSuccess { success ->

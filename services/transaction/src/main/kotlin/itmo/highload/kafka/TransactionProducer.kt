@@ -14,7 +14,7 @@ class TransactionProducer(private val kafkaTemplate: KafkaTemplate<String, Any>)
     @Value("\${spring.kafka.producer.new-donation-topic}")
     lateinit var newDonationTopic: String
 
-    @Value("\${spring.kafka.producer.balance-check-topic}")
+    @Value("\${spring.kafka.producer.balance-change-topic}")
     lateinit var balanceCheckTopic: String
 
     fun sendMessageToNewDonationTopic(transaction: TransactionResponse) {
