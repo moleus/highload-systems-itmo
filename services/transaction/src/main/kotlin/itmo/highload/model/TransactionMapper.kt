@@ -15,7 +15,8 @@ object TransactionMapper {
             userId = userId,
             balanceId = balance.id,
             moneyAmount = dto.moneyAmount!!,
-            isDonation = isDonation
+            isDonation = isDonation,
+            status = "PENDING"
         )
     }
 
@@ -37,6 +38,30 @@ object TransactionMapper {
             dateTime = entity.dateTime,
             transactionId = entity.id,
             balanceId = entity.balanceId,
+            moneyAmount = entity.moneyAmount,
+            isDonation = entity.isDonation
+        )
+    }
+
+    fun toEntityFromTransactionDTO(dto: TransactionDto, userId: Int, isDonation: Boolean): Transaction {
+        return Transaction(
+            dateTime = LocalDateTime.now(),
+            userId = userId,
+            balanceId = dto.purposeId!!,
+            moneyAmount = dto.moneyAmount!!,
+            isDonation = isDonation,
+            status = "PENDING"
+        )
+    }
+
+    fun toResponseFromTransaction(entity: Transaction): TransactionResponse {
+        return TransactionResponse(
+            dateTime = entity.dateTime,
+            purpose = PurposeResponse(
+                id = entity.balanceId,
+                name = entity.
+            ),
+            userId = entity.userId,
             moneyAmount = entity.moneyAmount,
             isDonation = entity.isDonation
         )

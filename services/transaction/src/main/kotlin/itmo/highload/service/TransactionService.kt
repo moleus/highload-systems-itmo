@@ -78,9 +78,14 @@ class TransactionService(
         }
     }
 
-    fun addTransaction(donationDto: TransactionDto, managerId: Int, isDonation: Boolean, token: String): Mono<TransactionResponse> {
+    fun addTransaction(
+        donationDto: TransactionDto,
+        managerId: Int,
+        isDonation: Boolean,
+        token: String
+    ): Mono<TransactionResponse> {
         // Создаем транзакцию без использования balanceService.getBalanceById
-        val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, isDonation)
+        val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
 
         return transactionRepository.save(transactionEntity) // Сохраняем транзакцию в БД
             .flatMap { savedTransaction ->
@@ -95,7 +100,7 @@ class TransactionService(
                     .onErrorContinue { error, _ ->
                         logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
                         // Если ошибка отправки в Kafka, откатываем транзакцию
-                        rollbackTransaction(savedTransaction.id.toLong()) // Приводим id к Long
+                        rollbackTransaction(savedTransaction.id) // Приводим id к Long
                             .then(Mono.error<Void>(error)) // Завершаем ошибкой
                     }
                     .thenReturn(savedTransaction) // Возвращаем сохраненную транзакцию
@@ -106,17 +111,42 @@ class TransactionService(
                 TransactionMapper.toResponse(savedTransaction, balance)
             }
     }
+//todo вернуть, как было, сначала feign client -> потом saga
 
-
-    private fun rollbackTransaction(transactionId: Long): Mono<Void> {
-        return transactionRepository.rollbackTransaction(transactionId)
+    fun rollbackTransaction(transactionId: Int): Mono<Void> {
+        return transactionRepository.updateStatus(transactionId, "DENIED") // Установка статуса "DENIED"
+            .doOnSubscribe {
+                // Логирование до начала операции
+                logger.info { "Rolling back transaction $transactionId due to Kafka sending failure." }
+            }
             .doOnSuccess {
-                logger.warn("Transaction $transactionId rolled back due to Kafka sending failure.")
+                // Логирование успешного выполнения
+                logger.warn { "Transaction $transactionId successfully rolled back." }
             }
             .doOnError { error ->
-                logger.error("Failed to rollback transaction $transactionId: ${error.message}")
+                // Логирование ошибки
+                logger.error { "Failed to rollback transaction $transactionId: ${error.message}" }
             }
+            .then() // Возвращаем Mono<Void> после выполнения операции
     }
+
+    fun confirmTransaction(transactionId: Int): Mono<Void> {
+        return transactionRepository.updateStatus(transactionId, "APPROVED")
+            .doOnSubscribe {
+                // Логирование до начала операции
+                logger.info { "Confirming transaction $transactionId due to Kafka sending success." }
+            }
+            .doOnSuccess {
+                // Логирование успешного выполнения
+                logger.info { "Transaction $transactionId successfully confirmed." }
+            }
+            .doOnError { error ->
+                // Логирование ошибки
+                logger.error { "Failed to confirm transaction $transactionId: ${error.message}" }
+            }
+            .then() // Возвращаем Mono<Void> после выполнения операции
+    }
+
 //    fun addTransaction(donationDto: TransactionDto, managerId: Int, isDonation: Boolean): Mono<TransactionResponse> {
 //        return balanceService.getById(donationDto.purposeId!!).flatMap { balance ->
 //                val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, balance, isDonation)
