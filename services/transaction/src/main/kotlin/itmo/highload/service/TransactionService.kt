@@ -84,34 +84,25 @@ class TransactionService(
         isDonation: Boolean,
         token: String
     ): Mono<TransactionResponse> {
-        // Создаем транзакцию без использования balanceService.getBalanceById
-        val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
-
-        return transactionRepository.save(transactionEntity) // Сохраняем транзакцию в БД
-            .flatMap { savedTransaction ->
-                // Создаем сообщение для проверки баланса
-                val message = TransactionMapper.toBalanceMessage(savedTransaction)
-
-                // Отправляем сообщение в Kafka для начала саги
-                Mono.fromCallable {
-                    transactionProducer.sendMessageToBalanceCheck(message) // Отправляем сообщение на проверку баланса
+        return balanceService.getBalanceById(token, donationDto.purposeId!!)
+            .flatMap { balance ->
+                // Создаем транзакцию, но еще не подтверждаем
+                val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, balance, isDonation)
+                transactionRepository.save(transactionEntity).flatMap { savedTransaction ->
+                    // Отправляем сообщение для проверки баланса в BalanceService через Kafka
+                    val message = TransactionMapper.toBalanceMessage(savedTransaction)
+                    Mono.fromCallable { transactionProducer.sendMessageToBalanceCheck(message) }
+                        .subscribeOn(Schedulers.boundedElastic())
+                        .onErrorContinue { error, _ ->
+                            logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
+                            rollbackTransaction(savedTransaction.id) // Приводим id к Long
+                                .then(Mono.error<Void>(error))
+                        }
+                        // Возвращаем TransactionResponse после отправки
+                        .map { TransactionMapper.toResponse(savedTransaction, balance) }
                 }
-                    .subscribeOn(Schedulers.boundedElastic())
-                    .onErrorContinue { error, _ ->
-                        logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
-                        // Если ошибка отправки в Kafka, откатываем транзакцию
-                        rollbackTransaction(savedTransaction.id) // Приводим id к Long
-                            .then(Mono.error<Void>(error)) // Завершаем ошибкой
-                    }
-                    .thenReturn(savedTransaction) // Возвращаем сохраненную транзакцию
-            }
-            .map { savedTransaction ->
-                // Преобразуем сохраненную транзакцию в TransactionResponse
-                val balance = savedTransaction.balanceId // Здесь предполагается, что баланс будет добавлен позже в саге
-                TransactionMapper.toResponse(savedTransaction, balance)
             }
     }
-//todo вернуть, как было, сначала feign client -> потом saga
 
     fun rollbackTransaction(transactionId: Int): Mono<Void> {
         return transactionRepository.updateStatus(transactionId, "DENIED") // Установка статуса "DENIED"
