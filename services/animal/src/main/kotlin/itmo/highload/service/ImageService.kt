@@ -48,7 +48,7 @@ class ImageServiceFallback : ImageService {
     override fun getImageUrlById(token: String, id: Int): Mono<FileUrlResponse> {
         val fallbackResponse = FileUrlResponse(
             fileID = id,
-            url = "https://example.com/fallback-image.jpg"
+            url = "https://http.cat/images/503.jpg"
         )
         return Mono.just(fallbackResponse)
     }
