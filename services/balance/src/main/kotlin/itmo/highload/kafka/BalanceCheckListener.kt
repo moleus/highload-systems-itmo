@@ -1,6 +1,5 @@
 package itmo.highload.kafka
 
-import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.service.BalanceService
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
@@ -27,6 +26,7 @@ class BalanceCheckListener(
                     transactionId = message.transactionId,
                     success = success
                 )
+                logger.info("result: ${resultMessage}")
 
                 kafkaTemplate.send("transaction_result", resultMessage)
                 logger.info("Sent transaction result for ${message.transactionId}: success=$success")

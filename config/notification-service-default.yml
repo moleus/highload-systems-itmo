@@ -3,7 +3,7 @@ spring:
     name: notification-service
 
   kafka:
-    bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
+    bootstrap-servers: "${KAFKA_HOST:localhost:29092}"
     consumer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer

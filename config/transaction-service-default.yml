@@ -7,7 +7,7 @@ spring:
     password: ${DB_PASSWORD:postgres}
 
   kafka:
-    bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
+    bootstrap-servers: "${KAFKA_HOST:localhost:29092}"
     admin:
       auto-create: true
     topics:
@@ -30,6 +30,9 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"  # Для доверия всем пакетам
+        spring.json.value.default.type: "itmo.highload.kafka.TransactionResultMessage"
       transaction-result-topic: "transaction_result"
 server:
   port: ${APP_SERVER_PORT:8088}
