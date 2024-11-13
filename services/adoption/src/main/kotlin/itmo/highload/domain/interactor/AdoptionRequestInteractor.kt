@@ -1,15 +1,16 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
+import itmo.highload.domain.AdoptionRequestProducer
+import itmo.highload.domain.AdoptionRequestRepository
+import itmo.highload.domain.OwnershipRepository
+import itmo.highload.domain.entity.AdoptionRequestEntity
+import itmo.highload.domain.entity.OwnershipEntity
+import itmo.highload.domain.mapper.AdoptionRequestMapper
+import itmo.highload.domain.mapper.OwnershipMapper
 import itmo.highload.exceptions.EntityAlreadyExistsException
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
-import itmo.highload.kafka.AdoptionRequestProducer
-import itmo.highload.model.AdoptionRequest
-import itmo.highload.model.AdoptionRequestMapper
-import itmo.highload.model.Ownership
-import itmo.highload.repository.AdoptionRequestRepository
-import itmo.highload.repository.OwnershipRepository
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -18,14 +19,14 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 
 @Service
-class AdoptionRequestService(
+class AdoptionRequestInteractor(
     private val adoptionRequestRepository: AdoptionRequestRepository,
     private val ownershipRepository: OwnershipRepository,
     private val adoptionRequestProducer: AdoptionRequestProducer
 ) {
-    private val logger = LoggerFactory.getLogger(AdoptionRequestService::class.java)
+    private val logger = LoggerFactory.getLogger(AdoptionRequestInteractor::class.java)
 
-    fun save(customerId: Int, animalId: Int): Mono<AdoptionRequest> {
+    fun save(customerId: Int, animalId: Int): Mono<AdoptionRequestEntity> {
         return Mono.fromCallable {
             adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
         }.subscribeOn(Schedulers.boundedElastic()).flatMap { existingRequest ->
@@ -37,9 +38,9 @@ class AdoptionRequestService(
                     )
                 )
             } else {
-                val adoptionRequest = AdoptionRequestMapper.toEntity(customerId, animalId, AdoptionStatus.PENDING)
+                val adoptionRequest = AdoptionRequestMapper.toJpaEntity(customerId, animalId, AdoptionStatus.PENDING)
                 logger.info("Saving adoption request for customer ID: $customerId and animal ID: $animalId")
-                Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
+                Mono.fromCallable { AdoptionRequestMapper.toEntity(adoptionRequestRepository.save(adoptionRequest)) }
                     .subscribeOn(Schedulers.boundedElastic())
                     .doOnSuccess {
                         val message = AdoptionRequestMapper.toResponse(adoptionRequest)
@@ -53,7 +54,7 @@ class AdoptionRequestService(
         }
     }
 
-    fun update(managerId: Int, request: UpdateAdoptionRequestStatusDto): Mono<AdoptionRequest> {
+    fun update(managerId: Int, request: UpdateAdoptionRequestStatusDto): Mono<AdoptionRequestEntity> {
         return Mono.fromCallable {
             adoptionRequestRepository.findById(request.id!!).orElseThrow {
                 EntityNotFoundException("Adoption request not found")
@@ -64,15 +65,15 @@ class AdoptionRequestService(
 
             val saveMono = if (request.status == AdoptionStatus.APPROVED) {
                 Mono.fromCallable {
-                    val ownership = Ownership(
+                    val ownership = OwnershipEntity(
                         customerId = adoptionRequest.customerId,
                         animalId = adoptionRequest.animalId,
                     )
-                    ownershipRepository.save(ownership)
-                    adoptionRequestRepository.save(adoptionRequest)
+                    ownershipRepository.save(OwnershipMapper.toJpaEntity(ownership))
+                    AdoptionRequestMapper.toEntity(adoptionRequestRepository.save(adoptionRequest))
                 }.subscribeOn(Schedulers.boundedElastic())
             } else {
-                Mono.fromCallable { adoptionRequestRepository.save(adoptionRequest) }
+                Mono.fromCallable { AdoptionRequestMapper.toEntity(adoptionRequestRepository.save(adoptionRequest)) }
                     .subscribeOn(Schedulers.boundedElastic())
             }
             saveMono.doOnSuccess {
@@ -108,20 +109,24 @@ class AdoptionRequestService(
             }
     }
 
-    fun getAll(status: AdoptionStatus?): Flux<AdoptionRequest> {
+    fun getAll(status: AdoptionStatus?): Flux<AdoptionRequestEntity> {
         return (status?.let {
             Flux.fromStream { adoptionRequestRepository.findAllByStatus(it).stream() }
                 .subscribeOn(Schedulers.boundedElastic())
+                .map { req -> AdoptionRequestMapper.toEntity(req) }
         } ?: Flux.fromStream { adoptionRequestRepository.findAll().stream() }
-            .subscribeOn(Schedulers.boundedElastic()))
+            .subscribeOn(Schedulers.boundedElastic())
+            .map { req -> AdoptionRequestMapper.toEntity(req) })
     }
 
-    fun getAllByCustomer(customerId: Int, status: AdoptionStatus?): Flux<AdoptionRequest> {
+    fun getAllByCustomer(customerId: Int, status: AdoptionStatus?): Flux<AdoptionRequestEntity> {
         return (status?.let {
             Flux.fromStream { adoptionRequestRepository.findAllByCustomerIdAndStatus(customerId, it).stream() }
                 .subscribeOn(Schedulers.boundedElastic())
+                .map { req -> AdoptionRequestMapper.toEntity(req) }
         } ?: Flux.fromStream { adoptionRequestRepository.findAllByCustomerId(customerId).stream() }
-            .subscribeOn(Schedulers.boundedElastic()))
+            .subscribeOn(Schedulers.boundedElastic())
+            .map { req -> AdoptionRequestMapper.toEntity(req) })
     }
 
     fun getAllStatuses(): Flux<AdoptionStatus> {

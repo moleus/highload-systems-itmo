@@ -1,4 +1,4 @@
-package itmo.highload.controller
+package itmo.highload.infrastructure.http
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
-import itmo.highload.service.OwnershipService
+import itmo.highload.domain.interactor.OwnershipInteractor
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,7 +21,7 @@ import reactor.core.publisher.Flux
         Server(url = "http://localhost:8080")
     ]
 )
-class OwnershipController(private val ownershipService: OwnershipService) {
+class OwnershipController(private val ownershipService: OwnershipInteractor) {
 
     @GetMapping("/animals")
     @PreAuthorize("hasAnyAuthority('ADOPTION_MANAGER', 'CUSTOMER')")

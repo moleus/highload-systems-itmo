@@ -1,4 +1,4 @@
-package itmo.highload.controller
+package itmo.highload.infrastructure.http
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
@@ -11,10 +11,10 @@ import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
 import itmo.highload.api.dto.response.AdoptionRequestResponse
-import itmo.highload.model.AdoptionRequestMapper
+import itmo.highload.domain.interactor.AdoptionRequestInteractor
+import itmo.highload.domain.mapper.AdoptionRequestMapper
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.AdoptionRequestService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono
     ]
 )
 class AdoptionRequestController(
-    private val adoptionRequestService: AdoptionRequestService, private val jwtUtils: JwtUtils
+    private val adoptionRequestService: AdoptionRequestInteractor, private val jwtUtils: JwtUtils
 ) {
     private val logger = KotlinLogging.logger { }
 

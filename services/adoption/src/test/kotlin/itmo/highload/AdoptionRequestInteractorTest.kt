@@ -5,13 +5,13 @@ import io.mockk.mockk
 import io.mockk.verify
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
+import itmo.highload.domain.AdoptionRequestProducer
+import itmo.highload.domain.AdoptionRequestRepository
+import itmo.highload.domain.OwnershipRepository
+import itmo.highload.domain.interactor.AdoptionRequestInteractor
 import itmo.highload.exceptions.InvalidAdoptionRequestStatusException
-import itmo.highload.kafka.AdoptionRequestProducer
-import itmo.highload.model.AdoptionRequest
-import itmo.highload.model.Ownership
-import itmo.highload.repository.AdoptionRequestRepository
-import itmo.highload.repository.OwnershipRepository
-import itmo.highload.service.AdoptionRequestService
+import itmo.highload.infrastructure.postgres.model.AdoptionRequest
+import itmo.highload.infrastructure.postgres.model.Ownership
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -19,12 +19,12 @@ import reactor.kotlin.test.test
 import java.time.LocalDateTime
 import java.util.*
 
-class AdoptionRequestServiceTest {
+class AdoptionRequestInteractorTest {
 
     private val adoptionRequestRepository: AdoptionRequestRepository = mockk()
     private val ownershipRepository: OwnershipRepository = mockk()
     private val adoptionProducer: AdoptionRequestProducer = mockk()
-    private val adoptionRequestService = AdoptionRequestService(
+    private val adoptionRequestService = AdoptionRequestInteractor(
         adoptionRequestRepository, ownershipRepository, adoptionProducer
     )
 

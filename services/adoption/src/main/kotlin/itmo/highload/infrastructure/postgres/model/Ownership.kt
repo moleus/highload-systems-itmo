@@ -1,4 +1,4 @@
-package itmo.highload.model
+package itmo.highload.infrastructure.postgres.model
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -25,3 +25,4 @@ data class OwnershipId(
         private const val serialVersionUID: Long = 1L
     }
 }
+
