@@ -2,7 +2,6 @@ package itmo.highload.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.TransactionDto
-import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.kafka.TransactionProducer
 import itmo.highload.model.TransactionMapper
@@ -81,8 +80,7 @@ class TransactionService(
     fun addTransaction(
         donationDto: TransactionDto,
         managerId: Int,
-        isDonation: Boolean,
-        token: String
+        isDonation: Boolean
     ): Mono<TransactionResponse> {
         // Создаем транзакцию без использования balanceService.getBalanceById
         val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
@@ -114,7 +112,7 @@ class TransactionService(
                     }
                         .subscribeOn(Schedulers.boundedElastic())
                         .onErrorContinue { error, _ ->
-                            logger.error("Failed to send donation message to Kafka: ${error.message}")
+                            logger.error { "Failed to send donation message to Kafka: ${error.message}" }
                         }
                         .thenReturn(savedTransaction)
                 } else {

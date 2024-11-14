@@ -28,7 +28,6 @@ import reactor.core.publisher.Mono
 class DonationController(
     private val transactionService: TransactionService,
     private val jwtUtils: JwtUtils,
-//    private val jwtUtils: JwtUtils,
 ) {
 
     @GetMapping
@@ -105,6 +104,6 @@ class DonationController(
         @RequestHeader("Authorization") token: String
     ): Mono<TransactionResponse> {
         val userId = jwtUtils.extractUserId(token)
-        return transactionService.addTransaction(donationDto, userId, isDonation = true, token)
+        return transactionService.addTransaction(donationDto, userId, isDonation = true)
     }
 }

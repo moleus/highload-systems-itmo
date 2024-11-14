@@ -76,6 +76,6 @@ class ExpenseController(
         @RequestHeader("Authorization") token: String,
     ): Mono<TransactionResponse> {
         val expenseManagerId = jwtUtils.extractUserId(token)
-        return transactionService.addTransaction(expenseDto, expenseManagerId, isDonation = false, token)
+        return transactionService.addTransaction(expenseDto, expenseManagerId, isDonation = false)
     }
 }
