@@ -29,7 +29,8 @@ object TransactionMapper {
             ),
             userId = entity.userId,
             moneyAmount = entity.moneyAmount,
-            isDonation = entity.isDonation
+            isDonation = entity.isDonation,
+            status = entity.status
         )
     }
 
@@ -63,8 +64,8 @@ object TransactionMapper {
             ),
             userId = entity.userId,
             moneyAmount = entity.moneyAmount,
-            isDonation = entity.isDonation
+            isDonation = entity.isDonation,
+            status = entity.status
         )
     }
-
 }

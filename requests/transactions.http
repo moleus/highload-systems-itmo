@@ -71,7 +71,7 @@ Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 Content-Type: application/json
 
 {
-  "purpose_id": 1,
+  "purpose_id": 2,
   "money_amount": 100
 }
 
