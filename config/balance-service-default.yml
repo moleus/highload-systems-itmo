@@ -20,7 +20,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      transaction_result-topic: "transaction_result"
+      transaction-result-topic: "transaction_result"
       properties:
         spring.json.trusted.packages: "*"  # Для доверия всем пакетам
         spring.json.value.default.type: "itmo.highload.kafka.TransactionResultMessage"

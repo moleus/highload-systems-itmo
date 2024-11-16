@@ -56,16 +56,13 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
             } else {
                 balance.moneyAmount - moneyAmount
             }
-
             if (updatedMoneyAmount < 0) {
-                // Недостаточно средств, возвращаем false
                 Mono.just(false)
             } else {
-                // Обновляем баланс и сохраняем, возвращаем true
                 val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
                 balanceRepository.save(updatedBalance).thenReturn(true)
             }
-        }.defaultIfEmpty(false) // Если баланс не найден, возвращаем false
+        }.defaultIfEmpty(false)
     }
 
 }

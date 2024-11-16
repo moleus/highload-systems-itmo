@@ -20,30 +20,30 @@ class BalanceCheckListener(
     fun listenToBalanceCheckTopic(@Payload message: TransactionBalanceMessage) {
         balanceService.checkAndAdjustBalance(message.balanceId, message.isDonation, message.moneyAmount)
             .doOnSuccess { success ->
-                // Обрабатываем успешный результат и отправляем в Kafka
                 val resultMessage = TransactionResultMessage(
                     dateTime = LocalDateTime.now(),
                     transactionId = message.transactionId,
-                    success = success
+                    success = success,
+                    message = if (success) "Transaction successful" else "Insufficient balance"
                 )
-                logger.info("result: ${resultMessage}")
+                logger.info("result: $resultMessage")
 
                 kafkaTemplate.send("transaction_result", resultMessage)
                 logger.info("Sent transaction result for ${message.transactionId}: success=$success")
             }
             .doOnError { error ->
-                // Логируем ошибку и отправляем сообщение с успехом = false
                 logger.error("Error processing transaction for ${message.transactionId}: ${error.message}", error)
 
                 val resultMessage = TransactionResultMessage(
                     dateTime = LocalDateTime.now(),
                     transactionId = message.transactionId,
-                    success = false // Устанавливаем успех = false в случае ошибки
+                    success = false,
+                    message = error.message ?: "Transaction failed"
                 )
 
                 kafkaTemplate.send("transaction_result", resultMessage)
             }
-            .onErrorReturn(false) // Возвращаем false в случае ошибки
-            .subscribe() // Не забываем подписаться на Mono
+            .onErrorReturn(false)
+            .subscribe()
     }
 }
