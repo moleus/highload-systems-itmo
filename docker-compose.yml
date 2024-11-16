@@ -51,6 +51,30 @@ services:
       timeout: 5s
       retries: 5
 
+  balance-db:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USERNAME:?error}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_PORT: 25432
+      POSTGRES_SHARED_BUFFERS: 4MB
+      POSTGRES_WAL_BUFFERS: 1MB
+      POSTGRES_WORK_MEM: 2MB
+    volumes:
+      - postgres-balance-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:25432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME:?error} -d postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
   init-db:
     image: liquibase/liquibase:4.29
     restart: no
@@ -66,6 +90,24 @@ services:
       - update
     volumes:
       - ./shared/db-migrations/src/main/resources/changelog:/liquibase/changelog
+    networks:
+      - backend
+
+  init-balance-db:
+    image: liquibase/liquibase:4.29
+    restart: no
+    depends_on:
+      balance-db:
+        condition: service_healthy
+    command:
+      - --changeLogFile=${DB_CHANGE_LOG_FILE:-changelog/changelog-root.yaml}
+      - --url=jdbc:postgresql://balance-db:5432/postgres
+      - --username=postgres
+      - --password=postgres
+      - --log-level=debug
+      - update
+    volumes:
+      - ./shared/db-migrations/src/main/resources/changelog-balance:/liquibase/changelog
     networks:
       - backend
 
@@ -290,6 +332,8 @@ volumes:
   postgres-data:
   kafka-1-data-signle-node:
   minio-data:
+  postgres-balance-data:
+
 
 networks:
   backend:

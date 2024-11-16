@@ -2,7 +2,7 @@ spring:
   application:
     name: balance-service
   r2dbc:
-    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:25432}/postgres
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
   kafka:

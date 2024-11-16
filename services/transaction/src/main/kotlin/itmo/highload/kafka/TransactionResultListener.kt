@@ -25,6 +25,7 @@ class TransactionResultListener(
                 transactionId = transactionId,
                 balanceId = message.balanceId,
                 moneyAmount = message.moneyAmount,
+                isDonation = message.isDonation,
                 success = true,
                 message = "Transaction successful"
             )

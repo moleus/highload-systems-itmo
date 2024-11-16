@@ -25,6 +25,7 @@ class BalanceCheckListener(
                     transactionId = message.transactionId,
                     balanceId = message.balanceId,
                     moneyAmount = message.moneyAmount,
+                    isDonation = message.isDonation,
                     success = success,
                     message = if (success) "Transaction successful" else "Insufficient balance"
                 )
@@ -41,6 +42,7 @@ class BalanceCheckListener(
                     transactionId = message.transactionId,
                     moneyAmount = message.moneyAmount,
                     balanceId = message.balanceId,
+                    isDonation = message.isDonation,
                     success = false,
                     message = error.message ?: "Transaction failed"
                 )

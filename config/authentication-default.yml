@@ -18,14 +18,14 @@ jwt:
 logging:
   level:
     itmo:
-      highload: INFO
-    web: INFO
+      highload: DEBUG
+    web: DEBUG
     org:
       springframework:
-        security: INFO
-        web: INFO
-    io.r2dbc.postgresql.QUERY: INFO
-    io.r2dbc.postgresql.PARAM: INFO
+        security: DEBUG
+        web: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 
 eureka:
   client:

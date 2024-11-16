@@ -77,7 +77,7 @@ object TransactionMapper {
             transactionId = resultMessage.transactionId,
             balanceId = resultMessage.balanceId,
             moneyAmount = resultMessage.moneyAmount,
-            isDonation = false
+            isDonation = resultMessage.isDonation
         )
     }
 }

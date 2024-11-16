@@ -12,6 +12,7 @@ data class TransactionResultMessage(
     val transactionId: Int,
     val balanceId: Int,
     val moneyAmount: Int,
+    val isDonation: Boolean,
     val success: Boolean,
     val message: String
 )
