@@ -14,7 +14,7 @@ spring:
     web-application-type: reactive
 
   kafka:
-    bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
+    bootstrap-servers: "${KAFKA_HOST:localhost:29092}"
     admin:
       auto-create: true
     topics:
