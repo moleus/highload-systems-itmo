@@ -4,12 +4,14 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.kafka.TransactionProducer
+import itmo.highload.kafka.TransactionResultMessage
 import itmo.highload.model.TransactionMapper
 import itmo.highload.repository.TransactionRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.time.Duration
 
 @Service
 class TransactionService(
@@ -132,19 +134,45 @@ class TransactionService(
             .then()
     }
 
-    fun confirmTransaction(transactionId: Int): Mono<Void> {
-        return transactionRepository.updateStatus(transactionId, "APPROVED")
-            .doOnSubscribe {
-                logger.info { "Confirming transaction $transactionId due to Kafka sending success." }
-            }
-            .doOnSuccess {
-                logger.info { "Transaction $transactionId successfully confirmed." }
-            }
-            .doOnError { error ->
-                logger.error { "Failed to confirm transaction $transactionId: ${error.message}" }
-            }
-            .then()
+    //    fun confirmTransaction(transactionId: Int): Mono<Void> {
+//        return transactionRepository.updateStatus(transactionId, "APPROVED")
+//            .doOnSubscribe {
+//                logger.info { "Confirming transaction $transactionId due to Kafka sending success." }
+//            }
+//            .doOnSuccess {
+//                logger.info { "Transaction $transactionId successfully confirmed." }
+//            }
+//            .doOnError { error ->
+//                logger.error { "Failed to confirm transaction $transactionId: ${error.message}" }
+//            }
+//            .then()
+//    }
+    fun confirmTransaction(transaction: TransactionResultMessage): Mono<Void> {
+        return Mono.defer {
+            logger.info { "Starting to confirm transaction ${transaction.transactionId}." }  // Логируем начало выполнения
+            Mono.delay(Duration.ofSeconds(10))
+                .then(
+                    transactionRepository.updateStatus(transaction.transactionId, "APPROVED")
+                        .doOnSubscribe {
+                            logger.info { "Confirming transaction ${transaction.transactionId} due to Kafka sending success." }
+                        }
+                        .doOnSuccess {
+                            logger.info { "Transaction ${transaction.transactionId} successfully confirmed." }
+                        }
+                        .doOnError { error ->
+                            rollbackTransaction(transaction.transactionId)
+                                .doOnTerminate {
+                                    transactionProducer.sendRollBackMessage(
+                                        TransactionMapper.toTransactionRollBackMessageFromResultMessage(transaction)
+                                    )
+                                }
+                                .subscribe()
+
+                            logger.error { "Failed to confirm transaction ${transaction.transactionId}: ${error.message}" }
+                        }
+                )
+                .then()
+        }
     }
 
 }
-

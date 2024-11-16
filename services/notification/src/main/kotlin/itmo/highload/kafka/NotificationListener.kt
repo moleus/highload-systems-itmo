@@ -72,7 +72,8 @@ class NotificationListener(
     fun listenToTransactionResultTopic(@Payload message: String) {
         try {
             val transaction = parseMessage(message, TransactionResultMessage::class.java)
-            val notification = "Transaction ${transaction.transactionId} ${if (transaction.success) "" else "failed"}: ${transaction.message}"
+            val notification = "Transaction ${transaction.transactionId} ${if (transaction.success) "" else "failed"}:" +
+                    " ${transaction.message}"
             sendNotification(notification, "/topic/transactions")
 
         } catch (e: JsonProcessingException) {

@@ -12,11 +12,10 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "*"  # Для доверия всем пакетам
-        spring.json.value.default.type: "itmo.highload.kafka.TransactionBalanceMessage"  # Указание типа данных
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: "itmo.highload.kafka.TransactionBalanceMessage"
       balance-change-topic: "balance_change"
+      roll-back-topic: "roll-back"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

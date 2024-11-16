@@ -20,7 +20,15 @@ class TransactionResultListener(
     fun listenToTransactionResultTopic(@Payload message: TransactionResultMessage) {
         val transactionId = message.transactionId
         if (message.success) {
-            transactionService.confirmTransaction(transactionId)
+            val transactionResultMessage = TransactionResultMessage(
+                dateTime = message.dateTime,
+                transactionId = transactionId,
+                balanceId = message.balanceId,
+                moneyAmount = message.moneyAmount,
+                success = true,
+                message = "Transaction successful"
+            )
+            transactionService.confirmTransaction(transactionResultMessage)
                 .doOnSuccess {
                     logger.info("Transaction $transactionId successfully confirmed")
                 }

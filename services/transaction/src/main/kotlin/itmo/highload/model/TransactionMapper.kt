@@ -5,6 +5,7 @@ import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.kafka.TransactionBalanceMessage
+import itmo.highload.kafka.TransactionResultMessage
 import java.time.LocalDateTime
 
 object TransactionMapper {
@@ -66,6 +67,17 @@ object TransactionMapper {
             moneyAmount = entity.moneyAmount,
             isDonation = entity.isDonation,
             status = entity.status
+        )
+    }
+
+    fun toTransactionRollBackMessageFromResultMessage(resultMessage: TransactionResultMessage):
+            TransactionBalanceMessage {
+        return TransactionBalanceMessage(
+            dateTime = resultMessage.dateTime,
+            transactionId = resultMessage.transactionId,
+            balanceId = resultMessage.balanceId,
+            moneyAmount = resultMessage.moneyAmount,
+            isDonation = false
         )
     }
 }

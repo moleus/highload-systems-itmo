@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
 
 @Service
 class BalanceService(private val balanceRepository: BalanceRepository) {
@@ -49,20 +50,59 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
         }
     }
 
+//    fun checkAndAdjustBalance(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Boolean> {
+//        return balanceRepository.findById(id).flatMap { balance ->
+//            val updatedMoneyAmount = if (isDonation) {
+//                balance.moneyAmount + moneyAmount
+//            } else {
+//                balance.moneyAmount - moneyAmount
+//            }
+//            if (updatedMoneyAmount < 0) {
+//                Mono.just(false)
+//            } else {
+//                val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
+//                balanceRepository.save(updatedBalance).thenReturn(true)
+//            }
+//        }.defaultIfEmpty(false)
+//    }
     fun checkAndAdjustBalance(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Boolean> {
-        return balanceRepository.findById(id).flatMap { balance ->
-            val updatedMoneyAmount = if (isDonation) {
-                balance.moneyAmount + moneyAmount
-            } else {
-                balance.moneyAmount - moneyAmount
-            }
-            if (updatedMoneyAmount < 0) {
-                Mono.just(false)
-            } else {
-                val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
-                balanceRepository.save(updatedBalance).thenReturn(true)
-            }
-        }.defaultIfEmpty(false)
+    return balanceRepository.findById(id).flatMap { balance ->
+        val updatedMoneyAmount = if (isDonation) {
+            balance.moneyAmount + moneyAmount
+        } else {
+            balance.moneyAmount - moneyAmount
+        }
+
+        // Добавляем задержку на 10 секунд
+        Mono.delay(Duration.ofSeconds(10))
+            .then(
+                if (updatedMoneyAmount < 0) {
+                    Mono.just(false)
+                } else {
+                    val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
+                    balanceRepository.save(updatedBalance).thenReturn(true)
+                }
+            )
+    }.defaultIfEmpty(false)
+}
+
+    fun rollbackBalance(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Boolean> {
+        return Mono.delay(Duration.ofSeconds(20))
+            .then(
+                balanceRepository.findById(id).flatMap { balance ->
+                    val updatedMoneyAmount = if (isDonation) {
+                        balance.moneyAmount - moneyAmount
+                    } else {
+                        balance.moneyAmount + moneyAmount
+                    }
+                    if (updatedMoneyAmount < 0) {
+                        Mono.just(false)
+                    } else {
+                        val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
+                        balanceRepository.save(updatedBalance).thenReturn(true)
+                    }
+                }.defaultIfEmpty(false)
+            )
     }
 
 }

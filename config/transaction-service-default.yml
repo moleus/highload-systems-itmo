@@ -20,11 +20,15 @@ spring:
       - name: transaction_result
         partitions: 3
         replicas: 1
+      - name: roll-back
+        partitions: 3
+        replicas: 1
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       new-donation-topic: "new_donation"
       balance-change-topic: "balance_change"
+      roll-back-topic: "roll-back"
     consumer:
       group-id: "transaction_result_group"
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
