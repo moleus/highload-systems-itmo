@@ -37,7 +37,7 @@ val imageTag = System.getenv("IMAGE_TAG") ?: "dev"
 gradle.projectsEvaluated {
     jib {
         from {
-            image = "eclipse-temurin:21-jre"
+            image = "public.ecr.aws/docker/library/eclipse-temurin:21-jre"
             platforms {
                 platform {
                     architecture = hostArchitecture
