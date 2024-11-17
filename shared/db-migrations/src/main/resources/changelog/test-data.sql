@@ -1,15 +1,9 @@
 TRUNCATE TABLE transaction CASCADE;
-TRUNCATE TABLE balance CASCADE;
 TRUNCATE TABLE animal CASCADE;
 TRUNCATE TABLE users CASCADE;
 TRUNCATE TABLE customer CASCADE;
 TRUNCATE TABLE adoption_request CASCADE;
 
--- Insert balance
-INSERT INTO balance (id, purpose, money_amount)
-VALUES (-1, 'Medicine', 1000),
-       (-2, 'Food', 500),
-       (-3, 'General', 0);
 
 -- Insert animals
 INSERT INTO animal (id, name, type_of_animal, gender, is_castrated, health_status)
@@ -45,6 +39,6 @@ VALUES (-1, (SELECT id FROM customer), (SELECT id FROM animal), 'PENDING', '2023
 -- Donations
 WITH customer AS (SELECT id
                  FROM users
-                 WHERE login = 'customer'),
+                 WHERE login = 'customer')
 INSERT INTO transaction (date_time, user_id, balance_id, money_amount, is_donation, status)
 VALUES ('2023-01-01', (SELECT id FROM customer), -1, 100, true, 'APPROVED');
