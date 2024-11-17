@@ -1,5 +1,8 @@
 image:
-  repository: moleus/highload/cloud-config
+  repository: ghcr.io/moleus/highload/cloud-config
+
+nameOverride: cloud-config
+fullnameOverride: cloud-config
 
 volumes:
   - name: ssh-key
