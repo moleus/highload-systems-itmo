@@ -100,15 +100,12 @@ services:
       balance-db:
         condition: service_healthy
     command:
-      - /bin/bash
-      - -c
-      - |
-        liquibase --changeLogFile=${BALANCE_DB_CHANGE_LOG_FILE:-changelog-balance/changelog-root.yaml} \
-        --url=jdbc:postgresql://balance-db:5432/postgres \
-        --username=postgres \
-        --password=postgres \
-        --log-level=debug update
-        exit 0
+      - --changeLogFile=${BALANCE_DB_CHANGE_LOG_FILE:-changelog-balance/changelog-root.yaml}
+      - --url=jdbc:postgresql://balance-db:5432/postgres
+      - --username=postgres
+      - --password=postgres
+      - --log-level=debug
+      - update
     volumes:
       - ./shared/db-migrations/src/main/resources/changelog-balance:/liquibase/changelog-balance
     networks:
