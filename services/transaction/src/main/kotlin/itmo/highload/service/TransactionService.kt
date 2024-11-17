@@ -139,7 +139,7 @@ class TransactionService(
 
     fun confirmTransaction(transaction: TransactionResultMessage): Mono<Void> {
         return Mono.defer {
-            logger.info { "Starting to confirm transaction ${transaction.transactionId}." }  // Логируем начало выполнения
+            logger.info { "Starting to confirm transaction ${transaction.transactionId}." }
             Mono.delay(Duration.ofSeconds(delay))
                 .then(
                     transactionRepository.updateStatus(transaction.transactionId, "COMPLETED")

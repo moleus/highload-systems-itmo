@@ -40,7 +40,7 @@ spring:
       transaction-result-topic: "transaction_result"
 
 transaction:
-  delay: ${TRANSACTION_DELAY:0}
+  delay: ${TRANSACTION_DELAY:10}
 
 server:
   port: ${APP_SERVER_PORT:8088}
