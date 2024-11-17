@@ -19,7 +19,10 @@ jobs:
     steps:
       - name: image tag with branch name
         id: tag
-        run: echo "tag_version=${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+        run: |
+          branch_name=${{ env.BRANCH_NAME }}
+          tag=${branch_name//\//-}
+          echo "tag_version=$tag" >> $GITHUB_ENV
 
   build-and-push:
     needs: [prepare]
