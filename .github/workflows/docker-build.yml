@@ -1,0 +1,47 @@
+name: Build docker images and push to registry
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+env:
+  JDK_VERSION: 21
+  GRADLE_VERSION: 8.10.2
+  BRANCH_NAME: "${{ github.head_ref || github.ref_name }}"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_version: ${{ steps.tag.outputs.tag_version }}
+    steps:
+      - name: image tag with branch name
+        id: tag
+        run: echo "tag_version=${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+
+  build-and-push:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: Build docker images
+        env:
+          IMAGE_TAG: ${{ needs.prepare.outputs.tag_version }}
+        run: ./gradlew jibDockerBuild

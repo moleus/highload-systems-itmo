@@ -32,6 +32,8 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
     }
 }
 
+val imageTag = System.getenv("IMAGE_TAG") ?: "dev"
+
 gradle.projectsEvaluated {
     jib {
         from {
@@ -44,7 +46,7 @@ gradle.projectsEvaluated {
             }
         }
         to {
-            image = "moleus/highload/${applicationExtension.serviceName.get()}:dev"
+            image = "moleus/highload/${applicationExtension.serviceName.get()}:${imageTag}"
         }
     }
 }
