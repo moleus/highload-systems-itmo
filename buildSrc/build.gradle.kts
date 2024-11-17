@@ -3,7 +3,6 @@
 plugins {
     `kotlin-dsl`
     id ("org.sonarqube") version "5.1.0.4882"
-
 }
 
 repositories {
@@ -34,11 +33,3 @@ dependencies {
 }
 
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "highload")
-        property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.sourceEncoding", "UTF-8")
-    }
-}

@@ -1,6 +1,7 @@
 plugins {
     id("io.spring.dependency-management")
     id("highload.common")
+    id ("org.sonarqube") version "5.1.0.4882"
 }
 
 dependencies {
