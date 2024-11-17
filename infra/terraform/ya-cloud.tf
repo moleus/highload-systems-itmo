@@ -9,6 +9,8 @@ terraform {
 
 locals {
   zone = "ru-central1-a"
+  ssh_user = "yellow-duck-helping"
+  ssh_identity = "~/.ssh/id_rsa"
 }
 
 provider "yandex" {
@@ -53,11 +55,22 @@ resource "yandex_compute_instance" "this" {
   network_interface {
     subnet_id = yandex_vpc_subnet.this.id
     nat = true
+    nat_ip_address = yandex_vpc_address.static_ip.external_ipv4_address[0].address
   }
   resources {
     core_fraction = 20
     cores = 2
     memory = 8
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+            k3sup install \
+            --ip ${self.network_interface[0].nat_ip_address} \
+            --context k3s \
+            --ssh-key ${local.ssh_identity}] \
+            --user ${local.ssh_user}
+        EOT
   }
 }
 
@@ -69,5 +82,5 @@ resource "yandex_vpc_address" "static_ip" {
 }
 
 output "external_ip" {
-  value = yandex_vpc_address.static_ip.external_ipv4_address.address
+  value = yandex_vpc_address.static_ip.external_ipv4_address[0].address
 }
