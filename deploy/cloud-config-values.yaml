@@ -1,0 +1,27 @@
+image:
+  repository: moleus/highload/cloud-config
+
+volumes:
+  - name: ssh-key
+    secret:
+    secretName: ssh-key
+  - name: config
+    configMap:
+      name: cloud-config
+
+volumeMounts:
+  - name: ssh-key
+    mountPath: /root/.ssh/id_rsa
+    subPath: ~/.ssh/highload-cloud-config-ro
+    readOnly: true
+  - name: config
+    mountPath: /app/config
+    subPath: ./config
+
+env:
+  SPRING_PROFILES_ACTIVE: standalone,native
+  SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'main'
+
+ports:
+  - name: http
+    containerPort: 8888

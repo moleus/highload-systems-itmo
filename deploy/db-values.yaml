@@ -1,0 +1,28 @@
+image:
+  repository:
+
+env:
+  SPRING_PROFILES_ACTIVE: standalone,native
+  SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'main'
+
+ports:
+  - name: http
+    containerPort: 8888
+
+volumes
+
+initContainers:
+  - name: liquibase
+    image: liquibase/liquibase:4.29
+    command:
+      - liquibase
+      - --changeLogFile=${DB_CHANGE_LOG_FILE:-changelog/changelog-root.yaml}
+      - --url=jdbc:postgresql://db:5432/postgres
+      - --username=postgres
+      - --password=postgres
+      - --log-level=debug
+      - update
+    volumeMounts:
+      - name: changelog
+        mountPath: /liquibase/changelog
+        subPath: ./shared/db-migrations/src/main/resources/changelog
