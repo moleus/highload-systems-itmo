@@ -12,3 +12,18 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                       defaultValue: 'PENDING'
+
+  - changeSet:
+      id: drop-fk-transaction-balance
+      author: Korako2
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: transaction
+            constraintName: fk_transaction_balance
+
+  - changeSet:
+      id: delete-balance-table
+      author: Korako2
+      changes:
+        - dropTable:
+            tableName: balance

@@ -46,8 +46,5 @@ VALUES (-1, (SELECT id FROM customer), (SELECT id FROM animal), 'PENDING', '2023
 WITH customer AS (SELECT id
                  FROM users
                  WHERE login = 'customer'),
-     balance AS (SELECT id
-                    FROM balance
-                    WHERE purpose = 'Medicine')
 INSERT INTO transaction (date_time, user_id, balance_id, money_amount, is_donation, status)
-VALUES ('2023-01-01', (SELECT id FROM customer), (SELECT id FROM balance), 100, true, 'APPROVED');
+VALUES ('2023-01-01', (SELECT id FROM customer), -1, 100, true, 'APPROVED');

@@ -144,7 +144,8 @@ class TransactionService(
                 .then(
                     transactionRepository.updateStatus(transaction.transactionId, "COMPLETED")
                         .doOnSubscribe {
-                            logger.info { "Confirming transaction ${transaction.transactionId} due to Kafka sending success." }
+                            logger.info { "Confirming transaction ${transaction.transactionId} " +
+                                    "due to Kafka sending success." }
                         }
                         .doOnSuccess {
                             logger.info { "Transaction ${transaction.transactionId} successfully confirmed." }

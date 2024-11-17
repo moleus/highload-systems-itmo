@@ -42,7 +42,7 @@ class NotificationListener(
     fun listenToAdoptionRequestCreatedTopic(@Payload message: String) {
         try {
             parseMessage(message, AdoptionRequestMessage::class.java)
-            val notification =  "New adoption request"
+            val notification = "New adoption request"
             sendNotification(notification, "/topic/adoption_requests")
 
         } catch (e: JsonProcessingException) {
@@ -72,8 +72,9 @@ class NotificationListener(
     fun listenToTransactionResultTopic(@Payload message: String) {
         try {
             val transaction = parseMessage(message, TransactionResultMessage::class.java)
-            val notification = "Transaction ${transaction.transactionId} ${if (transaction.success) "" else "failed"}:" +
-                    " ${transaction.message}"
+            val notification =
+                "Transaction ${transaction.transactionId} ${if (transaction.success) "" else "failed"}:" +
+                        " ${transaction.message}"
             sendNotification(notification, "/topic/transactions")
 
         } catch (e: JsonProcessingException) {
