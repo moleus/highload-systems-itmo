@@ -44,14 +44,7 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
 
-      - name: Build or retag docker images
+      - name: Build docker images
         env:
           IMAGE_TAG: ${{ needs.prepare.outputs.tag_version }}
-        run: |
-          if [ "${{ env.build_required }}" = "true" ]; then
-            ./gradlew jibDockerBuild
-          else
-            docker pull ghcr.io/moleus/highload-systems-itmo:${{ env.BRANCH_NAME }}
-            docker tag ghcr.io/moleus/highload-systems-itmo:${{ env.BRANCH_NAME }} ghcr.io/moleus/highload-systems-itmo:${{ needs.prepare.outputs.tag_version }}
-            docker push ghcr.io/moleus/highload-systems-itmo:${{ needs.prepare.outputs.tag_version }}
-          fi
+        run: ./gradlew jibDockerBuild
