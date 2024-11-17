@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: "BY DEFAULT"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: login
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: update-adoption-request-manager-id
+      author: Korako2
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: adoption_request
+            constraintName: fk_adoption_request_manager
+
+        - addForeignKeyConstraint:
+            baseTableName: adoption_request
+            baseColumnNames: manager_id
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_adoption_request_manager
+
+  - changeSet:
+      id: update-transaction-user-id
+      author: Korako2
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: transaction
+            constraintName: fk_transaction_person
+
+        - addForeignKeyConstraint:
+            baseTableName: transaction
+            baseColumnNames: person_id
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_transaction_user
+        - renameColumn:
+            tableName: transaction
+            oldColumnName: person_id
+            newColumnName: user_id
+  - changeSet:
+      id: drop-persons-table
+      author: Korako2
+      changes:
+        - dropTable:
+            tableName: persons
+            cascade: true

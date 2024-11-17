@@ -1,0 +1,99 @@
+### Add a new purpose
+POST http://localhost:8080/api/v1/transactions/balances/purposes
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "name": "Медикаменты"
+}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(responseBody.name === "Медикаменты", "Name is not correct");
+        client.assert(responseBody.id !== undefined, "ID is missing");
+    });
+%}
+
+### Get all purposes
+GET http://localhost:8080/api/v1/transactions/balances/purposes
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(Array.isArray(responseBody), "Response body is not an array");
+        client.assert(responseBody.length > 0, "No purposes found");
+        client.assert(responseBody.some(purpose => purpose.name === "Медикаменты"), "Purpose 'Медикаменты' is not found in the list");
+    });
+%}
+
+### Get all balances
+GET http://localhost:8080/api/v1/transactions/balances
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(Array.isArray(responseBody), "Response body is not an array");
+    });
+%}
+
+### Get balance by ID
+GET http://localhost:8080/api/v1/transactions/balances/1
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Test response body", function() {
+        const responseBody = response.body;
+        client.assert(responseBody.purpose.id === 1, "ID is not correct");
+        client.assert(responseBody.purpose.name === "Медикаменты", "Name is not correct");
+        client.assert(responseBody.money_amount === 0, "Wrong money amount");
+    });
+%}
+
+### Add a new purpose with too long name
+POST http://localhost:8080/api/v1/transactions/balances/purposes
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+    });
+%}
+
+### Add a new purpose with blank name
+POST http://localhost:8080/api/v1/transactions/balances/purposes
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+> {%
+    client.test("Test status code", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+    });
+%}

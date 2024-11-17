@@ -1,0 +1,38 @@
+jwt:
+  secret:
+    sign: '0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg=='
+
+app:
+  base-url: /api/v1
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      adoption-request-created-topic: "adoption_request_created"
+      adoption-request-changed-topic: "adoption_request_changed"
+      new-donation-topic: "new_donation"
+    consumer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      new-donation-topic: "new_donation"
+      adoption-request-created-topic: "adoption_request_created"
+      adoption-request-changed-topic: "adoption_request_changed"
+  liquibase:
+    show-summary-output: all
+    change-log: 'classpath:changelog/test-changelog-root.yaml'
+    contexts: test
+
+liquibase:
+  duplicateFileMode: WARN
+
+
+logging:
+  level:
+    root: INFO
+    itmo:
+      highload: TRACE
+debug: true

@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: images-service
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+minio:
+  username: ${MINIO_USERNAME:minio}
+  password: ${MINIO_PASSWORD:minio123}
+  url: http://${MINIO_HOST:localhost:9000}
+  publicEndpoint: ${MINIO_SERVICE_PUBLIC_ENDPOINT:http://localhost:9000}
+  bucketName: ${MINIO_BUCKET_NAME:images}
+  defaultFolder: ${MINIO_DEFAULT_FOLDER:}
+
+
+server:
+  port: ${APP_SERVER_PORT:8090}
+app.base-url: /api/v1
+
+jwt:
+  secret:
+    sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /v3/api-docs
+
+logging:
+  level:
+    itmo:
+      highload: INFO
+    web: INFO
+    org:
+      springframework:
+        security: INFO
+        web: INFO
+        web.cors.reactive.DefaultCorsProcessor: DEBUG

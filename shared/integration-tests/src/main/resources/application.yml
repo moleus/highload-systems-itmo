@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: test,disable-security
+  cloud:
+    config:
+      enabled: false
+      discovery:
+        enabled: false
+    discovery:
+      enabled: false

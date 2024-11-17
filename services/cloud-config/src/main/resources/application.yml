@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: cloud-config
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:moleus/highload-systems-itmo.git
+          search-paths:
+            - config
+          clone-on-start: true
+          default-label: main
+          strict-host-key-checking: false
+        native:
+          search-locations: file:./config/
+server:
+  port: 8888
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
