@@ -2,7 +2,8 @@
 
 plugins {
     `kotlin-dsl`
-    id ("org.sonarqube") version "3.3"
+    id ("org.sonarqube") version "5.1.0.4882"
+
 }
 
 repositories {
@@ -30,4 +31,14 @@ dependencies {
     // kotlin("spring")
     implementation("org.jetbrains.kotlin:kotlin-allopen:2.0.10")
     implementation("com.google.cloud.tools:jib-gradle-plugin:3.4.2")
+}
+
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.sourceEncoding", "UTF-8")
+    }
 }
