@@ -12,3 +12,12 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
 }
 
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-shared")
+        property("sonar.projectName", "Highload Systems ITMO - shared")
+        property("sonar.host.url", "http://89.169.129.100:9000")
+        property("sonar.login", "3c90927b1bad2d789ea51a4909e613aca9c4253a")
+        property("sonar.sourceEncoding", "UTF-8")
+    }
+}
