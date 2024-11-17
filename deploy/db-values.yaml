@@ -9,8 +9,6 @@ ports:
   - name: http
     containerPort: 8888
 
-volumes
-
 initContainers:
   - name: liquibase
     image: liquibase/liquibase:4.29

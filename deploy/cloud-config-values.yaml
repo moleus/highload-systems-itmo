@@ -4,23 +4,18 @@ image:
 volumes:
   - name: ssh-key
     secret:
-    secretName: ssh-key
-  - name: config
-    configMap:
-      name: cloud-config
+      secretName: github-deploy-key-ro
 
 volumeMounts:
   - name: ssh-key
-    mountPath: /root/.ssh/id_rsa
-    subPath: ~/.ssh/highload-cloud-config-ro
+    mountPath: /root/.ssh/
     readOnly: true
-  - name: config
-    mountPath: /app/config
-    subPath: ./config
 
-env:
-  SPRING_PROFILES_ACTIVE: standalone,native
-  SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'main'
+envs:
+  - name: SPRING_PROFILES_ACTIVE
+    value: cloud
+  - name: SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL
+    value: 'main'
 
 ports:
   - name: http

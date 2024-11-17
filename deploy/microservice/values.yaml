@@ -10,6 +10,8 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+namespace: "dev"
+
 podAnnotations: {}
 podLabels: {}
 
@@ -46,4 +48,4 @@ readinessProbe:
     port: http
 
 envs:
-  JAVA_TOOL_OPTIONS: "-Xms64m -Xmx168m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
+  - JAVA_TOOL_OPTIONS: "-Xms64m -Xmx168m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
