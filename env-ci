@@ -17,7 +17,7 @@ KAFKA_HOST=kafka-1:9092,kafka-2:9092,kafka-3:9092
 SERVICES_ENDPOINTS_IMAGES=images:${APP_SERVER_PORT}
 SERVICES_ENDPOINTS_BALANCE=balance:${APP_SERVER_PORT}
 TRANSACTION_DELAY=0
-DB_CHANGE_LOG_FILE=changelog-balance/test-changelog-root.yaml
+BALANCE_DB_CHANGE_LOG_FILE=test-changelog-root.yaml
 
 
 ## compose interpolation
