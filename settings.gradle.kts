@@ -3,7 +3,7 @@ rootProject.name = "highload"
 include(
     "services:adoption",
     "services:animal",
-    "services:animal:repositories",
+//    "services:animal:repositories",
     "services:api-gateway",
     "services:authentication",
     "services:cloud-config",

@@ -7,6 +7,8 @@ plugins {
     id("highload.security")
     id("highload.reactive-db")
     id("highload.e2e-test")
+    id("highload.common")
+    id ("org.sonarqube") version "5.1.0.4882"
 }
 
 testing {
@@ -40,4 +42,14 @@ dependencies {
 
 highloadApp {
     serviceName.set("animal")
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-animal")
+        property("sonar.projectName", "Highload Systems ITMO - animal")
+        property("sonar.host.url", "http://89.169.129.100:9000")
+        property("sonar.login", "3c90927b1bad2d789ea51a4909e613aca9c4253a")
+        property("sonar.sourceEncoding", "UTF-8")
+    }
 }
