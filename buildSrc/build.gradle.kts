@@ -2,6 +2,7 @@
 
 plugins {
     `kotlin-dsl`
+    id ("org.sonarqube") version "3.3"
 }
 
 repositories {
