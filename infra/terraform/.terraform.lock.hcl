@@ -8,10 +8,24 @@ provider "registry.terraform.io/hashicorp/kubernetes" {
   ]
 }
 
+provider "registry.terraform.io/hashicorp/local" {
+  version = "2.5.2"
+  hashes = [
+    "h1:IyFbOIO6mhikFNL/2h1iZJ6kyN3U00jgkpCLUCThAfE=",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/null" {
   version = "3.2.3"
   hashes = [
     "h1:I0Um8UkrMUb81Fxq/dxbr3HLP2cecTH2WMJiwKSrwQY=",
+  ]
+}
+
+provider "registry.terraform.io/hashicorp/tls" {
+  version = "4.0.6"
+  hashes = [
+    "h1:n3M50qfWfRSpQV9Pwcvuse03pEizqrmYEryxKky4so4=",
   ]
 }
 
