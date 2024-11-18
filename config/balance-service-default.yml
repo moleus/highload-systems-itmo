@@ -5,6 +5,16 @@ spring:
     url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:25432}/postgres
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+    pool:
+      initial-size: 0
+      max-size: 15
+      max-idle-time: 300000 # 5 минут
+      max-lifetime: 600000 # 10 минут
+      validation-query: SELECT 1
+      validation-query-timeout: 1000 # 1 секунда
+      connection-timeout: 10000 # 10 секунд
+      idle-timeout: 300000 # 5 минут
+
   kafka:
     bootstrap-servers: "${KAFKA_HOST:localhost:29092}"
     consumer:
