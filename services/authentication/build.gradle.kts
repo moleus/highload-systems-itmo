@@ -27,8 +27,8 @@ sonarqube {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-auth")
         property("sonar.projectName", "Highload Systems ITMO - auth")
-        property("sonar.host.url", "http://89.169.129.100:9000")
-        property("sonar.login", "3c90927b1bad2d789ea51a4909e613aca9c4253a")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
+        property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
         property("sonar.sourceEncoding", "UTF-8")
     }
 }
