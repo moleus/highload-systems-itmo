@@ -1,4 +1,3 @@
-DELETE FROM balance;
 -- Insert balance
 INSERT INTO balance (id, purpose, money_amount)
 VALUES (-1, 'Medicine', 1000),
