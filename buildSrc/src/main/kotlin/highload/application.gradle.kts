@@ -33,7 +33,8 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
 }
 
 val imageTag = System.getenv("IMAGE_TAG") ?: "dev"
-val baseImage = System.getenv("BASE_IMAGE") ?: "eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
+val baseImage = "public.ecr.aws/docker/library/eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
+//val baseImage = System.getenv("BASE_IMAGE") ?: "eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
 val pushToRegistry = System.getenv("PUSH_TO_REGISTRY")?.toBoolean() ?: false
 val registryPrefix = if (pushToRegistry) "ghcr.io/" else ""
 
@@ -58,3 +59,10 @@ gradle.projectsEvaluated {
         }
     }
 }
+
+//tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
+//    imageName.set("${registryPrefix}moleus/highload/${applicationExtension.serviceName.get()}:${imageTag}")
+////    builder.set("paketobuildpacks/builder:base")
+////    environment.set(mapOf("BP_JVM_VERSION" to "21.*"))
+//    publish.set(true)
+//}
