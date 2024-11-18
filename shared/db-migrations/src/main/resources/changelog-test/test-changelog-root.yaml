@@ -2,7 +2,7 @@ databaseChangeLog:
   - includeAll:
       path: changelog-test/changelog-1.0/
   - includeAll:
-     path: changelog-test/changelog-2.0/
+      path: changelog-test/changelog-2.0/
   - includeAll:
       path: changelog-test/changelog-3.0/
   - includeAll:

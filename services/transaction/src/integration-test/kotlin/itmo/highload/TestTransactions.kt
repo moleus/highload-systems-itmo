@@ -80,10 +80,8 @@ class TestTransactions @Autowired constructor(
     }
 
     @BeforeEach
-    fun rollOutTestData(@Value("classpath:/changelog/test-data.sql") script: Resource,
-                        @Value("classpath:/changelog-balance/test-data.sql") balanceScript: Resource) {
+    fun rollOutTestData(@Value("classpath:/changelog-test/test-data.sql") script: Resource) {
         executeScriptBlocking(script)
-        executeScriptBlocking(balanceScript)
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
     }
