@@ -25,6 +25,7 @@ spring:
       adoption-request-changed-topic: "adoption_request_changed"
       transaction-result-topic: "transaction_result"
       balance-change-topic: "balance_change"
+      roll-back-topic: "roll-back"
   liquibase:
     show-summary-output: all
     change-log: 'classpath:changelog-test/test-changelog-root.yaml'
