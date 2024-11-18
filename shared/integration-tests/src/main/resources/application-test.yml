@@ -42,3 +42,6 @@ debug: true
 
 transaction:
   delay: ${TRANSACTION_DELAY:10}
+
+balance:
+  delay: ${TRANSACTION_DELAY:10}
