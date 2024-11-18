@@ -26,7 +26,7 @@ spring:
       transaction-result-topic: "transaction_result"
   liquibase:
     show-summary-output: all
-    change-log: 'classpath:changelog/test-changelog-root.yaml'
+    change-log: 'classpath:changelog-test/test-changelog-root.yaml'
     contexts: test
 
 liquibase:
