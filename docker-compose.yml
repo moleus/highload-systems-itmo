@@ -116,7 +116,7 @@ services:
       - backend
 
   cloud-config:
-    image: moleus/highload/cloud-config${LAB_TAG:?error}
+    image: moleus/highload/cloud-config:${LAB_TAG:?error}
     working_dir: /app
     volumes:
       - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
@@ -139,7 +139,7 @@ services:
       - backend
 
   eureka-server:
-    image: moleus/highload/eureka-server${LAB_TAG:?error}
+    image: moleus/highload/eureka-server:${LAB_TAG:?error}
     ports:
       - "8761:8761"
     depends_on:
@@ -160,7 +160,7 @@ services:
       - backend
 
   adoption:
-    image: moleus/highload/adoption${LAB_TAG:?error}
+    image: moleus/highload/adoption:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -175,7 +175,7 @@ services:
       - backend
 
   animal:
-    image: moleus/highload/animal${LAB_TAG:?error}
+    image: moleus/highload/animal:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -190,7 +190,7 @@ services:
       - backend
 
   api-gateway:
-    image: moleus/highload/api-gateway${LAB_TAG:?error}
+    image: moleus/highload/api-gateway:${LAB_TAG:?error}
     ports:
       - "8080:8080"
     env_file:
@@ -209,7 +209,7 @@ services:
       - backend
 
   authentication:
-    image: moleus/highload/authentication${LAB_TAG:?error}
+    image: moleus/highload/authentication:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -224,7 +224,7 @@ services:
       - backend
 
   transaction:
-    image: moleus/highload/transaction${LAB_TAG:?error}
+    image: moleus/highload/transaction:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -239,7 +239,7 @@ services:
       - backend
 
   images:
-    image: moleus/highload/images${LAB_TAG:?error}
+    image: moleus/highload/images:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -256,7 +256,7 @@ services:
       - backend
 
   notification:
-    image: moleus/highload/notification${LAB_TAG:?error}
+    image: moleus/highload/notification:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
