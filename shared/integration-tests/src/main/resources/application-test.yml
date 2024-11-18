@@ -15,12 +15,15 @@ spring:
       adoption-request-created-topic: "adoption_request_created"
       adoption-request-changed-topic: "adoption_request_changed"
       new-donation-topic: "new_donation"
+      balance-change-topic: "balance_change"
+      roll-back-topic: "roll-back"
     consumer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       new-donation-topic: "new_donation"
       adoption-request-created-topic: "adoption_request_created"
       adoption-request-changed-topic: "adoption_request_changed"
+      transaction-result-topic: "transaction_result"
   liquibase:
     show-summary-output: all
     change-log: 'classpath:changelog/test-changelog-root.yaml'
@@ -36,3 +39,6 @@ logging:
     itmo:
       highload: TRACE
 debug: true
+
+transaction:
+  delay: ${TRANSACTION_DELAY:10}
