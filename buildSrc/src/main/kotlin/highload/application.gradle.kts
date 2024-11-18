@@ -32,17 +32,12 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
     }
 }
 
-val imageTag = System.getenv("IMAGE_TAG") ?: "dev"
-val baseImage = "public.ecr.aws/docker/library/eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
-//val baseImage = System.getenv("BASE_IMAGE") ?: "eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
-val pushToRegistry = System.getenv("PUSH_TO_REGISTRY")?.toBoolean() ?: false
-val registryPrefix = if (pushToRegistry) "ghcr.io/" else ""
+val imageTag = System.getenv("IMAGE_TAG") ?: "lab4"
 
 gradle.projectsEvaluated {
     jib {
         from {
-//            image = "public.ecr.aws/docker/library/eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
-            image = baseImage
+            image = "public.ecr.aws/docker/library/eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
             platforms {
                 platform {
                     architecture = hostArchitecture
@@ -55,14 +50,7 @@ gradle.projectsEvaluated {
             }
         }
         to {
-            image = "${registryPrefix}moleus/highload/${applicationExtension.serviceName.get()}:${imageTag}"
+            image = "ghcr.io/moleus/highload/${applicationExtension.serviceName.get()}:${imageTag}"
         }
     }
 }
-
-//tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
-//    imageName.set("${registryPrefix}moleus/highload/${applicationExtension.serviceName.get()}:${imageTag}")
-////    builder.set("paketobuildpacks/builder:base")
-////    environment.set(mapOf("BP_JVM_VERSION" to "21.*"))
-//    publish.set(true)
-//}

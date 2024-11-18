@@ -10,6 +10,10 @@ env:
   JDK_VERSION: 21
   GRADLE_VERSION: 8.10.2
   BRANCH_NAME: "${{ github.head_ref || github.ref_name }}"
+  REGISTRY: ghcr.io
+
+permissions:
+  packages: write
 
 jobs:
   prepare:
@@ -43,6 +47,13 @@ jobs:
           build-scan-publish: true
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: moleus
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build docker images
         env:
