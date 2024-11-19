@@ -1,9 +1,9 @@
-package itmo.highload.kafka
+package itmo.highload.infrastructure.kafka
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import itmo.highload.kafka.message.AdoptionRequestMessage
-import itmo.highload.kafka.message.TransactionMessage
+import itmo.highload.infrastructure.kafka.message.AdoptionRequestMessage
+import itmo.highload.infrastructure.kafka.message.TransactionMessage
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
