@@ -62,7 +62,7 @@ jobs:
           PUSH_TO_REGISTRY: true
         run: |
           # adoption animal api-gateway authentication balance cloud-config eureka-server images notification transaction 
-          services_to_build=(":services:adoption" ":services:animal" ":services:api-gateway" ":services:authentication" ":services:balance" ":services:cloud-config" ":services:eureka-server" ":services:images" ":services:notification" ":services:transaction")
+          services_to_build=(":services:adoption" ":services:animal" ":services:api-gateway" ":services:authentication" ":services:cloud-config" ":services:eureka-server" ":services:images" ":services:notification" ":services:transaction")
           for service in "${services_to_build[@]}"; do
               echo "Building $service"
               ./gradlew $service:jibDockerBuild 
