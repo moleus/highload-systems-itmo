@@ -1,4 +1,4 @@
-package itmo.highload.controller
+package itmo.highload.infrastructure.http
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
-import itmo.highload.dto.LoginDto
-import itmo.highload.dto.RegisterDto
+import itmo.highload.infrastructure.http.dto.LoginDto
+import itmo.highload.infrastructure.http.dto.RegisterDto
 import itmo.highload.security.dto.JwtResponse
-import itmo.highload.service.AuthService
+import itmo.highload.domain.interactor.AuthService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

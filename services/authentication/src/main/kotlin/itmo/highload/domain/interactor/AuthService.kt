@@ -1,7 +1,7 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
-import itmo.highload.dto.RegisterDto
-import itmo.highload.model.Users
+import itmo.highload.infrastructure.http.dto.RegisterDto
+import itmo.highload.infrastructure.postgres.model.Users
 import itmo.highload.security.dto.JwtResponse
 import itmo.highload.security.jwt.JwtUtils
 import org.springframework.security.authentication.BadCredentialsException
@@ -11,7 +11,9 @@ import reactor.core.publisher.Mono
 
 @Service
 class AuthService(
-    private val jwtProvider: JwtUtils, private val userService: UserService, private val encoder: PasswordEncoder
+    private val jwtProvider: JwtUtils,
+    private val userService: UserService,
+    private val encoder: PasswordEncoder
 ) {
 
     fun login(login: String, password: String): Mono<JwtResponse> = userService.getByLogin(login).flatMap { user ->

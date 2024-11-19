@@ -1,8 +1,8 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
-import itmo.highload.dto.RegisterDto
-import itmo.highload.model.Users
-import itmo.highload.repository.UserRepository
+import itmo.highload.domain.UserRepository
+import itmo.highload.infrastructure.http.dto.RegisterDto
+import itmo.highload.infrastructure.postgres.model.Users
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -10,7 +10,8 @@ import java.time.LocalDate
 
 @Service
 class UserService(
-    private val userRepository: UserRepository, private val encoder: PasswordEncoder
+    private val userRepository: UserRepository,
+    private val encoder: PasswordEncoder
 ) {
 
     fun getByLogin(login: String): Mono<Users> = userRepository.findByLogin(login)
