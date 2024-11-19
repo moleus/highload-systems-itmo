@@ -50,7 +50,7 @@ gradle.projectsEvaluated {
             }
         }
         to {
-            image = "ghcr.io/moleus/highload/${applicationExtension.serviceName.get()}:${imageTag}"
+            image = "ghcr.io/moleus/highload-systems-itmo/${applicationExtension.serviceName.get()}:${imageTag}"
         }
     }
 }
