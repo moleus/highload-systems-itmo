@@ -80,8 +80,7 @@ class TransactionService(
     fun addTransaction(
         donationDto: TransactionDto,
         managerId: Int,
-        isDonation: Boolean,
-        token: String
+        isDonation: Boolean
     ): Mono<TransactionResponse> {
         // Создаем транзакцию без использования balanceService.getBalanceById
         val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)

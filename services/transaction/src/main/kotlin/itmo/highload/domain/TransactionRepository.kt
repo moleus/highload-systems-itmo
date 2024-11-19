@@ -3,7 +3,6 @@ package itmo.highload.domain
 import itmo.highload.infrastructure.postgres.model.Transaction
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.util.*
 
 interface TransactionRepository {
     fun findByIsDonation(isDonation: Boolean): Flux<Transaction>

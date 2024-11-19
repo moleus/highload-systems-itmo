@@ -12,7 +12,10 @@ class TransactionResultListener(private val transactionService: TransactionServi
 
     private val logger = LoggerFactory.getLogger(TransactionResultListener::class.java)
 
-    @KafkaListener(topics = ["\${spring.kafka.consumer.transaction-result-topic}"], groupId = "transaction_result_group")
+    @KafkaListener(
+        topics = ["\${spring.kafka.consumer.transaction-result-topic}"],
+        groupId = "transaction_result_group"
+    )
     fun listenToTransactionResultTopic(@Payload message: TransactionResultMessage) {
         val transactionId = message.transactionId
         if (message.success) {
