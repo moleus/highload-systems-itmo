@@ -1,10 +1,11 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
+import itmo.highload.domain.BalanceRepository
+import itmo.highload.domain.entity.BalanceEntity
 import itmo.highload.exceptions.EntityAlreadyExistsException
 import itmo.highload.exceptions.NegativeBalanceException
-import itmo.highload.model.Balance
-import itmo.highload.model.BalanceMapper
-import itmo.highload.repository.BalanceRepository
+
+import itmo.highload.domain.mapper.BalanceMapper
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -13,26 +14,31 @@ import reactor.core.publisher.Mono
 @Service
 class BalanceService(private val balanceRepository: BalanceRepository) {
 
-    fun getBalanceById(id: Int): Mono<Balance> {
+    fun getBalanceById(id: Int): Mono<BalanceEntity> {
         return balanceRepository.findById(id)
             .switchIfEmpty(Mono.error(EntityNotFoundException("Failed to find Balance with id = $id")))
+            .map { balance -> BalanceMapper.toEntity(balance) }
     }
 
-    fun getAll(): Flux<Balance> {
+    fun getAll(): Flux<BalanceEntity> {
         return balanceRepository.findAll()
+            .map { balance -> BalanceMapper.toEntity(balance) }
     }
 
-    fun getAllPurposes(): Flux<Balance> {
+    fun getAllPurposes(): Flux<BalanceEntity> {
         return balanceRepository.findAll()
+            .map { balance -> BalanceMapper.toEntity(balance) }
     }
 
-    fun addPurpose(name: String): Mono<Balance> {
+    fun addPurpose(name: String): Mono<BalanceEntity> {
         return balanceRepository.findByPurpose(name)
-            .flatMap<Balance> { Mono.error(EntityAlreadyExistsException("Purpose with name '$name' already exists")) }
-            .switchIfEmpty(Mono.defer { balanceRepository.save(BalanceMapper.toEntity(name)) })
+            .flatMap<BalanceEntity> {
+                Mono.error(EntityAlreadyExistsException("Purpose with name '$name' already exists"))
+            }.switchIfEmpty(Mono.defer { balanceRepository.save(BalanceMapper.toJpaEntity(name)) }
+                .map { balance -> BalanceMapper.toEntity(balance) })
     }
 
-    fun changeMoneyAmount(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Balance> {
+    fun changeMoneyAmount(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<BalanceEntity> {
         return balanceRepository.findById(id).flatMap { balance ->
             val updatedMoneyAmount = if (isDonation) {
                 balance.moneyAmount + moneyAmount
@@ -45,6 +51,7 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
             } else {
                 val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
                 balanceRepository.save(updatedBalance)
+                    .map { savedBalance -> BalanceMapper.toEntity(savedBalance) }
             }
         }
     }

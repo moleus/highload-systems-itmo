@@ -1,4 +1,4 @@
-package itmo.highload.controller
+package itmo.highload.infrastructure.http
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
-import itmo.highload.model.BalanceMapper
-import itmo.highload.service.BalanceService
+import itmo.highload.domain.mapper.BalanceMapper
+import itmo.highload.domain.interactor.BalanceService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
