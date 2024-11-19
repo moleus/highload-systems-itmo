@@ -34,7 +34,13 @@ class AuthServiceTest {
 
     @Test
     fun `login - should return JWT token on success`() {
-        val user = Users(id = 1, login = "testUser", password = "hashedPassword", role = Role.CUSTOMER, creationDate = LocalDate.now())
+        val user = Users(
+            id = 1,
+            login = "testUser",
+            password = "hashedPassword",
+            role = Role.CUSTOMER,
+            creationDate = LocalDate.now()
+        )
         val rawPassword = "password"
         val accessToken = "fakeToken"
 
@@ -51,7 +57,10 @@ class AuthServiceTest {
 
     @Test
     fun `login - should throw BadCredentialsException for incorrect password`() {
-        val user = Users(id = 1, login = "testUser", password = "hashedPassword", role = Role.CUSTOMER, creationDate = LocalDate.now())
+        val user = Users(
+            id = 1, login = "testUser", password = "hashedPassword", role = Role.CUSTOMER,
+            creationDate = LocalDate.now()
+        )
         val rawPassword = "wrongPassword"
 
         every { userService.getByLogin("testUser") } returns Mono.just(user)
