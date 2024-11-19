@@ -1,4 +1,4 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse

@@ -1,4 +1,4 @@
-package itmo.highload.model
+package itmo.highload.infrastructure.postgres.model
 
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus

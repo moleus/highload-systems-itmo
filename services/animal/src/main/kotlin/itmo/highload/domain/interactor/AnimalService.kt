@@ -1,11 +1,11 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.HealthStatus
+import itmo.highload.domain.AnimalRepository
+import itmo.highload.domain.entity.AnimalEntity
 import itmo.highload.exceptions.InvalidAnimalUpdateException
-import itmo.highload.model.Animal
-import itmo.highload.model.AnimalMapper
-import itmo.highload.repository.AnimalRepository
+import itmo.highload.domain.mapper.AnimalMapper
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -18,27 +18,30 @@ class AnimalService(
     private val animalImageService: AnimalImageService
 ) {
 
-    fun getById(animalId: Int): Mono<Animal> = animalRepository.findById(animalId)
+    fun getById(animalId: Int): Mono<AnimalEntity> = animalRepository.findById(animalId)
         .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
+        .map { animal -> AnimalMapper.toEntity(animal) }
 
-    fun save(request: AnimalDto): Mono<Animal> = animalRepository.save(AnimalMapper.toEntity(request))
+    fun save(request: AnimalDto): Mono<AnimalEntity> =
+        animalRepository.save(AnimalMapper.toJpaEntity(request)).map { animal -> AnimalMapper.toEntity(animal) }
 
-    fun update(animalId: Int, request: AnimalDto): Mono<Animal> {
+    fun update(animalId: Int, request: AnimalDto): Mono<AnimalEntity> {
         return getById(animalId).flatMap { existingAnimal ->
             validateAnimal(existingAnimal, request)
             existingAnimal.name = request.name
             existingAnimal.isCastrated = request.isCastrated!!
             existingAnimal.healthStatus = request.healthStatus!!
-            animalRepository.save(existingAnimal)
+            animalRepository.save(AnimalMapper.toJpaEntity(existingAnimal))
+                .map { animal -> AnimalMapper.toEntity(animal) }
         }
     }
 
     fun delete(animalId: Int, token: String): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
-        animalRepository.delete(existingAnimal)
+        animalRepository.delete(AnimalMapper.toJpaEntity(existingAnimal))
             .then(animalImageService.deleteAllByAnimalId(existingAnimal.id, token))
     }
 
-    fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<Animal> {
+    fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<AnimalEntity> {
         val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null && isNotAdopted)
             adoptionService.getAllAdoptedAnimalsId(token) else Flux.empty()
 
@@ -52,12 +55,12 @@ class AnimalService(
                     else -> {
                         Flux.empty()
                     }
-                }
+                }.map { animal -> AnimalMapper.toEntity(animal) }
             }
 
     }
 
-    private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {
+    private fun validateAnimal(existingAnimal: AnimalEntity, updateAnimal: AnimalDto) {
         val errors = mutableListOf<String>()
 
         if (existingAnimal.healthStatus == HealthStatus.DEAD) {

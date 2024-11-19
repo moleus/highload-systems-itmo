@@ -36,7 +36,7 @@ import reactor.core.publisher.Mono
 
 @R2dbcIntegrationTestContext
 @AutoConfigureWireMock(port = 8085)
-class TestAnimal @Autowired constructor(
+class TestAnimalEntity @Autowired constructor(
     private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
 ) : TestContainerIntegrationTest() {
 

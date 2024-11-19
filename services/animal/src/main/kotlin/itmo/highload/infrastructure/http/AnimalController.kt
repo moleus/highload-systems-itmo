@@ -1,4 +1,4 @@
-package itmo.highload.controller
+package itmo.highload.infrastructure.http
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.response.AnimalResponse
-import itmo.highload.model.AnimalMapper
-import itmo.highload.service.AnimalService
+import itmo.highload.domain.mapper.AnimalMapper
+import itmo.highload.domain.interactor.AnimalService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize

@@ -6,19 +6,19 @@ import io.mockk.verify
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
+import itmo.highload.domain.AnimalRepository
+import itmo.highload.domain.interactor.AdoptionService
+import itmo.highload.domain.interactor.AnimalImageService
+import itmo.highload.domain.interactor.AnimalService
 import itmo.highload.exceptions.InvalidAnimalUpdateException
-import itmo.highload.model.Animal
-import itmo.highload.repository.AnimalRepository
-import itmo.highload.service.AdoptionService
-import itmo.highload.service.AnimalImageService
-import itmo.highload.service.AnimalService
+import itmo.highload.infrastructure.postgres.model.Animal
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import kotlin.test.assertTrue
 
-class AnimalServiceTest {
+class AnimalEntityServiceTest {
 
     private val animalRepository: AnimalRepository = mockk()
     private val adoptionService: AdoptionService = mockk()

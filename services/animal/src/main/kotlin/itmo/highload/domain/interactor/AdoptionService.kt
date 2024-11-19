@@ -1,4 +1,4 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping

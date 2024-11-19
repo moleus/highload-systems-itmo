@@ -1,4 +1,4 @@
-package itmo.highload.model
+package itmo.highload.infrastructure.postgres.model
 
 import jakarta.persistence.IdClass
 import org.springframework.data.relational.core.mapping.Column

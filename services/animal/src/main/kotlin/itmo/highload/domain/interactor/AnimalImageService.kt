@@ -1,12 +1,12 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
+import itmo.highload.domain.AnimalRepository
+import itmo.highload.domain.ImageToAnimalRepository
 import itmo.highload.exceptions.ImageNotFoundException
-import itmo.highload.model.AnimalToImage
-import itmo.highload.repository.AnimalRepository
-import itmo.highload.repository.ImageToAnimalRepository
+import itmo.highload.infrastructure.postgres.model.AnimalToImage
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
