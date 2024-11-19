@@ -175,7 +175,7 @@ GET http://localhost:8080/api/v1/animals/images/2
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
 ### Delete image
-DELETE http://127.0.0.1:8086/api/v1/animals/images/5
+DELETE http://127.0.0.1:8080/api/v1/animals/images/5
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 
 ### Upload image
@@ -191,5 +191,5 @@ Content-Type: image/png
 --boundary--
 
 ### Delete image
-DELETE http://127.0.0.1:8086/api/v1/animals/images/5
+DELETE http://127.0.0.1:8080/api/v1/animals/images/5
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}

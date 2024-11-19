@@ -22,3 +22,5 @@ DB_CHANGE_LOG_FILE=changelog/test-changelog-root.yaml
 MINIO_ROOT_USER=minio
 MINIO_ROOT_PASSWORD=minio123
 MINIO_SERVICE_PUBLIC_ENDPOINT=http://localhost:8080/images
+
+LAB_TAG=lab3
