@@ -238,6 +238,21 @@ services:
     networks:
       - backend
 
+  balance:
+    image: moleus/highload/balance:dev
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      <<: *small-jvm-heap-envs
+    <<: *default-healthcheck
+    networks:
+      - backend
+
   images:
     image: moleus/highload/images:dev
     depends_on:

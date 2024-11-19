@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 
+
 plugins {
     id("highload.web")
     id("highload.application")
@@ -21,15 +22,10 @@ dependencies {
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
-    @Suppress("VulnerableDependency")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.3")
-    @Suppress("VulnerableDependency")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE")
-    implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
 }
 
 highloadApp {
-    serviceName.set("transaction")
+    serviceName.set("balance")
 }
 
 testing {

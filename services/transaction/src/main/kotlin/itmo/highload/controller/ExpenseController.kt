@@ -7,16 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
-import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.TransactionService
-import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("\${app.base-url}/transactions/expenses")
@@ -27,7 +23,7 @@ import reactor.core.publisher.Mono
 )
 class ExpenseController(
     private val transactionService: TransactionService,
-    private val jwtUtils: JwtUtils,
+//    private val jwtUtils: JwtUtils,
 ) {
 
     @GetMapping
@@ -48,33 +44,34 @@ class ExpenseController(
         ]
     )
     fun getExpenses(
-        @RequestParam(required = false) purposeId: Int?
-    ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId)
+        @RequestParam(required = false) purposeId: Int?,
+        @RequestHeader("Authorization") token: String
+    ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId, token)
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER')")
-    @Operation(
-        summary = "Add an expense",
-        description = "Submit a new expense transaction."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "Expense successfully created",
-                content = [Content(schema = Schema(implementation = TransactionResponse::class))]
-            ),
-            ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            ApiResponse(responseCode = "401", description = "Unauthorized request"),
-            ApiResponse(responseCode = "403", description = "No authority for this operation")
-        ]
-    )
-    fun addExpense(
-        @RequestBody @Valid expenseDto: TransactionDto,
-        @RequestHeader("Authorization") token: String,
-    ): Mono<TransactionResponse> {
-        val expenseManagerId = jwtUtils.extractUserId(token)
-        return transactionService.addTransaction(expenseDto, expenseManagerId, isDonation = false)
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAnyAuthority('EXPENSE_MANAGER')")
+//    @Operation(
+//        summary = "Add an expense",
+//        description = "Submit a new expense transaction."
+//    )
+//    @ApiResponses(
+//        value = [
+//            ApiResponse(
+//                responseCode = "201",
+//                description = "Expense successfully created",
+//                content = [Content(schema = Schema(implementation = TransactionResponse::class))]
+//            ),
+//            ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+//            ApiResponse(responseCode = "401", description = "Unauthorized request"),
+//            ApiResponse(responseCode = "403", description = "No authority for this operation")
+//        ]
+//    )
+//    fun addExpense(
+//        @RequestBody @Valid expenseDto: TransactionDto,
+//        @RequestHeader("Authorization") token: String,
+//    ): Mono<TransactionResponse> {
+//        val expenseManagerId = jwtUtils.extractUserId(token)
+//        return transactionService.addTransaction(expenseDto, expenseManagerId, isDonation = false)
+//    }
 }

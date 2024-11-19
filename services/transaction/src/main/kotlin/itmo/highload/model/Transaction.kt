@@ -25,5 +25,8 @@ data class Transaction(
     val moneyAmount: Int,
 
     @Column("is_donation")
-    val isDonation: Boolean
+    val isDonation: Boolean,
+
+    @Column("status")
+    val status: String
 )
