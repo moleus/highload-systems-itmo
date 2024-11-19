@@ -1,4 +1,4 @@
-package itmo.highload.controller
+package itmo.highload.infrastructure.http
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -8,8 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.TransactionService
+import itmo.highload.domain.interactor.TransactionService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux

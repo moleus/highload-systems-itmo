@@ -1,12 +1,11 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.TransactionDto
-import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.kafka.TransactionProducer
-import itmo.highload.model.TransactionMapper
-import itmo.highload.repository.TransactionRepository
+import itmo.highload.domain.TransactionProducer
+import itmo.highload.domain.TransactionRepository
+import itmo.highload.domain.mapper.TransactionMapper
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -114,7 +113,7 @@ class TransactionService(
                     }
                         .subscribeOn(Schedulers.boundedElastic())
                         .onErrorContinue { error, _ ->
-                            logger.error("Failed to send donation message to Kafka: ${error.message}")
+                            logger.error { "Failed to send donation message to Kafka: ${error.message}" }
                         }
                         .thenReturn(savedTransaction)
                 } else {
@@ -123,7 +122,7 @@ class TransactionService(
             }
             .map { savedTransaction ->
                 // Преобразуем сохраненную транзакцию в TransactionResponse
-                val balance = savedTransaction.balanceId // Здесь предполагается, что баланс будет добавлен позже в саге
+                savedTransaction.balanceId // Здесь предполагается, что баланс будет добавлен позже в саге
                 TransactionMapper.toResponseFromTransaction(savedTransaction)
             }
     }

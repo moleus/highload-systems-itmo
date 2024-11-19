@@ -1,9 +1,10 @@
-package itmo.highload.model
+package itmo.highload.domain.mapper
 
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
+import itmo.highload.infrastructure.postgres.model.Transaction
 import itmo.highload.kafka.TransactionBalanceMessage
 import java.time.LocalDateTime
 

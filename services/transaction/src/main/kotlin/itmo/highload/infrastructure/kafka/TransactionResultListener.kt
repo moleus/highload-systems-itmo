@@ -1,19 +1,14 @@
-package itmo.highload.kafka
+package itmo.highload.infrastructure.kafka
 
-import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.repository.TransactionRepository
-import itmo.highload.service.TransactionService
+import itmo.highload.domain.interactor.TransactionService
+import itmo.highload.kafka.TransactionResultMessage
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Component
-class TransactionResultListener(
-    private val transactionService: TransactionService,
-    private val kafkaTemplate: KafkaTemplate<String, TransactionResponse>
-) {
+class TransactionResultListener(private val transactionService: TransactionService) {
 
     private val logger = LoggerFactory.getLogger(TransactionResultListener::class.java)
 

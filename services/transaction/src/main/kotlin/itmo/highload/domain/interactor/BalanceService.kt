@@ -1,11 +1,10 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.exceptions.ServiceUnavailableException
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.*
 import reactivefeign.spring.config.ReactiveFeignClient

@@ -1,10 +1,5 @@
 package itmo.highload
 
-import io.mockk.mockk
-import itmo.highload.api.dto.TransactionDto
-import itmo.highload.kafka.TransactionProducer
-import itmo.highload.repository.TransactionRepository
-
 
 class TransactionServiceTest {
 
