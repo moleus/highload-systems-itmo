@@ -1,11 +1,11 @@
-package itmo.highload.service
+package itmo.highload.domain.interactor
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import itmo.highload.domain.ImageObjectRefRepository
+import itmo.highload.infrastructure.minio.model.S3ObjectRef
 import itmo.highload.minio.MinioConfig
 import itmo.highload.minio.PartDataStream
 import itmo.highload.minio.S3Storage
-import itmo.highload.model.S3ObjectRef
-import itmo.highload.repository.ImageObjectRefRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException

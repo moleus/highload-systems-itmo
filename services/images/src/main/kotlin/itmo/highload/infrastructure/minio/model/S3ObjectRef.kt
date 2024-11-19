@@ -1,4 +1,4 @@
-package itmo.highload.model
+package itmo.highload.infrastructure.minio.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
