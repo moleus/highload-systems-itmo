@@ -10,8 +10,10 @@ import java.time.LocalDateTime
 
 object BalanceResponseFixture {
     fun of(
-        purpose: PurposeResponse = PurposeResponse(-1, "Medicine"), moneyAmount: Int = 1000
-    ) = BalanceResponse(purpose, moneyAmount)
+        id: Int = -1,
+        purpose: PurposeResponse = PurposeResponse(-1, "Medicine"),
+        moneyAmount: Int = 1000
+    ) = BalanceResponse(id, purpose, moneyAmount)
 }
 
 object PurposeResponseFixture {
