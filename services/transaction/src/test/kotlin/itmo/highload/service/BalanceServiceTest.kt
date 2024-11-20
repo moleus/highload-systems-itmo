@@ -44,7 +44,8 @@ class BalanceServiceTest {
         every { balanceRepository.findById(balanceId) } returns Mono.empty()
 
         StepVerifier.create(balanceService.getById(balanceId))
-            .expectErrorMatches { it is EntityNotFoundException && it.message == "Failed to find Balance with id = $balanceId" }
+            .expectErrorMatches { it is EntityNotFoundException && it.message == "Failed " +
+                    "to find Balance with id = $balanceId" }
             .verify()
 
         verify { balanceRepository.findById(balanceId) }
@@ -91,7 +92,8 @@ class BalanceServiceTest {
         every { balanceRepository.findByPurpose(purposeName) } returns Mono.just(existingBalance)
 
         StepVerifier.create(balanceService.addPurpose(purposeName))
-            .expectErrorMatches { it is EntityAlreadyExistsException && it.message == "Purpose with name '$purposeName' already exists" }
+            .expectErrorMatches { it is EntityAlreadyExistsException && it.message == "Purpose with " +
+                    "name '$purposeName' already exists" }
             .verify()
 
         verify { balanceRepository.findByPurpose(purposeName) }
@@ -140,7 +142,8 @@ class BalanceServiceTest {
         every { balanceRepository.findById(balanceId) } returns Mono.just(initialBalance)
 
         StepVerifier.create(balanceService.changeMoneyAmount(balanceId, isDonation = false, moneyAmount = 600))
-            .expectErrorMatches { it is NegativeBalanceException && it.message == "Insufficient funds to complete the transaction" }
+            .expectErrorMatches { it is NegativeBalanceException && it.message == "Insufficient funds " +
+                    "to complete the transaction" }
             .verify()
 
         verify { balanceRepository.findById(balanceId) }

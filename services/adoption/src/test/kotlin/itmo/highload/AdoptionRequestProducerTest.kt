@@ -40,10 +40,8 @@ class AdoptionRequestProducerTest {
 
     @Test
     fun `sendMessageToAdoptionRequestChangedTopic - should send message to correct topic`() {
-        // Создаем объект LocalDateTime
         val dateTime = LocalDateTime.parse("2024-11-19T12:00:00")
 
-        // Создаем объект AdoptionStatus
         val status = AdoptionStatus.APPROVED
 
         val adoptionRequest = AdoptionRequestResponse(
@@ -55,7 +53,6 @@ class AdoptionRequestProducerTest {
             animalId = 101
         )
 
-        // Исправленная строка
         every { kafkaTemplate.send(producer.adoptionRequestCreatedTopic, adoptionRequest) } just Awaits
 
         producer.sendMessageToAdoptionRequestChangedTopic(adoptionRequest)
