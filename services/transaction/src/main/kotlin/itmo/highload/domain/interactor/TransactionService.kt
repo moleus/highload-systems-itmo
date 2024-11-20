@@ -6,16 +6,21 @@ import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.domain.TransactionProducer
 import itmo.highload.domain.TransactionRepository
 import itmo.highload.domain.mapper.TransactionMapper
+import itmo.highload.kafka.TransactionResultMessage
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.time.Duration
 
 @Service
 class TransactionService(
     private val transactionRepository: TransactionRepository,
     private val balanceService: BalanceService,
-    private val transactionProducer: TransactionProducer
+    private val transactionProducer: TransactionProducer,
+    @Value("\${transaction.delay}")
+    val delay: Long
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -82,30 +87,24 @@ class TransactionService(
         managerId: Int,
         isDonation: Boolean
     ): Mono<TransactionResponse> {
-        // Создаем транзакцию без использования balanceService.getBalanceById
         val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
 
-        return transactionRepository.save(transactionEntity) // Сохраняем транзакцию в БД
+        return transactionRepository.save(transactionEntity)
             .flatMap { savedTransaction ->
-                // Создаем сообщение для проверки баланса
                 val message = TransactionMapper.toBalanceMessage(savedTransaction)
-
-                // Отправляем сообщение в Kafka для начала саги
                 Mono.fromCallable {
-                    transactionProducer.sendMessageToBalanceCheck(message) // Отправляем сообщение на проверку баланса
+                    transactionProducer.sendMessageToBalanceCheck(message)
                 }
                     .subscribeOn(Schedulers.boundedElastic())
                     .onErrorContinue { error, _ ->
                         logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
-                        // Если ошибка отправки в Kafka, откатываем транзакцию
-                        rollbackTransaction(savedTransaction.id) // Приводим id к Long
-                            .then(Mono.error<Void>(error)) // Завершаем ошибкой
+                        rollbackTransaction(savedTransaction.id)
+                            .then(Mono.error<Void>(error))
                     }
-                    .thenReturn(savedTransaction) // Возвращаем сохраненную транзакцию
+                    .thenReturn(savedTransaction)
             }
             .flatMap { savedTransaction ->
                 if (isDonation) {
-                    // Если это донат, отправляем сообщение в топик new_donation
                     val donationMessage = TransactionMapper.toResponseFromTransaction(savedTransaction)
                     Mono.fromCallable {
                         transactionProducer.sendMessageToNewDonationTopic(donationMessage)
@@ -116,74 +115,57 @@ class TransactionService(
                         }
                         .thenReturn(savedTransaction)
                 } else {
-                    Mono.just(savedTransaction) // Если не донат, просто возвращаем сохраненную транзакцию
+                    Mono.just(savedTransaction)
                 }
             }
             .map { savedTransaction ->
-                // Преобразуем сохраненную транзакцию в TransactionResponse
-                savedTransaction.balanceId // Здесь предполагается, что баланс будет добавлен позже в саге
                 TransactionMapper.toResponseFromTransaction(savedTransaction)
             }
     }
 
     fun rollbackTransaction(transactionId: Int): Mono<Void> {
-        return transactionRepository.updateStatus(transactionId, "DENIED") // Установка статуса "DENIED"
+        return transactionRepository.updateStatus(transactionId, "CANCELED")
             .doOnSubscribe {
-                // Логирование до начала операции
                 logger.info { "Rolling back transaction $transactionId due to Kafka sending failure." }
             }
             .doOnSuccess {
-                // Логирование успешного выполнения
                 logger.warn { "Transaction $transactionId successfully rolled back." }
             }
             .doOnError { error ->
-                // Логирование ошибки
                 logger.error { "Failed to rollback transaction $transactionId: ${error.message}" }
             }
-            .then() // Возвращаем Mono<Void> после выполнения операции
+            .then()
     }
 
-    fun confirmTransaction(transactionId: Int): Mono<Void> {
-        return transactionRepository.updateStatus(transactionId, "APPROVED")
-            .doOnSubscribe {
-                // Логирование до начала операции
-                logger.info { "Confirming transaction $transactionId due to Kafka sending success." }
-            }
-            .doOnSuccess {
-                // Логирование успешного выполнения
-                logger.info { "Transaction $transactionId successfully confirmed." }
-            }
-            .doOnError { error ->
-                // Логирование ошибки
-                logger.error { "Failed to confirm transaction $transactionId: ${error.message}" }
-            }
-            .then() // Возвращаем Mono<Void> после выполнения операции
-    }
+    fun confirmTransaction(transaction: TransactionResultMessage): Mono<Void> {
+        return Mono.defer {
+            logger.info { "Starting to confirm transaction ${transaction.transactionId}." }
+            Mono.delay(Duration.ofSeconds(delay))
+                .then(
+                    transactionRepository.updateStatus(transaction.transactionId, "COMPLETED")
+                        .doOnSubscribe {
+                            logger.info { "Confirming transaction ${transaction.transactionId} " +
+                                    "due to Kafka sending success." }
+                        }
+                        .doOnSuccess {
+                            logger.info { "Transaction ${transaction.transactionId} successfully confirmed." }
+                        }
+                        .doOnError { error ->
+                            rollbackTransaction(transaction.transactionId)
+                                .doOnTerminate {
+                                    transactionProducer.sendRollBackMessage(
+                                        TransactionMapper.toTransactionRollBackMessageFromResultMessage(transaction)
+                                    )
+                                }
+                                .subscribe()
 
-//    fun addTransaction(donationDto: TransactionDto, managerId: Int, isDonation: Boolean): Mono<TransactionResponse> {
-//        return balanceService.getById(donationDto.purposeId!!).flatMap { balance ->
-//                val transactionEntity = TransactionMapper.toEntity(donationDto, managerId, balance, isDonation)
-//                transactionRepository.save(transactionEntity).flatMap { savedTransaction ->
-//                        balanceService.changeMoneyAmount(donationDto.purposeId!!, isDonation,
-//                        donationDto.moneyAmount!!)
-//                            .thenReturn(savedTransaction)
-//                    }
-//            }.flatMap { transaction ->
-//                balanceService.getById(transaction.balanceId)
-//                    .map { balance ->
-//                        val transactionResponse = TransactionMapper.toResponse(transaction, balance)
-//
-//                        if (isDonation) {
-//                            val message = TransactionMapper.toResponse(transaction, balance)
-//                            Mono.fromCallable { transactionProducer.sendMessageToNewDonationTopic(message) }
-//                                .subscribeOn(Schedulers.boundedElastic())
-//                                .onErrorContinue { error, _ ->
-//                                    logger.error("Failed to send donation message to Kafka: ${error.message}")
-//                                }
-//                                .subscribe()
-//                        }
-//                        transactionResponse }
-//            }
-//    }
+                            logger.error {
+                                "Failed to confirm transaction ${transaction.transactionId}: " +
+                                        "${error.message}"
+                            }
+                        }
+                )
+                .then()
+        }
+    }
 }
-

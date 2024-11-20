@@ -1,8 +1,8 @@
 package itmo.highload.infrastructure.kafka
 
+import itmo.highload.domain.interactor.BalanceService
 import itmo.highload.kafka.TransactionBalanceMessage
 import itmo.highload.kafka.TransactionResultMessage
-import itmo.highload.domain.interactor.BalanceService
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
@@ -26,25 +26,46 @@ class BalanceCheckListener(
                 val resultMessage = TransactionResultMessage(
                     dateTime = LocalDateTime.now(),
                     transactionId = message.transactionId,
-                    success = success
+                    balanceId = message.balanceId,
+                    moneyAmount = message.moneyAmount,
+                    isDonation = message.isDonation,
+                    success = success,
+                    message = if (success) "Transaction successful" else "Insufficient balance"
                 )
+                logger.info("result: $resultMessage")
 
                 kafkaTemplate.send("transaction_result", resultMessage)
                 logger.info("Sent transaction result for ${message.transactionId}: success=$success")
             }
             .doOnError { error ->
-                // Логируем ошибку и отправляем сообщение с успехом = false
                 logger.error("Error processing transaction for ${message.transactionId}: ${error.message}", error)
 
                 val resultMessage = TransactionResultMessage(
                     dateTime = LocalDateTime.now(),
                     transactionId = message.transactionId,
-                    success = false // Устанавливаем успех = false в случае ошибки
+                    moneyAmount = message.moneyAmount,
+                    balanceId = message.balanceId,
+                    isDonation = message.isDonation,
+                    success = false,
+                    message = error.message ?: "Transaction failed"
                 )
 
                 kafkaTemplate.send("transaction_result", resultMessage)
             }
-            .onErrorReturn(false) // Возвращаем false в случае ошибки
-            .subscribe() // Не забываем подписаться на Mono
+            .onErrorReturn(false)
+            .subscribe()
+    }
+
+    @KafkaListener(topics = ["\${spring.kafka.consumer.roll-back-topic}"], groupId = "balance_change_group")
+    fun listenToRollBackTopic(@Payload message: TransactionBalanceMessage) {
+        balanceService.rollbackBalance(message.balanceId, message.isDonation, message.moneyAmount)
+            .doOnSuccess {
+                logger.info("Rollback successful for ${message.transactionId}")
+            }
+            .doOnError { error ->
+                logger.error("Error rolling back transaction for ${message.transactionId}: ${error.message}", error)
+            }
+            .onErrorReturn(false)
+            .subscribe()
     }
 }

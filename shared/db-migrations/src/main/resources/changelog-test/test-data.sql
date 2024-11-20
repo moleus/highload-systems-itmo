@@ -1,3 +1,4 @@
+TRUNCATE TABLE balance CASCADE;
 TRUNCATE TABLE transaction CASCADE;
 TRUNCATE TABLE animal CASCADE;
 TRUNCATE TABLE users CASCADE;
@@ -42,3 +43,8 @@ WITH customer AS (SELECT id
                  WHERE login = 'customer')
 INSERT INTO transaction (date_time, user_id, balance_id, money_amount, is_donation, status)
 VALUES ('2023-01-01', (SELECT id FROM customer), -1, 100, true, 'APPROVED');
+
+INSERT INTO balance (id, purpose, money_amount)
+VALUES (-1, 'Medicine', 1000),
+       (-2, 'Food', 500),
+       (-3, 'General', 0);

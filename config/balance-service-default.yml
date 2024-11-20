@@ -2,19 +2,40 @@ spring:
   application:
     name: balance-service
   r2dbc:
-    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:25432}/postgres
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+    pool:
+      initial-size: 0
+      max-size: 15
+      max-idle-time: 300000 # 5 минут
+      max-lifetime: 600000 # 10 минут
+      validation-query: SELECT 1
+      validation-query-timeout: 1000 # 1 секунда
+      connection-timeout: 10000 # 10 секунд
+      idle-timeout: 300000 # 5 минут
+
   kafka:
-    bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
+    bootstrap-servers: "${KAFKA_HOST:localhost:29092}"
     consumer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      group-id: "balance_change_group"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: "itmo.highload.kafka.TransactionBalanceMessage"
       balance-change-topic: "balance_change"
+      roll-back-topic: "roll-back"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      transaction_result-topic: "transaction_result"
+      transaction-result-topic: "transaction_result"
+      properties:
+        spring.json.trusted.packages: "*"  # Для доверия всем пакетам
+        spring.json.value.default.type: "itmo.highload.kafka.TransactionResultMessage"
+
+balance:
+  delay: ${TRANSACTION_DELAY:10}
 
 server:
   port: ${APP_SERVER_PORT:8099}

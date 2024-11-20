@@ -8,7 +8,9 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Component
-class TransactionResultListener(private val transactionService: TransactionService) {
+class TransactionResultListener(
+    private val transactionService: TransactionService,
+) {
 
     private val logger = LoggerFactory.getLogger(TransactionResultListener::class.java)
 
@@ -19,7 +21,16 @@ class TransactionResultListener(private val transactionService: TransactionServi
     fun listenToTransactionResultTopic(@Payload message: TransactionResultMessage) {
         val transactionId = message.transactionId
         if (message.success) {
-            transactionService.confirmTransaction(transactionId)
+            val transactionResultMessage = TransactionResultMessage(
+                dateTime = message.dateTime,
+                transactionId = transactionId,
+                balanceId = message.balanceId,
+                moneyAmount = message.moneyAmount,
+                isDonation = message.isDonation,
+                success = true,
+                message = "Transaction successful"
+            )
+            transactionService.confirmTransaction(transactionResultMessage)
                 .doOnSuccess {
                     logger.info("Transaction $transactionId successfully confirmed")
                 }

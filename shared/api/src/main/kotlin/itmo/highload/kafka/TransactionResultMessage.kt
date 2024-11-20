@@ -10,5 +10,9 @@ data class TransactionResultMessage(
     @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val dateTime: LocalDateTime,
     val transactionId: Int,
-    val success: Boolean
+    val balanceId: Int,
+    val moneyAmount: Int,
+    val isDonation: Boolean,
+    val success: Boolean,
+    val message: String
 )

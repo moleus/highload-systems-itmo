@@ -5,6 +5,15 @@ spring:
     url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+    pool:
+      initial-size: 0
+      max-size: 15
+      max-idle-time: 300000 # 5 минут
+      max-lifetime: 600000 # 10 минут
+      validation-query: SELECT 1
+      validation-query-timeout: 1000 # 1 секунда
+      connection-timeout: 10000 # 10 секунд
+      idle-timeout: 300000 # 5 минут
 
 server:
   port: ${APP_SERVER_PORT:8087}
@@ -18,14 +27,14 @@ jwt:
 logging:
   level:
     itmo:
-      highload: INFO
-    web: INFO
+      highload: DEBUG
+    web: DEBUG
     org:
       springframework:
-        security: INFO
-        web: INFO
-    io.r2dbc.postgresql.QUERY: INFO
-    io.r2dbc.postgresql.PARAM: INFO
+        security: DEBUG
+        web: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
 
 eureka:
   client:

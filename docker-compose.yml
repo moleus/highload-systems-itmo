@@ -7,9 +7,9 @@ x-defaults: &default-healthcheck
 
 # а что на порту 9093?
 x-kafka-cluster-envs: &kafka-cluster-envs
-  KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
-  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://:9092"
-  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+  KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092"
+  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:29092"
+  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT"
   KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
   KAFKA_KRAFT_CLUSTER_ID: abcdefghijklmnopqrstuv
   KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -51,6 +51,30 @@ services:
       timeout: 5s
       retries: 5
 
+  balance-db:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USERNAME:?error}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_PORT: 25432
+      POSTGRES_SHARED_BUFFERS: 4MB
+      POSTGRES_WAL_BUFFERS: 1MB
+      POSTGRES_WORK_MEM: 2MB
+    volumes:
+      - postgres-balance-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:25432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME:?error} -d postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
   init-db:
     image: liquibase/liquibase:4.29
     restart: no
@@ -69,6 +93,24 @@ services:
     networks:
       - backend
 
+  init-balance-db:
+    image: liquibase/liquibase:4.29
+    restart: no
+    depends_on:
+      balance-db:
+        condition: service_healthy
+    command:
+      - --changeLogFile=${BALANCE_DB_CHANGE_LOG_FILE:-changelog-balance/changelog-root.yaml}
+      - --url=jdbc:postgresql://balance-db:5432/postgres
+      - --username=postgres
+      - --password=postgres
+      - --log-level=debug
+      - update
+    volumes:
+      - ./shared/db-migrations/src/main/resources/changelog-balance:/liquibase/changelog-balance
+    networks:
+      - backend
+
   kafka-1:
     image: 'bitnami/kafka:3.8.0'
     environment:
@@ -78,6 +120,7 @@ services:
       - kafka-1-data-signle-node:/bitnami/kafka
     ports:
       - "127.0.0.1:9092:9092"
+      - "127.0.0.1:29092:29092"
     networks:
       - backend
 
@@ -230,6 +273,8 @@ services:
         condition: service_healthy
       init-db:
         condition: service_completed_successfully
+      init-balance-db:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:
@@ -289,6 +334,8 @@ volumes:
   postgres-data:
   kafka-1-data-signle-node:
   minio-data:
+  postgres-balance-data:
+
 
 networks:
   backend:

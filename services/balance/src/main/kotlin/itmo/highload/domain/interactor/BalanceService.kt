@@ -2,17 +2,20 @@ package itmo.highload.domain.interactor
 
 import itmo.highload.domain.BalanceRepository
 import itmo.highload.domain.entity.BalanceEntity
-import itmo.highload.exceptions.EntityAlreadyExistsException
-import itmo.highload.exceptions.NegativeBalanceException
-
 import itmo.highload.domain.mapper.BalanceMapper
+import itmo.highload.exceptions.EntityAlreadyExistsException
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
 
 @Service
-class BalanceService(private val balanceRepository: BalanceRepository) {
+class BalanceService(private val balanceRepository: BalanceRepository,
+                     @Value("\${balance.delay}")
+                     val delay: Long
+) {
 
     fun getBalanceById(id: Int): Mono<BalanceEntity> {
         return balanceRepository.findById(id)
@@ -38,24 +41,6 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
                 .map { balance -> BalanceMapper.toEntity(balance) })
     }
 
-    fun changeMoneyAmount(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<BalanceEntity> {
-        return balanceRepository.findById(id).flatMap { balance ->
-            val updatedMoneyAmount = if (isDonation) {
-                balance.moneyAmount + moneyAmount
-            } else {
-                balance.moneyAmount - moneyAmount
-            }
-
-            if (updatedMoneyAmount < 0) {
-                Mono.error(NegativeBalanceException("Insufficient funds to complete the transaction"))
-            } else {
-                val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
-                balanceRepository.save(updatedBalance)
-                    .map { savedBalance -> BalanceMapper.toEntity(savedBalance) }
-            }
-        }
-    }
-
     fun checkAndAdjustBalance(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Boolean> {
         return balanceRepository.findById(id).flatMap { balance ->
             val updatedMoneyAmount = if (isDonation) {
@@ -64,15 +49,35 @@ class BalanceService(private val balanceRepository: BalanceRepository) {
                 balance.moneyAmount - moneyAmount
             }
 
-            if (updatedMoneyAmount < 0) {
-                // Недостаточно средств, возвращаем false
-                Mono.just(false)
-            } else {
-                // Обновляем баланс и сохраняем, возвращаем true
-                val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
-                balanceRepository.save(updatedBalance).thenReturn(true)
-            }
-        }.defaultIfEmpty(false) // Если баланс не найден, возвращаем false
+            Mono.delay(Duration.ofSeconds(delay))
+                .then(
+                    if (updatedMoneyAmount < 0) {
+                        Mono.just(false)
+                    } else {
+                        val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
+                        balanceRepository.save(updatedBalance).thenReturn(true)
+                    }
+                )
+        }.defaultIfEmpty(false)
+    }
+
+    fun rollbackBalance(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Boolean> {
+        return Mono.delay(Duration.ofSeconds(delay))
+            .then(
+                balanceRepository.findById(id).flatMap { balance ->
+                    val updatedMoneyAmount = if (isDonation) {
+                        balance.moneyAmount - moneyAmount
+                    } else {
+                        balance.moneyAmount + moneyAmount
+                    }
+                    if (updatedMoneyAmount < 0) {
+                        Mono.just(false)
+                    } else {
+                        val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
+                        balanceRepository.save(updatedBalance).thenReturn(true)
+                    }
+                }.defaultIfEmpty(false)
+            )
     }
 
 }

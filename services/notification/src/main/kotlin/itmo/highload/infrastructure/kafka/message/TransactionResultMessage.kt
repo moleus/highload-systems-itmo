@@ -6,12 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 import java.time.LocalDateTime
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-data class TransactionMessage(
+data class TransactionResultMessage(
     @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val dateTime: LocalDateTime,
-    val purpose: PurposeMessage,
-    val userId: Int,
-    val moneyAmount: Int,
-    val isDonation: Boolean,
-    val status: String
+    val transactionId: Int,
+    val success: Boolean,
+    val message: String
 )

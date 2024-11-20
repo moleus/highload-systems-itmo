@@ -6,4 +6,5 @@ import itmo.highload.kafka.TransactionBalanceMessage
 interface TransactionProducer {
     fun sendMessageToNewDonationTopic(transaction: TransactionResponse)
     fun sendMessageToBalanceCheck(transaction: TransactionBalanceMessage)
+    fun sendRollBackMessage(transaction: TransactionBalanceMessage)
 }
