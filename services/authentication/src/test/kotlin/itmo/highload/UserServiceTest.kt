@@ -29,7 +29,13 @@ class UserServiceTest {
 
     @Test
     fun `getByLogin - should return user if found`() {
-        val user = Users(id = 1, login = "testUser", password = "hashedPassword", role = Role.CUSTOMER, creationDate = LocalDate.now())
+        val user = Users(
+            id = 1,
+            login = "testUser",
+            password = "hashedPassword",
+            role = Role.CUSTOMER,
+            creationDate = LocalDate.now()
+        )
 
         every { userRepository.findByLogin("testUser") } returns Mono.just(user)
 
@@ -43,7 +49,8 @@ class UserServiceTest {
         every { userRepository.findByLogin("nonexistentUser") } returns Mono.empty()
 
         StepVerifier.create(userService.getByLogin("nonexistentUser"))
-            .expectErrorMatches { it is NoSuchElementException && it.message == "User with login nonexistentUser not found" }
+            .expectErrorMatches { it is NoSuchElementException
+                    && it.message == "User with login nonexistentUser not found" }
             .verify()
     }
 
@@ -69,7 +76,13 @@ class UserServiceTest {
     @Test
     fun `checkIfExists - should return true if user exists`() {
         every { userRepository.findByLogin("existingUser") } returns Mono.just(
-            Users(id = 1, login = "existingUser", password = "password", role = Role.CUSTOMER, creationDate = LocalDate.now())
+            Users(
+                id = 1,
+                login = "existingUser",
+                password = "password",
+                role = Role.CUSTOMER,
+                creationDate = LocalDate.now()
+            )
         )
 
         StepVerifier.create(userService.checkIfExists("existingUser"))
