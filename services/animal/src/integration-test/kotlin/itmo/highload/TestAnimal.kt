@@ -36,7 +36,7 @@ import reactor.core.publisher.Mono
 
 @R2dbcIntegrationTestContext
 @AutoConfigureWireMock(port = 8085)
-class TestAnimalEntity @Autowired constructor(
+class TestAnimal @Autowired constructor(
     private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
 ) : TestContainerIntegrationTest() {
 
@@ -114,7 +114,8 @@ class TestAnimalEntity @Autowired constructor(
         )
 
         val actualAnimalResponse =
-            defaultJsonRequestSpec().withJwt(customerToken).queryParam("isNotAdopted", true).get(animalApiUrlBasePath).then().log()
+            defaultJsonRequestSpec().withJwt(customerToken).queryParam("isNotAdopted", true)
+                .get(animalApiUrlBasePath).then().log()
                 .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
                 .`as`(Array<AnimalResponse>::class.java).toList()
 

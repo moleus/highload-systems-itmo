@@ -8,6 +8,7 @@ import itmo.highload.infrastructure.postgres.model.Animal
 object AnimalMapper {
     fun toEntity(animal: Animal): AnimalEntity {
         return AnimalEntity(
+            id = animal.id,
             name = animal.name,
             typeOfAnimal = animal.typeOfAnimal,
             gender = animal.gender,
