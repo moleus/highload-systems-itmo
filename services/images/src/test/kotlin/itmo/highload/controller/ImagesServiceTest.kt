@@ -32,7 +32,6 @@ class ImagesServiceTest {
     private lateinit var imagesService: ImagesService
 
     private val testS3ObjectRef = S3ObjectRef(id = 1, bucket = "bucketName", key = "fileKey")
-    private val filePart = mockk<FilePart>()
 
     @BeforeEach
     fun setup() {
