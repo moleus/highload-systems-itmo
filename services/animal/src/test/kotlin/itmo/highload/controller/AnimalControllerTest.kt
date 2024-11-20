@@ -17,7 +17,6 @@ import reactor.test.StepVerifier
 class AnimalControllerTest {
 
     private val animalService = mockk<AnimalService>()
-    private val animalMapper = mockk<AnimalMapper>()
     private val controller = AnimalController(animalService)
 
     @Test
@@ -39,39 +38,53 @@ class AnimalControllerTest {
         )
 
         StepVerifier.create(controller.getAll(null, null, token))
-            .expectNextMatches { it.id == 1 && it.name == "Max" && it.type == "Cat" && it.gender == Gender.MALE &&
-                    !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY }
-            .expectNextMatches { it.id == 2 && it.name == "Kate" && it.type == "Dog" && it.gender == Gender.MALE &&
-                    !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY }
+            .expectNextMatches {
+                it.id == 1 && it.name == "Max" && it.type == "Cat" && it.gender == Gender.MALE &&
+                        !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY
+            }
+            .expectNextMatches {
+                it.id == 2 && it.name == "Kate" && it.type == "Dog" && it.gender == Gender.MALE &&
+                        !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY
+            }
             .verifyComplete()
     }
 
     @Test
     fun `getAnimal - should return animal by ID`() {
         val animalId = 1
-        val animal = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY)
+        val animal = Animal(
+            id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY
+        )
 
         every { animalService.getById(animalId) } returns Mono.just(animal)
 
         StepVerifier.create(controller.getAnimal(animalId))
-            .expectNextMatches { it.id == animalId && it.name == "Max" && it.type == "Cat" && it.gender == Gender.MALE &&
-                    !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY }
+            .expectNextMatches {
+                it.id == animalId && it.name == "Max" && it.type == "Cat" &&
+                        it.gender == Gender.MALE && !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY
+            }
             .verifyComplete()
     }
 
     @Test
     fun `addAnimal - should add a new animal`() {
-        val request = AnimalDto(name = "Ave", type = "Cat", gender = Gender.MALE, isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY)
-        val animal = Animal(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY)
+        val request = AnimalDto(
+            name = "Ave", type = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY
+        )
+        val animal = Animal(
+            id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY
+        )
 
         every { animalService.save(request) } returns Mono.just(animal)
 
         StepVerifier.create(controller.addAnimal(request))
-            .expectNextMatches { it.id == 1 && it.name == "Ave" && it.type == "Cat" && it.gender == Gender.MALE &&
-                    !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY }
+            .expectNextMatches {
+                it.id == 1 && it.name == "Ave" && it.type == "Cat" && it.gender == Gender.MALE &&
+                        !it.isCastrated && it.healthStatus == HealthStatus.HEALTHY
+            }
             .verifyComplete()
     }
 
@@ -89,16 +102,22 @@ class AnimalControllerTest {
     @Test
     fun `updateAnimal - should update animal information`() {
         val animalId = 1
-        val request = AnimalDto(name = "Bella", type = "Dog", gender = Gender.FEMALE, isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY)
-        val updatedAnimal = Animal(id = animalId, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE,
-            isCastrated = true, healthStatus = HealthStatus.HEALTHY)
+        val request = AnimalDto(
+            name = "Bella", type = "Dog", gender = Gender.FEMALE, isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
+        )
+        val updatedAnimal = Animal(
+            id = animalId, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE,
+            isCastrated = true, healthStatus = HealthStatus.HEALTHY
+        )
 
         every { animalService.update(animalId, request) } returns Mono.just(updatedAnimal)
 
         StepVerifier.create(controller.updateAnimal(animalId, request))
-            .expectNextMatches { it.id == animalId && it.name == "Bella" && it.type == "Dog" && it.gender == Gender.FEMALE &&
-                    it.isCastrated && it.healthStatus == HealthStatus.HEALTHY }
+            .expectNextMatches {
+                it.id == animalId && it.name == "Bella" && it.type == "Dog" &&
+                        it.gender == Gender.FEMALE && it.isCastrated && it.healthStatus == HealthStatus.HEALTHY
+            }
             .verifyComplete()
     }
 
@@ -106,11 +125,14 @@ class AnimalControllerTest {
     @Test
     fun `updateAnimal - should return 400 if invalid data provided`() {
         val animalId = 1
-        val request = AnimalDto(name = "", type = "Dog", gender = Gender.FEMALE, isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY) // Неверное имя животного (пустое)
+        val request = AnimalDto(
+            name = "", type = "Dog", gender = Gender.FEMALE, isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
+        )
 
         every { animalService.update(animalId, request) } returns Mono.error(
-            InvalidRequestException("Invalid data provided"))
+            InvalidRequestException("Invalid data provided")
+        )
 
         StepVerifier.create(controller.updateAnimal(animalId, request))
             .expectError(InvalidRequestException::class.java)
