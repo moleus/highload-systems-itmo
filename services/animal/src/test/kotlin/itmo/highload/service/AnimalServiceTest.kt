@@ -242,7 +242,8 @@ class AnimalServiceTest {
     fun `delete - should delete animal and its images`() {
         val animalId = 1
         val token = "validToken"
-        val animal = Animal(id = animalId, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false, healthStatus = HealthStatus.HEALTHY)
+        val animal = Animal(id = animalId, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE,
+            isCastrated = false, healthStatus = HealthStatus.HEALTHY)
 
         every { animalRepository.findById(animalId) } returns Mono.just(animal)
         every { animalRepository.delete(animal) } returns Mono.empty()

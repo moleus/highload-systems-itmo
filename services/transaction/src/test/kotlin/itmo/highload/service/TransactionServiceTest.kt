@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.service
 
 import io.mockk.every
 import io.mockk.mockk
@@ -9,8 +9,6 @@ import itmo.highload.kafka.TransactionProducer
 import itmo.highload.model.Balance
 import itmo.highload.model.Transaction
 import itmo.highload.repository.TransactionRepository
-import itmo.highload.service.BalanceService
-import itmo.highload.service.TransactionService
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
