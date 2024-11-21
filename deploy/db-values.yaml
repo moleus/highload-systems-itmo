@@ -1,26 +1,36 @@
 image:
-  repository:
+  repository: postres
+  tag: 15
 
-env:
-  SPRING_PROFILES_ACTIVE: standalone,native
-  SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'main'
+nameOverride: "db"
+fullnameOverride: "db"
 
-ports:
-  - name: http
-    containerPort: 8888
+service:
+  port: 5432
 
 initContainers:
   - name: liquibase
     image: liquibase/liquibase:4.29
     command:
       - liquibase
-      - --changeLogFile=${DB_CHANGE_LOG_FILE:-changelog/changelog-root.yaml}
-      - --url=jdbc:postgresql://db:5432/postgres
-      - --username=postgres
-      - --password=postgres
+      - --changeLogFile=changelog/changelog-root.yaml
+      - --url=jdbc:postgresql://db:5432/$POSTGRES_DB
+      - --username=$POSTGRES_USER
+      - --password=$POSTGRES_PASSWORD
       - --log-level=debug
       - update
-    volumeMounts:
-      - name: changelog
-        mountPath: /liquibase/changelog
-        subPath: ./shared/db-migrations/src/main/resources/changelog
+
+
+envs:
+  - name: POSTGRES_DB
+    value: postgres
+  - name: POSTGRES_USER
+    valueFrom:
+      secretKeyRef:
+        name: db-secrets
+        key: username
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-secrets
+        key: password

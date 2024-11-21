@@ -70,3 +70,40 @@ jobs:
           PUSH_TO_REGISTRY: true
         run: |
           ./gradlew jib
+
+  build-and-push-dockerfile:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config:
+          - app: db-init
+            dockerfile: deploy/db-init.Dockerfile
+            build-args: |
+              MIGRATION_DIR=./shared/db-migrations/src/main/resources/changelog
+          - app: dp-balance-init
+            dockerfile: deploy/dp-init.Dockerfile
+            build-args: |
+              MIGRATION_DIR=./shared/db-migrations/src/main/resources/changelog
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: moleus
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build db-init docker image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          file: ${{ matrix.config.dockerfile }}
+          build-args: ${{ matrix.config.build-args }}
+          push: true
+          tags: ghcr.io/moleus/highload-systems-itmo/${{ matrix.config.app }}:${{ needs.prepare.outputs.tag_version }}

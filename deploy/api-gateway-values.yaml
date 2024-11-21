@@ -1,5 +1,6 @@
 image:
-  repository: moleus/highload/api-gateway
+  repository: ghcr.io/moleus/highload-systems-itmo/api-gateway
+  tag: setup-k8s
 
 ingress:
   enabled: true

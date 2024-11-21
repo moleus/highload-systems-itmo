@@ -1,5 +1,6 @@
 image:
-  repository: ghcr.io/moleus/highload/cloud-config
+  repository: ghcr.io/moleus/highload-systems-itmo/cloud-config
+  tag: setup-k8s
 
 nameOverride: cloud-config
 fullnameOverride: cloud-config
