@@ -2,8 +2,8 @@ image:
   repository: postgres
   tag: 15
 
-nameOverride: "db"
-fullnameOverride: "db"
+nameOverride: "db-balance"
+fullnameOverride: "db-balance"
 
 service:
   port: 5432
@@ -33,3 +33,11 @@ envs:
       secretKeyRef:
         name: db-secrets
         key: password
+  - name: POSTGRES_PORT
+    value: 5432
+  - name: POSTGRES_SHARED_BUFFERS
+    value: 4MB
+  - name: POSTGRES_WAL_BUFFERS
+    value: 1MB
+  - name: POSTGRES_WORK_MEM
+    value: 2MB

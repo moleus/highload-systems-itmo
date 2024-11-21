@@ -1,0 +1,43 @@
+replicaCount: 1
+
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: "15"
+
+imagePullSecrets:
+  - name: ghcr-registry
+
+nameOverride: ""
+fullnameOverride: ""
+
+namespace: "dev"
+
+service:
+  type: ClusterIP
+  port: 5432
+
+storage:
+  size: "1Gi"
+
+resources:
+  limits:
+    memory: 200Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+
+livenessProbe:
+  exec:
+    command:
+      - bash
+      - "-c"
+      - | 
+        pg_isready -U $POSTGRES_USER -h 127.0.0.1 -d$POSTGRES_DB
+readinessProbe:
+  exec:
+    command:
+      - bash
+      - "-c"
+      - |
+        pg_isready -U $POSTGRES_USER -h 127.0.0.1 -d$POSTGRES_DB
