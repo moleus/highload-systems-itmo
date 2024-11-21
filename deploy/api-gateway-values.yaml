@@ -7,6 +7,14 @@ fullnameOverride: api-gateway
 
 ingress:
   enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  hosts:
+    - host: highload.duckdns.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
 
 service:
   type: ClusterIP

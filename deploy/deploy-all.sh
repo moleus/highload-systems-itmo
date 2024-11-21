@@ -1,4 +1,4 @@
-microservices=("adoption" "animal" "api-gateway" "authentication" "cloud-config" "eureka" "images" "notification" "transaction")
+microservices=("adoption" "animal" "api-gateway" "authentication" "cloud-config" "images" "notification" "transaction")
 
 storage=("db" "minio")
 

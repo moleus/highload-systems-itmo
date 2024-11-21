@@ -9,6 +9,12 @@ fullnameOverride: "minio"
 service:
   port: 9000
 
+args:
+  - server
+  - --console-address
+  - ":9001"
+  - /data
+
 envs:
   - name: MINIO_ROOT_USER
     valueFrom:

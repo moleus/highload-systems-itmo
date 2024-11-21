@@ -11,6 +11,6 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: storage
       protocol: TCP
-      name: postgres
+      name: storage
   selector:
     {{- include "db.selectorLabels" . | nindent 4 }}

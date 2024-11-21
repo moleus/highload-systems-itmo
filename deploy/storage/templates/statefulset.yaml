@@ -34,8 +34,16 @@ spec:
         - name: {{ include "db.fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "dev" }}"
           imagePullPolicy: Always
+          {{- with .Values.command }}
+          command:
+              {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.args }}
+          args:
+              {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
-            - name: postgres
+            - name: storage
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:

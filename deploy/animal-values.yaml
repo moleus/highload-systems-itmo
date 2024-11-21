@@ -44,8 +44,6 @@ envs:
     value: "80"
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
-  - name: EUREKA_HOST
-    value: eureka-server
   - name: POSTGRES_DB
     value: postgres
   - name: DB_HOST
