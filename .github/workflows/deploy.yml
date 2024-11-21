@@ -22,8 +22,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Read version
+        id: read-version
+        uses: ./.github/actions/read-version
       - name: Start and run
-        env:
-          LAB_TAG: ${{ github.event.inputs.tag }}
         run: |
+          export LAB_TAG=${{  github.event.inputs.tag || steps.read-version.outputs.version }}
           docker compose --env-file env-ci -f docker-compose.yml up -d --wait
