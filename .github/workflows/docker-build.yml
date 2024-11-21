@@ -78,17 +78,14 @@ jobs:
       matrix:
         config:
           - app: db-init
-            dockerfile: deploy/db-init.Dockerfile
+            dockerfile: ./deploy/db-init.Dockerfile
             build-args: |
               MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog
           - app: db-balance-init
-            dockerfile: deploy/db-init.Dockerfile
+            dockerfile: ./deploy/db-init.Dockerfile
             build-args: |
               MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog-balance
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -107,7 +104,6 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           file: ${{ matrix.config.dockerfile }}
-          context: .
           build-args: ${{ matrix.config.build-args }}
           push: true
           tags: ghcr.io/moleus/highload-systems-itmo/${{ matrix.config.app }}:${{ needs.prepare.outputs.tag_version }}
