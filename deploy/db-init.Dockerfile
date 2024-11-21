@@ -2,4 +2,4 @@ ARG MIGRATIONS_DIR
 
 FROM liquibase/liquibase:4.29
 
-COPY $MIGRATION_DIR /liquibase/changelog
+COPY $MIGRATIONS_DIR /liquibase/changelog
