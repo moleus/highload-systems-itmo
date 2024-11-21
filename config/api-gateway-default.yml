@@ -8,37 +8,37 @@ spring:
     gateway:
       routes:
         - id: animal-service
-          uri: lb://animal
+          uri: http://animal
           predicates:
             - Path=/api/v1/animals/**,/animal-api-service/**
           filters:
             - RewritePath=/animal-api-service/(?<segment>/?.*), /$\{segment}
         - id: adoption-service
-          uri: lb://adoption
+          uri: http://adoption
           predicates:
             - Path=/api/v1/adoptions/**,/adoption-api-service/**
           filters:
             - RewritePath=/adoption-api-service/(?<segment>/?.*), /$\{segment}
         - id: transaction-service
-          uri: lb://transaction
+          uri: http://transaction
           predicates:
             - Path=/api/v1/transactions/**,/transaction-api-service/**
           filters:
             - RewritePath=/transaction-api-service/(?<segment>/?.*), /$\{segment}
         - id: authentication-service
-          uri: lb://authentication
+          uri: http://authentication
           predicates:
             - Path=/api/v1/auth/**,/auth-api-service/**
           filters:
             - RewritePath=/auth-api-service/(?<segment>/?.*), /$\{segment}
         - id: notification-service
-          uri: lb://notification
+          uri: http://notification
           predicates:
             - Path=/api/v1/notifications/ws/**
           filters:
             - RewritePath=/api/v1/notifications/ws/(?<segment>/?.*), /ws/$\{segment}
         - id: images-service
-          uri: lb://images
+          uri: http://images
           predicates:
             - Path=/images-api-service/**
           filters:
