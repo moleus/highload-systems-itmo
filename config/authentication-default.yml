@@ -27,11 +27,6 @@ logging:
     io.r2dbc.postgresql.QUERY: INFO
     io.r2dbc.postgresql.PARAM: INFO
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
-
 
 springdoc:
   api-docs:

@@ -23,11 +23,6 @@ jwt:
   secret:
     sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
-
 springdoc:
   api-docs:
     enabled: true
