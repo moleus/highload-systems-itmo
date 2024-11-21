@@ -1,11 +1,6 @@
-variable "apps_pg_user" {
-  type = string
-  sensitive = true
-}
-
-variable "apps_pg_password" {
-  type = string
-  sensitive = true
+locals {
+  app_db_username = data.sops_file.secrets.data["app_db_username"]
+  app_db_password = data.sops_file.secrets.data["app_db_password"]
 }
 
 resource "kubernetes_secret_v1" "db_secrets" {
@@ -15,7 +10,7 @@ resource "kubernetes_secret_v1" "db_secrets" {
     namespace = each.value
   }
   data = {
-    "username"     = var.apps_pg_user
-    "password" = var.apps_pg_password
+    "username"     = sensitive(local.app_db_username)
+    "password" = sensitive(local.app_db_password)
   }
 }

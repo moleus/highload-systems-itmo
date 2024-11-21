@@ -1,15 +1,7 @@
 locals {
   deploy_key_path = "/Users/krot/.ssh/highload-cloud-config-ro"
-}
-
- variable "github_ro_packages_token" {
-  type = string
-  sensitive = true
-}
-
-variable "github_email" {
-  type = string
-  sensitive = true
+  github_ro_packages_token = data.sops_file.secrets.data["github_ro_packages_token"]
+  github_email = data.sops_file.secrets.data["github_email"]
 }
 
 resource "kubernetes_secret_v1" "ro_deploy_key" {
@@ -37,8 +29,8 @@ resource "kubernetes_secret_v1" "ghcr_pull_secret" {
       auths = {
         "ghcr.io" = {
           username = "moleus"
-          password = var.github_ro_packages_token
-          email    = var.github_email
+          password = local.github_ro_packages_token
+          email    = local.github_email
         }
       }
     })
