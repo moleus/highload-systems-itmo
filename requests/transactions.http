@@ -72,7 +72,7 @@ Content-Type: application/json
 
 {
   "purpose_id": 1,
-  "money_amount": 100
+  "money_amount": 10000
 }
 
 > {%

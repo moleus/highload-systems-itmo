@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.servers.Server
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.security.jwt.JwtUtils
+import org.springframework.http.HttpStatus
 import itmo.highload.service.TransactionService
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -48,8 +48,9 @@ class ExpenseController(
         ]
     )
     fun getExpenses(
-        @RequestParam(required = false) purposeId: Int?
-    ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId)
+        @RequestParam(required = false) purposeId: Int?,
+        @RequestHeader("Authorization") token: String
+    ): Flux<TransactionResponse> = transactionService.getExpenses(purposeId, token)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
