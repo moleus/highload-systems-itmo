@@ -54,7 +54,6 @@ class AnimalService(
                     }
                 }
             }
-
     }
 
     private fun validateAnimal(existingAnimal: Animal, updateAnimal: AnimalDto) {

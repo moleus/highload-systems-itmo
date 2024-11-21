@@ -22,11 +22,19 @@ jobs:
     outputs:
       tag_version: ${{ steps.tag.outputs.tag_version }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Read default version
+        id: read-version
+        uses: ./.github/actions/read-version
       - name: image tag with branch name
         id: tag
         run: |
           branch_name=${{ env.BRANCH_NAME }}
           tag=${branch_name//\//-}
+          if [[ ${{ github.event_name }} == 'push' ]]; then
+            tag=${{ steps.read-version.outputs.version }}
+          fi
           echo "tag_version=$tag" >> $GITHUB_OUTPUT
 
   build-and-push:
@@ -61,9 +69,4 @@ jobs:
           IMAGE_TAG: ${{ needs.prepare.outputs.tag_version }}
           PUSH_TO_REGISTRY: true
         run: |
-          # adoption animal api-gateway authentication cloud-config eureka-server images notification transaction 
-          services_to_build=(":services:adoption" ":services:animal" ":services:api-gateway" ":services:authentication" ":services:cloud-config" ":services:eureka-server" ":services:images" ":services:notification" ":services:transaction")
-          for service in "${services_to_build[@]}"; do
-              echo "Building $service"
-              ./gradlew $service:jib
-          done
+          ./gradlew jib
