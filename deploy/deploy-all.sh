@@ -1,4 +1,4 @@
-microservices=("adoption" "animal" "api-gateway" "authentication" "cloud-config" "images" "notification" "transaction")
+microservices=("adoption" "animal" "api-gateway" "authentication" "cloud-config" "images" "notification" "transaction" "kafka-ui")
 
 storage=("db" "minio")
 

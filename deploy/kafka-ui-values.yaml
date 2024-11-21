@@ -1,0 +1,41 @@
+image:
+  repository: provectuslabs/kafka-ui
+  tag: "v0.7.2"
+
+nameOverride: kafka-ui
+fullnameOverride: kafka-ui
+
+service:
+  type: ClusterIP
+  port: 8080
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 10
+
+envs:
+  - name: KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS
+    value: "kafka-controller-0.kafka-controller-headless:9092"
+  - name: KAFKA_CLUSTERS_0_NAME
+    value: kafka-0
+  - name: KAFKA_CLUSTERS_1_BOOTSTRAP_SERVERS
+    value: "kafka-controller-1.kafka-controller-headless:9092"
+  - name: KAFKA_CLUSTERS_1_NAME
+    value: kafka-1
+  - name: KAFKA_CLUSTERS_2_BOOTSTRAP_SERVERS
+    value: "kafka-controller-2.kafka-controller-headless:9092"
+  - name: KAFKA_CLUSTERS_2_NAME
+    value: kafka-2
+  - name: DYNAMIC_CONFIG_ENABLED
+    value: 'true'

@@ -47,6 +47,8 @@ envs:
     value: cloud-config
   - name: EUREKA_HOST
     value: eureka-server
+  - name: KAFKA_HOST
+    value: "kafka:9092"
   - name: POSTGRES_DB
     value: postgres
   - name: DB_HOST

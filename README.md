@@ -60,7 +60,12 @@ $ kafka-console-consumer.sh --topic events --bootstrap-server localhost:9092 --f
 
 ## K8S Deploy
 ```bash
-helm template -f cloud-config-values.yaml microservice | kubectl --kubeconfig ~/.kube/pavel -n dev apply -f -
+cd ./deploy && bash ./deploy-all.sh
+helm install -f kafka-values.yaml -n dev kafka-release oci://registry-1.docker.io/bitnamicharts/kafka
+```
+После изменений в вальюсах:
+```bash
+helm upgrade -i kafka-release -f kafka-values.yaml -n dev oci://registry-1.docker.io/bitnamicharts/kafka
 ```
 
 ## Progress
