@@ -1,9 +1,9 @@
 image:
-  repository: ghcr.io/moleus/highload-systems-itmo/transaction
+  repository: ghcr.io/moleus/highload-systems-itmo/authentication
   tag: pavel-setup-k8s
 
-nameOverride: transaction
-fullnameOverride: transaction
+nameOverride: authentication
+fullnameOverride: authentication
 
 initContainers:
   - name: liquibase-main
