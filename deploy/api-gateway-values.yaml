@@ -14,6 +14,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
+    - host: highload-lab.duckdns.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
 
 
 service:
