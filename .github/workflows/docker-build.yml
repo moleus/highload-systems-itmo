@@ -84,7 +84,7 @@ jobs:
           - app: dp-balance-init
             dockerfile: deploy/dp-init.Dockerfile
             build-args: |
-              MIGRATION_DIR=./shared/db-migrations/src/main/resources/changelog
+              MIGRATION_DIR=./shared/db-migrations/src/main/resources/changelog-balance
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
