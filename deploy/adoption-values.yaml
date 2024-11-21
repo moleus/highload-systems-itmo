@@ -1,14 +1,13 @@
 image:
-  repository: ghcr.io/moleus/highload-systems-itmo/transaction
+  repository: ghcr.io/moleus/highload-systems-itmo/adoption
   tag: pavel-setup-k8s
 
-nameOverride: transaction
-fullnameOverride: transaction
+nameOverride: adoption
+fullnameOverride: adoption
 
 initContainers:
   - name: liquibase-main
     image: ghcr.io/moleus/highload-systems-itmo/db-init:pavel-setup-k8s
-    imagePullPolicy: Always
     command:
       - bash
       - "-c"
@@ -41,7 +40,7 @@ initContainers:
 #      - update
 
 envs:
-  - name: APP_SERVER_PORT
+  - name: SERVER_PORT
     value: "80"
   - name: CLOUD_CONFIG_HOST
     value: cloud-config

@@ -19,6 +19,7 @@ service:
 
 storage:
   size: "1Gi"
+  mountPath: "/var/lib/postgresql/data"
 
 resources:
   limits:

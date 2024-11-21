@@ -33,7 +33,7 @@ spec:
       containers:
         - name: {{ include "microservice.fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "dev" }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

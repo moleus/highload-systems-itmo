@@ -9,7 +9,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: postgres
+      targetPort: storage
       protocol: TCP
       name: postgres
   selector:

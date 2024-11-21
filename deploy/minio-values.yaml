@@ -1,0 +1,41 @@
+image:
+  repository: quay.io/minio/minio
+  pullPolicy: IfNotPresent
+  tag: "RELEASE.2024-10-13T13-34-11Z"
+
+nameOverride: "minio"
+fullnameOverride: "minio"
+
+service:
+  port: 9000
+
+envs:
+  - name: MINIO_ROOT_USER
+    valueFrom:
+      secretKeyRef:
+        name: minio-secrets
+        key: username
+  - name: MINIO_ROOT_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: minio-secrets
+        key: password
+
+storage:
+  size: "100Mi"
+  mountPath: "/data"
+
+livenessProbe:
+  exec:
+    command:
+      - bash
+      - "-c"
+      - |
+        mc ready local
+readinessProbe:
+  exec:
+    command:
+      - bash
+      - "-c"
+      - |
+        mc ready local  

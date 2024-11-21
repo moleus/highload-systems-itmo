@@ -34,7 +34,7 @@ ingress:
 
 resources:
   limits:
-    memory: 300Mi
+    memory: 400Mi
   requests:
     cpu: 200m
     memory: 200Mi
@@ -43,10 +43,16 @@ livenessProbe:
   httpGet:
     path: /actuator/health/liveness
     port: http
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  failureThreshold: 5
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
     port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  failureThreshold: 5
 
 envs:
   - name: CLOUD_CONFIG_HOST

@@ -8,7 +8,13 @@ fullnameOverride: api-gateway
 ingress:
   enabled: true
 
+service:
+  type: ClusterIP
+  port: 80
+
 envs:
+  - name: SERVER_PORT
+    value: "80"
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
   - name: EUREKA_HOST
