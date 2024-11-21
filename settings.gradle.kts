@@ -7,7 +7,6 @@ include(
     "services:api-gateway",
     "services:authentication",
     "services:cloud-config",
-    "services:eureka-server",
     "services:notification",
     "services:transaction",
     "services:images",
