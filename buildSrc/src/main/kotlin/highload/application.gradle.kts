@@ -32,7 +32,7 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
     }
 }
 
-val imageTag = System.getenv("IMAGE_TAG") ?: "lab4"
+val imageTag = System.getenv("IMAGE_TAG") ?: throw IllegalStateException("IMAGE_TAG is not set")
 
 gradle.projectsEvaluated {
     jib {
