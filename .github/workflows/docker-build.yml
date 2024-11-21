@@ -80,11 +80,11 @@ jobs:
           - app: db-init
             dockerfile: deploy/db-init.Dockerfile
             build-args: |
-              MIGRATION_DIR=./shared/db-migrations/src/main/resources/changelog
-          - app: dp-balance-init
+              MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog
+          - app: db-balance-init
             dockerfile: deploy/db-init.Dockerfile
             build-args: |
-              MIGRATION_DIR=./shared/db-migrations/src/main/resources/changelog-balance
+              MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog-balance
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -104,6 +104,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           file: ${{ matrix.config.dockerfile }}
+          context: .
           build-args: ${{ matrix.config.build-args }}
           push: true
           tags: ghcr.io/moleus/highload-systems-itmo/${{ matrix.config.app }}:${{ needs.prepare.outputs.tag_version }}
