@@ -49,4 +49,7 @@ readinessProbe:
     port: http
 
 envs:
-  - JAVA_TOOL_OPTIONS: "-Xms64m -Xmx168m -XX:+UseSerialGC -Xss256k -XX:MaxRAM=350m"
+  - name: CLOUD_CONFIG_HOST
+    value: cloud-config
+  - name: EUREKA_HOST
+    value: eureka-server

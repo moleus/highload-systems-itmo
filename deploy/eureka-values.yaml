@@ -1,0 +1,15 @@
+image:
+  repository: ghcr.io/moleus/highload-systems-itmo/eureka-server
+  tag: pavel-setup-k8s
+
+nameOverride: eureka-server
+fullnameOverride: eureka-server
+
+service:
+  port: 8761
+
+envs:
+  - name: CLOUD_CONFIG_HOST
+    value: cloud-config
+  - name: EUREKA_HOST
+    value: eureka-server

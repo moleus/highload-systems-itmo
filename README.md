@@ -1,19 +1,8 @@
-## Local development (Linux/WSL/macOS only)
+## Local development (Linux/WSL/macOS)
 
 ### IDE
 
 - install `detekt` plugin in IntelliJ IDEA. Set config in `Preferences -> Tools -> detekt -> Configuration file` to `detekt.yml`
-
-### Run via docker
-
-Add to `.env` file:
-```sh
-JWT_SECRET_ACCESS=0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==
-
-# optionally
-TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/501/docker.sock
-DOCKER_HOST=/var/run/docker.sock
-```
 
 build App + run App and PostgresqlDB:
 ```sh
@@ -28,7 +17,6 @@ run only db in docker:
 ```sh
 docker-compose up db
 ```
-
 
 ## Liquibase
 
@@ -68,6 +56,11 @@ docker compose exec kafka-1 kafka-metadata-shell.sh \
 ```bash
 docker compose exec kafka-2 bash
 $ kafka-console-consumer.sh --topic events --bootstrap-server localhost:9092 --from-beginning
+```
+
+## K8S Deploy
+```bash
+helm template -f cloud-config-values.yaml microservice | kubectl --kubeconfig ~/.kube/pavel -n dev apply -f -
 ```
 
 ## Progress

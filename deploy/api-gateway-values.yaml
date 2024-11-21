@@ -1,6 +1,15 @@
 image:
   repository: ghcr.io/moleus/highload-systems-itmo/api-gateway
-  tag: setup-k8s
+  tag: pavel-setup-k8s
+
+nameOverride: api-gateway
+fullnameOverride: api-gateway
 
 ingress:
   enabled: true
+
+envs:
+  - name: CLOUD_CONFIG_HOST
+    value: cloud-config
+  - name: EUREKA_HOST
+    value: eureka-server
