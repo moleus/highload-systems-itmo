@@ -32,21 +32,25 @@ val hostArchitecture = System.getProperty("os.arch").lowercase(Locale.getDefault
     }
 }
 
-val labVersion = "lab3"
+val imageTag = System.getenv("IMAGE_TAG") ?: "unset"
 
 gradle.projectsEvaluated {
     jib {
         from {
-            image = "public.ecr.aws/docker/library/eclipse-temurin:21-jre"
+            image = "ghcr.io/moleus/eclipse-temurin:21-jre@sha256:8802b9e75cfafd5ea9e9a48fb4e37c64d4ceedb929689b2b46f3528e858d275f"
             platforms {
                 platform {
                     architecture = hostArchitecture
                     os = "linux"
                 }
+                platform {
+                    architecture = "amd64"
+                    os = "linux"
+                }
             }
         }
         to {
-            image = "moleus/highload/${applicationExtension.serviceName.get()}:${labVersion}"
+            image = "ghcr.io/moleus/highload-systems-itmo/${applicationExtension.serviceName.get()}:${imageTag}"
         }
     }
 }

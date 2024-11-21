@@ -1,0 +1,31 @@
+name: Deploy services
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag for the docker images'
+        required: false
+        default: 'lab4'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  run-docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Read version
+        id: read-version
+        uses: ./.github/actions/read-version
+      - name: Start and run
+        run: |
+          export LAB_TAG=${{  github.event.inputs.tag || steps.read-version.outputs.version }}
+          docker compose --env-file env-ci -f docker-compose.yml up -d --wait
