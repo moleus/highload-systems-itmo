@@ -4,6 +4,7 @@ plugins {
     id("highload.e2e-test")
     id("highload.application")
     id("highload.security")
+    id ("org.sonarqube") version "5.1.0.4882"
 }
 
 highloadApp {
@@ -18,4 +19,14 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
 
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-auth")
+        property("sonar.projectName", "Highload Systems ITMO - auth")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
+        property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
+        property("sonar.sourceEncoding", "UTF-8")
+    }
 }

@@ -1,6 +1,7 @@
 plugins {
     id("io.spring.dependency-management")
     id("highload.common")
+    id ("java-library")
 }
 
 dependencies {
@@ -8,3 +9,7 @@ dependencies {
     implementation("io.minio:minio:8.5.13")
 }
 
+
+tasks.named("bootJar") {
+    enabled = false
+}

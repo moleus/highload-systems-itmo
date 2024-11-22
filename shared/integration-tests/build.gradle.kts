@@ -5,6 +5,7 @@ plugins {
     id("highload.web")
     `java-test-fixtures`
     java
+    id ("java-library")
 }
 
 dependencies {
@@ -24,4 +25,8 @@ sourceSets {
             resources.setSrcDirs(files("src/main/non-existent"))
         }
     }
+}
+
+tasks.named("bootJar") {
+    enabled = false
 }

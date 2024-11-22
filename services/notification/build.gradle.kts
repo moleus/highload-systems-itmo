@@ -5,6 +5,7 @@ plugins {
     id("highload.application")
     id("highload.common")
     id("io.spring.dependency-management")
+    id ("org.sonarqube") version "5.1.0.4882"
     id("highload.e2e-test")
 }
 
@@ -25,4 +26,14 @@ dependencies {
 
 highloadApp {
     serviceName.set("notification")
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-notification")
+        property("sonar.projectName", "Highload Systems ITMO - notification")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
+        property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
+        property("sonar.sourceEncoding", "UTF-8")
+    }
 }
