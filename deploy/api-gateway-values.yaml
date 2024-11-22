@@ -31,3 +31,5 @@ envs:
     value: cloud-config
   - name: EUREKA_HOST
     value: eureka-server
+  - name: MINIO_HOST
+    value: minio

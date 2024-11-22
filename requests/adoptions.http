@@ -1,5 +1,5 @@
 ###
-POST http://highload.duckdns.org/api/v1/adoptions/3
+POST http://highload.duckdns.org/api/v1/adoptions/4
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
 > {%
