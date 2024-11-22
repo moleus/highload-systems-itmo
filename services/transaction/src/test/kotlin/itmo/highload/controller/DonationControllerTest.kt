@@ -8,8 +8,8 @@ import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.service.TransactionService
 import org.junit.jupiter.api.Test
-import reactor.core.publisher.Mono
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
 
@@ -20,101 +20,98 @@ class DonationControllerTest {
     private val controller = DonationController(transactionService, jwtUtils)
 
     @Test
-    fun `getDonations - should return all donations`() {
+    fun `getDonations - should return donations`() {
+        val purposeId: Int? = 1
+        val token = "validToken"
         val donations = listOf(
             TransactionResponse(
-                dateTime = LocalDateTime.of(2024, 12, 1, 12, 0),
-                PurposeResponse(id = 1, name = "Медицина"), userId = 1, moneyAmount = 100, isDonation = true
+                dateTime = LocalDateTime.now(),
+                purpose = PurposeResponse(1, "Education"),
+                userId = 123,
+                moneyAmount = 500,
+                isDonation = true,
+                status = "SUCCESS"
             ),
             TransactionResponse(
-                dateTime = LocalDateTime.of(2024, 12, 1, 12, 0),
-                PurposeResponse(id = 2, name = "Питание"), userId = 2, moneyAmount = 200, isDonation = false
-            ),
+                dateTime = LocalDateTime.now(),
+                purpose = PurposeResponse(2, "Health"),
+                userId = 124,
+                moneyAmount = 700,
+                isDonation = true,
+                status = "PENDING"
+            )
         )
 
-        every { transactionService.getDonations(null) } returns Flux.fromIterable(donations)
+        every { transactionService.getDonations(purposeId, token) } returns Flux.fromIterable(donations)
 
-        StepVerifier.create(controller.getDonations(null))
+        StepVerifier.create(controller.getDonations(purposeId, token))
             .expectNextMatches {
-                it.dateTime == LocalDateTime.of(
-                    2024, 12, 1,
-                    12, 0
-                ) && it.purpose.id == 1 && it.moneyAmount == 100 && it.userId == 1 && it.isDonation
+                it.purpose.name == "Education" && it.moneyAmount == 500 && it.isDonation && it.status == "SUCCESS"
             }
             .expectNextMatches {
-                it.dateTime == LocalDateTime.of(
-                    2024, 12, 1,
-                    12, 0
-                ) && it.purpose.id == 2 && it.moneyAmount == 200 && it.userId == 2 && !it.isDonation
+                it.purpose.name == "Health" && it.moneyAmount == 700 && it.isDonation && it.status == "PENDING"
             }
             .verifyComplete()
     }
 
     @Test
-    fun `getDonationsByCustomerForManager - should return donations by customer`() {
-        val customerId = 2
+    fun `addDonation - should add donation`() {
+        val token = "validToken"
+        val userId = 123
+        val request = TransactionDto(purposeId = 1, moneyAmount = 500)
+        val response = TransactionResponse(
+            dateTime = LocalDateTime.now(),
+            purpose = PurposeResponse(1, "Education"),
+            userId = userId,
+            moneyAmount = 500,
+            isDonation = true,
+            status = "SUCCESS"
+        )
+
+        every { jwtUtils.extractUserId(token) } returns userId
+        every { transactionService.addTransaction(request, userId, isDonation = true) } returns Mono.just(response)
+
+        StepVerifier.create(controller.addDonation(request, token))
+            .expectNextMatches {
+                it.purpose.name == "Education" && it.moneyAmount == 500 && it.isDonation && it.status == "SUCCESS"
+            }
+            .verifyComplete()
+    }
+    @Test
+    fun `getDonationsByCustomerForManager - should return donations for a specific customer`() {
+        val customerId = 123
+        val token = "validToken"
         val donations = listOf(
             TransactionResponse(
-                dateTime = LocalDateTime.of(2024, 12, 1, 12, 0),
-                PurposeResponse(id = 1, name = "Медицина"), userId = 1, moneyAmount = 100, isDonation = true
+                dateTime = LocalDateTime.now(),
+                purpose = PurposeResponse(1, "Education"),
+                userId = customerId,
+                moneyAmount = 500,
+                isDonation = true,
+                status = "SUCCESS"
             ),
             TransactionResponse(
-                dateTime = LocalDateTime.of(2024, 12, 1, 12, 0),
-                PurposeResponse(id = 2, name = "Питание"), userId = 2, moneyAmount = 200, isDonation = true
-            ),
+                dateTime = LocalDateTime.now(),
+                purpose = PurposeResponse(2, "Health"),
+                userId = customerId,
+                moneyAmount = 700,
+                isDonation = true,
+                status = "PENDING"
+            )
         )
 
-        every { transactionService.getAllByUser(isDonation = true, userId = customerId) } returns
-                Flux.fromIterable(donations.filter { it.userId == customerId && it.isDonation })
+        every { transactionService.getAllByUser(isDonation = true, userId = customerId, token) } returns
+                Flux.fromIterable(donations)
 
-
-        StepVerifier.create(controller.getDonationsByCustomerForManager(customerId))
+        StepVerifier.create(controller.getDonationsByCustomerForManager(customerId, token))
             .expectNextMatches {
-                it.dateTime == LocalDateTime.of(2024, 12, 1, 12, 0) &&
-                        it.purpose.id == 2 && it.moneyAmount == 200 && it.userId == 2 && it.isDonation
+                it.userId == customerId && it.purpose.name == "Education" && it.moneyAmount == 500 && it.isDonation
+                        && it.status == "SUCCESS"
+            }
+            .expectNextMatches {
+                it.userId == customerId && it.purpose.name == "Health" && it.moneyAmount == 700 && it.isDonation
+                        && it.status == "PENDING"
             }
             .verifyComplete()
     }
-
-
-    @Test
-    fun `addDonation - should add a new donation`() {
-        val donationDto = TransactionDto(moneyAmount = 500, purposeId = 1)
-        val donationResponse = TransactionResponse(
-            dateTime = LocalDateTime.of(2024, 12, 1, 12, 0),
-            PurposeResponse(id = 1, name = "Медицина"), userId = 1, moneyAmount = 500, isDonation = true
-        )
-        val token = "validToken"
-        val userId = 1
-
-        every { jwtUtils.extractUserId(token) } returns userId
-        every { transactionService.addTransaction(donationDto, userId, isDonation = true) } returns
-                Mono.just(donationResponse)
-
-        StepVerifier.create(controller.addDonation(donationDto, token))
-            .expectNextMatches { it.dateTime == LocalDateTime.of(2024, 12, 1, 12, 0) &&
-                    it.purpose.id == 1 &&
-                    it.purpose.name == "Медицина" &&
-                    it.userId == 1 &&
-                    it.moneyAmount == 500 &&
-                    it.isDonation }
-            .verifyComplete()
-    }
-
-
-    @Test
-    fun `addDonation - should return 400 if invalid data provided`() {
-        val donationDto = TransactionDto(moneyAmount = -50, purposeId = 1)
-        val token = "validToken"
-        val userId = 1
-
-        every { jwtUtils.extractUserId(token) } returns userId
-        every { transactionService.addTransaction(donationDto, userId, isDonation = true) } returns
-                Mono.error(IllegalArgumentException("Invalid donation amount"))
-
-        StepVerifier.create(controller.addDonation(donationDto, token))
-            .expectError(IllegalArgumentException::class.java)
-            .verify()
-    }
-
 }

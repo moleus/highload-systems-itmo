@@ -35,7 +35,7 @@ class BalanceControllerTest {
         val balanceId = 1
         val balance = Balance(id = 1, purpose = "Медикаменты", moneyAmount = 100)
 
-        every { balanceService.getById(balanceId) } returns Mono.just(balance)
+        every { balanceService.getBalanceById(balanceId) } returns Mono.just(balance)
 
         StepVerifier.create(controller.getBalanceById(balanceId))
             .expectNextMatches { it.purpose.id == 1 && it.purpose.name == "Медикаменты" && it.moneyAmount == 100 }
