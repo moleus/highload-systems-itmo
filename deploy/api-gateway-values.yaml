@@ -32,4 +32,4 @@ envs:
   - name: EUREKA_HOST
     value: eureka-server
   - name: MINIO_HOST
-    value: minio
+    value: "minio:9000"
