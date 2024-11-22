@@ -7,9 +7,11 @@ import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.domain.AnimalRepository
+import itmo.highload.domain.entity.AnimalEntity
 import itmo.highload.domain.interactor.AdoptionService
 import itmo.highload.domain.interactor.AnimalImageService
 import itmo.highload.domain.interactor.AnimalService
+import itmo.highload.domain.mapper.AnimalMapper
 import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.infrastructure.postgres.model.Animal
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -144,10 +146,16 @@ class AnimalServiceTest {
 
     @Test
     fun `save - should save a new animal`() {
-        val savedAnimal = Animal(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE,
+        val request = AnimalDto(name = "Ave", type = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY)
+        val savedAnimal = AnimalEntity(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE,
             isCastrated = false, healthStatus = HealthStatus.HEALTHY)
 
-        every { animalRepository.save(any()) } returns Mono.just(savedAnimal)
+        every { animalRepository.save(any()) } returns Mono.just(AnimalMapper.toJpaEntity(savedAnimal))
+
+        StepVerifier.create(animalService.save(request))
+            .expectNext(savedAnimal)
+            .verifyComplete()
 
         verify { animalRepository.save(any()) }
     }
@@ -170,5 +178,4 @@ class AnimalServiceTest {
         verify { animalRepository.delete(animal) }
         verify { animalImageService.deleteAllByAnimalId(animal.id, token) }
     }
-
 }

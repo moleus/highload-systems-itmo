@@ -27,6 +27,7 @@ object AnimalMapper {
     }
     fun toJpaEntity(animal: AnimalEntity): Animal {
         return Animal(
+            id = animal.id,
             name = animal.name,
             typeOfAnimal = animal.typeOfAnimal,
             gender = animal.gender,
