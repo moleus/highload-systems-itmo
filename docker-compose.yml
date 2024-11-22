@@ -159,14 +159,14 @@ services:
       - backend
 
   cloud-config:
-    image: moleus/highload/cloud-config:dev
+    image: ghcr.io/moleus/highload/cloud-config:${LAB_TAG:?error}
     working_dir: /app
     volumes:
       - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
       - ./config:/app/config
     environment:
       <<: *small-jvm-heap-envs
-#      SPRING_PROFILES_ACTIVE: cloud
+      #      SPRING_PROFILES_ACTIVE: cloud
       SPRING_PROFILES_ACTIVE: standalone,native
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
     env_file:
@@ -182,7 +182,7 @@ services:
       - backend
 
   eureka-server:
-    image: moleus/highload/eureka-server:dev
+    image: ghcr.io/moleus/highload/eureka-server:${LAB_TAG:?error}
     ports:
       - "8761:8761"
     depends_on:
@@ -203,7 +203,7 @@ services:
       - backend
 
   adoption:
-    image: moleus/highload/adoption:dev
+    image: ghcr.io/moleus/highload/adoption:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -218,7 +218,7 @@ services:
       - backend
 
   animal:
-    image: moleus/highload/animal:dev
+    image: ghcr.io/moleus/highload/animal:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -233,7 +233,7 @@ services:
       - backend
 
   api-gateway:
-    image: moleus/highload/api-gateway:dev
+    image: ghcr.io/moleus/highload/api-gateway:${LAB_TAG:?error}
     ports:
       - "8080:8080"
     env_file:
@@ -252,7 +252,7 @@ services:
       - backend
 
   authentication:
-    image: moleus/highload/authentication:dev
+    image: ghcr.io/moleus/highload/authentication:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -267,7 +267,7 @@ services:
       - backend
 
   transaction:
-    image: moleus/highload/transaction:dev
+    image: ghcr.io/moleus/highload/transaction:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -299,7 +299,7 @@ services:
       - backend
 
   images:
-    image: moleus/highload/images:dev
+    image: ghcr.io/moleus/highload/images:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -316,7 +316,7 @@ services:
       - backend
 
   notification:
-    image: moleus/highload/notification:dev
+    image: ghcr.io/moleus/highload/notification:${LAB_TAG:?error}
     depends_on:
       eureka-server:
         condition: service_healthy
