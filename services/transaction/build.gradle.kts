@@ -45,8 +45,8 @@ testing {
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "highload-systems-itmo-transaction")
-        property("sonar.projectName", "Highload Systems ITMO - transaction")
+        property("sonar.projectKey", "highload-systems-itmo-balance")
+        property("sonar.projectName", "Highload Systems ITMO - balance")
         property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
         property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
         property("sonar.sourceEncoding", "UTF-8")
