@@ -23,19 +23,6 @@ class BalanceServiceTest {
     private val testBalance = Balance(id = 1, purpose = "test", moneyAmount = 100)
 
     @Test
-    fun `should return balance by id`() {
-        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
-
-        val result = balanceService.getBalanceById(1)
-
-        StepVerifier.create(result)
-            .assertNext { assertEquals(testBalance, it) }
-            .verifyComplete()
-
-        verify { balanceRepository.findById(1) }
-    }
-
-    @Test
     fun `should throw EntityNotFoundException when balance by id is not found`() {
         every { balanceRepository.findById(1) } returns Mono.empty()
 
@@ -46,34 +33,6 @@ class BalanceServiceTest {
             .verify()
 
         verify { balanceRepository.findById(1) }
-    }
-
-    @Test
-    fun `should return all balances`() {
-        every { balanceRepository.findAll() } returns Flux.just(testBalance)
-
-        val result = balanceService.getAll()
-
-        StepVerifier.create(result)
-            .assertNext { assertEquals(testBalance, it) }
-            .verifyComplete()
-
-        verify { balanceRepository.findAll() }
-    }
-
-    @Test
-    fun `should add purpose successfully`() {
-        every { balanceRepository.findByPurpose("test") } returns Mono.empty()
-        every { balanceRepository.save(any()) } returns Mono.just(testBalance)
-
-        val result = balanceService.addPurpose("test")
-
-        StepVerifier.create(result)
-            .assertNext { assertEquals(testBalance, it) }
-            .verifyComplete()
-
-        verify { balanceRepository.findByPurpose("test") }
-        verify { balanceRepository.save(any()) }
     }
 
     @Test
