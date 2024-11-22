@@ -16,6 +16,7 @@ import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.infrastructure.postgres.model.Animal
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import reactor.test.StepVerifier
@@ -160,6 +161,86 @@ class AnimalServiceTest {
         verify { animalRepository.save(any()) }
     }
 
+    @Test
+    fun `getAll - should return all animals not adopted`() {
+        val token = "validToken"
+        val animal1 = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY)
+        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY)
+
+        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
+        every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal1, animal2)
+
+        StepVerifier.create(animalService.getAll(null, true, token))
+            .expectNext(AnimalMapper.toEntity(animal1))
+            .expectNext(AnimalMapper.toEntity(animal2))
+            .verifyComplete()
+    }
+
+    @Test
+    fun `getAll - should return filtered animals by name`() {
+        val token = "validToken"
+        val animal1 = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY)
+        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY)
+
+        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
+        every { animalRepository.findByNameAndIdNotIn("Max", any()) } returns Flux.just(animal1)
+
+        StepVerifier.create(animalService.getAll("Max", true, token))
+            .expectNext(AnimalMapper.toEntity(animal1))
+            .verifyComplete()
+    }
+
+    @Test
+    fun `getAll - should return empty if no animals found`() {
+        val token = "validToken"
+
+        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
+        every { animalRepository.findByIdNotIn(any()) } returns Flux.empty()
+
+        StepVerifier.create(animalService.getAll(null, true, token))
+            .verifyComplete()
+    }
+
+    @Test
+    fun `getAll - should return animals filtered by adoption status`() {
+        val token = "validToken"
+        val animal1 = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY)
+        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY)
+
+        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
+        every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal1, animal2)
+
+        StepVerifier.create(animalService.getAll(null, true, token))
+            .expectNext(AnimalMapper.toEntity(animal1))
+            .expectNext(AnimalMapper.toEntity(animal2))
+            .verifyComplete()
+
+        verify { adoptionService.getAllAdoptedAnimalsId(token) }
+        verify { animalRepository.findByIdNotIn(any()) }
+    }
+
+    @Test
+    fun `getAll - should call adoptionService when isNotAdopted is true`() {
+        val token = "validToken"
+        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY)
+
+        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.just(1)
+        every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal2)
+
+        StepVerifier.create(animalService.getAll(null, true, token))
+            .expectNext(AnimalMapper.toEntity(animal2))
+            .verifyComplete()
+
+        verify { adoptionService.getAllAdoptedAnimalsId(token) }
+        verify { animalRepository.findByIdNotIn(any()) }
+    }
 
     @Test
     fun `delete - should delete animal and its images`() {
