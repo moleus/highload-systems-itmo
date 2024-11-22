@@ -1,5 +1,5 @@
 ###
-POST http://highload.duckdns.org/api/v1/adoptions/4
+POST http://highload.duckdns.org/api/v1/adoptions/3
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
 > {%
@@ -50,7 +50,7 @@ Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {
-  "id": 1,
+  "id": 2,
   "status": "DENIED"
 }
 

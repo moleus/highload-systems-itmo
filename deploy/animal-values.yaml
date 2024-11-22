@@ -50,6 +50,10 @@ envs:
     value: db
   - name: DB_PORT
     value: "5432"
+  - name: SERVICES_ENDPOINTS_IMAGES
+    value: images
+  - name: SERVICES_ENDPOINTS_ADOPTION
+    value: adoption
   - name: POSTGRES_USER
     valueFrom:
       secretKeyRef:

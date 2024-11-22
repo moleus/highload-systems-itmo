@@ -12,7 +12,7 @@ listeners:
   controller:
     name: CONTROLLER
     containerPort: 9093
-  advertisedListeners: "INTERNAL://:9092"
+  advertisedListeners: "CLIENT://:9092,INTERNAL://:9094"
   securityProtocolMap: "CLIENT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT"
   interbroker:
     containerPort: 9094
