@@ -1,6 +1,6 @@
 package itmo.highload.service
 
-import itmo.highload.exceptions.ImageServiceUnavailableException
+import itmo.highload.exceptions.ServiceUnavailableException
 import org.junit.jupiter.api.Test
 import org.springframework.http.codec.multipart.FilePart
 import reactor.core.publisher.Mono
@@ -31,7 +31,7 @@ class ImageServiceFallbackTest {
         val response = imageServiceFallback.uploadImage(token, fileParts)
 
         StepVerifier.create(response)
-            .expectError(ImageServiceUnavailableException::class.java)
+            .expectError(ServiceUnavailableException::class.java)
             .verify()
     }
 
@@ -43,7 +43,7 @@ class ImageServiceFallbackTest {
         val response = imageServiceFallback.deleteImageById(token, imageId)
 
         StepVerifier.create(response)
-            .expectError(ImageServiceUnavailableException::class.java)
+            .expectError(ServiceUnavailableException::class.java)
             .verify()
     }
 
@@ -56,7 +56,7 @@ class ImageServiceFallbackTest {
         val response = imageServiceFallback.updateImage(token, imageId, fileParts)
 
         StepVerifier.create(response)
-            .expectError(ImageServiceUnavailableException::class.java)
+            .expectError(ServiceUnavailableException::class.java)
             .verify()
     }
 }
