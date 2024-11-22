@@ -7,9 +7,9 @@ plugins {
     id("highload.reactive-db")
     id("highload.security")
     id("highload.e2e-test")
-
     id("io.spring.dependency-management")
     id("org.springframework.boot")
+    id ("org.sonarqube") version "5.1.0.4882"
 }
 
 dependencies {
@@ -43,4 +43,14 @@ testing {
 
 highloadApp {
     serviceName.set("images")
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-images")
+        property("sonar.projectName", "Highload Systems ITMO - images")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
+        property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
+        property("sonar.sourceEncoding", "UTF-8")
+    }
 }

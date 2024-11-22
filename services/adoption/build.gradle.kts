@@ -7,6 +7,7 @@ plugins {
     id("highload.web")
     id("highload.db")
     id("highload.common")
+    id ("org.sonarqube") version "5.1.0.4882"
 }
 
 dependencies {
@@ -37,5 +38,15 @@ testing {
                 implementation("org.testcontainers:kafka:1.20.3")
             }
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-adoption")
+        property("sonar.projectName", "Highload Systems ITMO - adoption")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
+        property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
+        property("sonar.sourceEncoding", "UTF-8")
     }
 }
