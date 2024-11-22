@@ -1,0 +1,137 @@
+package itmo.highload.service
+
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import itmo.highload.exceptions.EntityAlreadyExistsException
+import itmo.highload.model.Balance
+import itmo.highload.repository.BalanceRepository
+import jakarta.persistence.EntityNotFoundException
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import java.time.Duration
+
+class BalanceServiceTest {
+
+    private val balanceRepository: BalanceRepository = mockk()
+    private val delay: Long = 1
+    private val balanceService = BalanceService(balanceRepository, delay)
+
+    private val testBalance = Balance(id = 1, purpose = "test", moneyAmount = 100)
+
+    @Test
+    fun `should return balance by id`() {
+        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
+
+        val result = balanceService.getBalanceById(1)
+
+        StepVerifier.create(result)
+            .assertNext { assertEquals(testBalance, it) }
+            .verifyComplete()
+
+        verify { balanceRepository.findById(1) }
+    }
+
+    @Test
+    fun `should throw EntityNotFoundException when balance by id is not found`() {
+        every { balanceRepository.findById(1) } returns Mono.empty()
+
+        val result = balanceService.getBalanceById(1)
+
+        StepVerifier.create(result)
+            .expectErrorMatches { it is EntityNotFoundException && it.message == "Failed to find Balance with id = 1" }
+            .verify()
+
+        verify { balanceRepository.findById(1) }
+    }
+
+    @Test
+    fun `should return all balances`() {
+        every { balanceRepository.findAll() } returns Flux.just(testBalance)
+
+        val result = balanceService.getAll()
+
+        StepVerifier.create(result)
+            .assertNext { assertEquals(testBalance, it) }
+            .verifyComplete()
+
+        verify { balanceRepository.findAll() }
+    }
+
+    @Test
+    fun `should add purpose successfully`() {
+        every { balanceRepository.findByPurpose("test") } returns Mono.empty()
+        every { balanceRepository.save(any()) } returns Mono.just(testBalance)
+
+        val result = balanceService.addPurpose("test")
+
+        StepVerifier.create(result)
+            .assertNext { assertEquals(testBalance, it) }
+            .verifyComplete()
+
+        verify { balanceRepository.findByPurpose("test") }
+        verify { balanceRepository.save(any()) }
+    }
+
+    @Test
+    fun `should throw EntityAlreadyExistsException when purpose already exists`() {
+        every { balanceRepository.findByPurpose("test") } returns Mono.just(testBalance)
+
+        val result = balanceService.addPurpose("test")
+
+        StepVerifier.create(result)
+            .expectErrorMatches { it is EntityAlreadyExistsException && it.message == "Purpose with name 'test' already exists" }
+            .verify()
+
+        verify { balanceRepository.findByPurpose("test") }
+    }
+
+    @Test
+    fun `should adjust balance correctly for donation`() {
+        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
+        every { balanceRepository.save(any()) } returns Mono.just(testBalance.copy(moneyAmount = 150))
+
+        val result = balanceService.checkAndAdjustBalance(1, isDonation = true, moneyAmount = 50)
+
+        StepVerifier.create(result)
+            .expectNext(true)
+            .verifyComplete()
+
+        verify { balanceRepository.findById(1) }
+        verify { balanceRepository.save(testBalance.copy(moneyAmount = 150)) }
+    }
+
+    @Test
+    fun `should fail to adjust balance for negative amount`() {
+        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
+
+        val result = balanceService.checkAndAdjustBalance(1, isDonation = false, moneyAmount = 200)
+
+        StepVerifier.create(result)
+            .expectNext(false)
+            .verifyComplete()
+
+        verify { balanceRepository.findById(1) }
+    }
+
+    @Test
+    fun `should rollback balance correctly`() {
+        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
+        every { balanceRepository.save(any()) } returns Mono.just(testBalance.copy(moneyAmount = 50))
+
+        val result = balanceService.rollbackBalance(1, isDonation = true, moneyAmount = 50)
+
+        StepVerifier.create(result)
+            .expectNext(true)
+            .verifyComplete()
+
+        verify { balanceRepository.findById(1) }
+        verify { balanceRepository.save(testBalance.copy(moneyAmount = 50)) }
+    }
+
+}
