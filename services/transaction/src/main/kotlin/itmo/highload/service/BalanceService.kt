@@ -1,51 +1,79 @@
 package itmo.highload.service
 
-import itmo.highload.exceptions.EntityAlreadyExistsException
-import itmo.highload.exceptions.NegativeBalanceException
-import itmo.highload.model.Balance
-import itmo.highload.model.BalanceMapper
-import itmo.highload.repository.BalanceRepository
-import jakarta.persistence.EntityNotFoundException
-import org.springframework.stereotype.Service
+import io.github.oshai.kotlinlogging.KotlinLogging
+import itmo.highload.api.dto.PurposeRequestDto
+import itmo.highload.api.dto.response.BalanceResponse
+import itmo.highload.api.dto.response.PurposeResponse
+import itmo.highload.exceptions.ServiceUnavailableException
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.*
+import reactivefeign.spring.config.ReactiveFeignClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-@Service
-class BalanceService(private val balanceRepository: BalanceRepository) {
+@ReactiveFeignClient(
+    value = "balance-service",
+    url = "http://\${services.endpoints.balances:localhost:8099}/api/v1",
+    fallback = BalanceServiceFallback::class
+)
 
-    fun getById(id: Int): Mono<Balance> {
-        return balanceRepository.findById(id)
-            .switchIfEmpty(Mono.error(EntityNotFoundException("Failed to find Balance with id = $id")))
-    }
+interface BalanceService {
+    @GetMapping("/balances")
+    fun getAllBalances(
+        @RequestHeader("Authorization") token: String
+    ): Flux<BalanceResponse>
 
-    fun getAll(): Flux<Balance> {
-        return balanceRepository.findAll()
-    }
+    @GetMapping("/balances/{id}")
+    fun getBalanceById(
+        @RequestHeader("Authorization") token: String,
+        @PathVariable id: Int
+    ): Mono<BalanceResponse>
 
-    fun getAllPurposes(): Flux<Balance> {
-        return balanceRepository.findAll()
-    }
+    @GetMapping("/balances/purposes")
+    fun getAllPurposes(
+        @RequestHeader("Authorization") token: String,
+    ): Flux<PurposeResponse>
 
-    fun addPurpose(name: String): Mono<Balance> {
-        return balanceRepository.findByPurpose(name)
-            .flatMap<Balance> { Mono.error(EntityAlreadyExistsException("Purpose with name '$name' already exists")) }
-            .switchIfEmpty(Mono.defer { balanceRepository.save(BalanceMapper.toEntity(name)) })
-    }
+    @PostMapping("/balances/purposes")
+    fun addPurpose(
+        @RequestHeader("Authorization") token: String,
+        @RequestBody purposeRequestDto: PurposeRequestDto
+    ): Mono<PurposeResponse>
 
-    fun changeMoneyAmount(id: Int, isDonation: Boolean, moneyAmount: Int): Mono<Balance> {
-        return balanceRepository.findById(id).flatMap { balance ->
-            val updatedMoneyAmount = if (isDonation) {
-                balance.moneyAmount + moneyAmount
-            } else {
-                balance.moneyAmount - moneyAmount
-            }
+}
 
-            if (updatedMoneyAmount < 0) {
-                Mono.error(NegativeBalanceException("Insufficient funds to complete the transaction"))
-            } else {
-                val updatedBalance = balance.copy(moneyAmount = updatedMoneyAmount)
-                balanceRepository.save(updatedBalance)
-            }
+@Component
+class BalanceServiceFallback : BalanceService {
+
+    private val logger = KotlinLogging.logger {}
+
+    override fun getAllBalances(token: String): Flux<BalanceResponse> {
+        logger.warn { "Fallback triggered for getAllBalances" }
+        return Flux.error {
+            ServiceUnavailableException("Balance service is currently unavailable.")
         }
     }
+
+    override fun getBalanceById(token: String, id: Int): Mono<BalanceResponse> {
+        logger.warn { "${"Fallback triggered for getBalanceById, id: {}"} $id" }
+        return Mono.error {
+            ServiceUnavailableException("Balance service is currently unavailable.")
+        }
+    }
+
+    override fun getAllPurposes(token: String): Flux<PurposeResponse> {
+        logger.warn { "Fallback triggered for getAllPurposes" }
+        return Flux.error {
+            ServiceUnavailableException("Balance service is currently unavailable.")
+        }
+    }
+
+    override fun addPurpose(token: String, purposeRequestDto: PurposeRequestDto): Mono<PurposeResponse> {
+        logger.warn { "${"Fallback triggered for addPurpose, purposeRequestDto: {}"} $purposeRequestDto" }
+        return Mono.error {
+            ServiceUnavailableException("Balance service is currently unavailable.")
+        }
+    }
+
 }

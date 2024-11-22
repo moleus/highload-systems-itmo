@@ -9,6 +9,7 @@ include(
     "services:cloud-config",
     "services:notification",
     "services:transaction",
+    "services:balance",
     "services:images",
     "shared:security",
     "shared:web-security",

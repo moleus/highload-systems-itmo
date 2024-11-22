@@ -47,9 +47,10 @@ class DonationController(
         ]
     )
     fun getDonations(
-        @RequestParam(required = false) purposeId: Int?
+        @RequestParam(required = false) purposeId: Int?,
+        @RequestHeader("Authorization") token: String
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getDonations(purposeId)
+        val donations = transactionService.getDonations(purposeId, token)
         return donations
     }
 
@@ -72,9 +73,10 @@ class DonationController(
         ]
     )
     fun getDonationsByCustomerForManager(
-        @PathVariable customerId: Int
+        @PathVariable customerId: Int,
+        @RequestHeader("Authorization") token: String
     ): Flux<TransactionResponse> {
-        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId)
+        val donations = transactionService.getAllByUser(isDonation = true, userId = customerId, token)
         return donations
     }
 

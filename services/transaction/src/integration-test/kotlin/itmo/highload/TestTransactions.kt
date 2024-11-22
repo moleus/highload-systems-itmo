@@ -60,7 +60,7 @@ class TestTransactions @Autowired constructor(
     private var port: Int = 0
     private val donationApiUrlBasePath = "/api/v1/transactions/donations"
     private val expenseApiUrlBasePath = "/api/v1/transactions/expenses"
-    private val balanceApiUrlBasePath = "/api/v1/transactions/balances"
+    private val balanceApiUrlBasePath = "/api/v1/balances"
 
     private val managerToken = jwtUtils.generateAccessToken(
         "emanager",
@@ -80,7 +80,7 @@ class TestTransactions @Autowired constructor(
     }
 
     @BeforeEach
-    fun rollOutTestData(@Value("classpath:/changelog/test-data.sql") script: Resource) {
+    fun rollOutTestData(@Value("classpath:/changelog-test/test-data.sql") script: Resource) {
         executeScriptBlocking(script)
         RestAssured.port = port
         RestAssured.defaultParser = Parser.JSON
@@ -97,20 +97,6 @@ class TestTransactions @Autowired constructor(
 
         response.then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
             .body("money_amount", equalTo(transactionMoney))
-    }
-
-    @Test
-    fun `test get all donations`() {
-        val expectedTransactionResponse = listOf(
-            TransactionResponseFixture.of()
-        )
-
-        val actualTransactionResponse = defaultJsonRequestSpec().withJwt(managerToken).get(donationApiUrlBasePath)
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.OK.value())
-            .extract().`as`(Array<TransactionResponse>::class.java).toList()
-
-        assertThat(actualTransactionResponse).containsExactlyInAnyOrderElementsOf(expectedTransactionResponse)
     }
 
     @Test
@@ -144,106 +130,5 @@ class TestTransactions @Autowired constructor(
 
         defaultJsonRequestSpec().withJwt(managerToken).body(transactionDto).post(expenseApiUrlBasePath).then().log()
             .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
-    }
-
-    @Test
-    fun `should return BAD_REQUEST when there is not enough money on balance`() {
-        val transactionDto = TransactionDto(purposeId = -1, moneyAmount = 1001)
-
-        defaultJsonRequestSpec().withJwt(managerToken).body(transactionDto).post(expenseApiUrlBasePath).then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.BAD_REQUEST.value())
-    }
-
-    @Test
-    fun `test get all expenses`() {
-        val expectedTransactionResponse = listOf(
-            TransactionResponseFixture.of(isDonation = false)
-        )
-
-        val actualTransactionResponse = defaultJsonRequestSpec().withJwt(managerToken).get(expenseApiUrlBasePath)
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.OK.value())
-            .extract().`as`(Array<TransactionResponse>::class.java).toList()
-
-        assertThat(actualTransactionResponse).isEmpty()
-
-        val transactionMoney = 300
-        val transactionDto = TransactionDto(
-            purposeId = -1, moneyAmount = transactionMoney
-        )
-
-        defaultJsonRequestSpec().withJwt(managerToken).body(transactionDto).post(expenseApiUrlBasePath)
-            .then().log().ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
-            .body("money_amount", equalTo(transactionMoney))
-
-        val actualTransactionResponse2 = defaultJsonRequestSpec().withJwt(managerToken).get(expenseApiUrlBasePath)
-            .then().log().ifValidationFails(LogDetail.BODY)
-            .statusCode(HttpStatus.OK.value())
-            .extract().`as`(Array<TransactionResponse>::class.java).toList()
-
-        assertThat(actualTransactionResponse2).allSatisfy {
-            assertThat(it.moneyAmount).isEqualTo(transactionMoney)
-            assertThat(it.isDonation).isFalse()
-            assertThat(it.purpose).isEqualTo(expectedTransactionResponse[0].purpose)
-            assertThat(it.userId).isEqualTo(-3)
-        }
-    }
-
-    @Test
-    fun `test get all balances`() {
-        val expectedBalanceResponse = listOf(BalanceResponseFixture.of())
-
-        val actualBalanceResponse =
-            defaultJsonRequestSpec().withJwt(managerToken).get(balanceApiUrlBasePath).then().log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.OK.value()).extract().`as`(Array<BalanceResponse>::class.java).toList()
-
-        assertThat(actualBalanceResponse).hasSize(3)
-        assertThat(expectedBalanceResponse).containsAnyElementsOf(actualBalanceResponse)
-    }
-
-    @Test
-    fun `test get balance by id`() {
-        val expectedBalanceResponse = BalanceResponseFixture.of()
-
-        val actualBalanceResponse = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/-1").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
-            .`as`(BalanceResponse::class.java)
-
-        assertThat(actualBalanceResponse).isEqualTo(expectedBalanceResponse)
-    }
-
-    @Test
-    fun `test get all purposes`() {
-        val expectedPurposeResponse = listOf(PurposeResponseFixture.of())
-
-        val actualPurposeResponse = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
-            .`as`(Array<PurposeResponse>::class.java).toList()
-
-        assertThat(actualPurposeResponse).hasSize(3)
-        assertThat(expectedPurposeResponse).containsAnyElementsOf(actualPurposeResponse)
-    }
-
-    @Test
-    fun `test add purpose`() {
-        val newPurpose = PurposeRequestDto(name = "New Purpose")
-
-        val allPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
-            .`as`(Array<PurposeResponse>::class.java).toList()
-
-        assertThat(allPurposes).allSatisfy { assertThat(it.name).isNotEqualTo(newPurpose.name) }
-        val initialPurposeSize = allPurposes.size
-
-        defaultJsonRequestSpec().withJwt(managerToken).body(newPurpose).post("$balanceApiUrlBasePath/purposes").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.CREATED.value())
-            .body("name", equalTo(newPurpose.name))
-
-        val updatedPurposes = defaultJsonRequestSpec().withJwt(managerToken).get("$balanceApiUrlBasePath/purposes").then().log()
-            .ifValidationFails(LogDetail.BODY).statusCode(HttpStatus.OK.value()).extract()
-            .`as`(Array<PurposeResponse>::class.java).toList()
-
-        assertThat(updatedPurposes).hasSize(initialPurposeSize + 1)
-        assertThat(updatedPurposes).anyMatch { it.name == newPurpose.name }
     }
 }

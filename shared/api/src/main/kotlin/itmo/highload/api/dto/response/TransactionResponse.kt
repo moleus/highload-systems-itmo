@@ -12,5 +12,6 @@ data class TransactionResponse(
     val purpose: PurposeResponse,
     val userId: Int,
     val moneyAmount: Int,
-    val isDonation: Boolean
+    val isDonation: Boolean,
+    val status: String
 )

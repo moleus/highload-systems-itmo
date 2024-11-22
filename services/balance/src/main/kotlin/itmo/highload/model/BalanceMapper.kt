@@ -14,6 +14,7 @@ object BalanceMapper {
 
     fun toBalanceResponse(entity: Balance): BalanceResponse {
         return BalanceResponse(
+            id = entity.id,
             purpose = toPurposeResponse(entity),
             moneyAmount = entity.moneyAmount
         )

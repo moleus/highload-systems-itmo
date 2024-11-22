@@ -49,6 +49,12 @@ spring:
             - Path=/images/**
           filters:
             - RewritePath=/images/(?<segment>/?.*), /$\{segment}
+        - id: balance-service
+          uri: http://balance
+          predicates:
+            - Path=/api/v1/balances/**,/balances-api-service/**
+          filters:
+            - RewritePath=/balances-api-service/(?<segment>/?.*), /$\{segment}
     loadbalancer:
       retry:
         enabled: true

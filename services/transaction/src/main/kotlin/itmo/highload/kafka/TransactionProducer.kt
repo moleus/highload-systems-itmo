@@ -7,15 +7,31 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class TransactionProducer(private val kafkaTemplate: KafkaTemplate<String, TransactionResponse>) {
+class TransactionProducer(private val kafkaTemplate: KafkaTemplate<String, Any>) {
 
     private val logger = LoggerFactory.getLogger(TransactionProducer::class.java)
 
     @Value("\${spring.kafka.producer.new-donation-topic}")
     lateinit var newDonationTopic: String
 
+    @Value("\${spring.kafka.producer.balance-change-topic}")
+    lateinit var balanceCheckTopic: String
+
+    @Value("\${spring.kafka.producer.roll-back-topic}")
+    lateinit var rollBackTopic: String
+
     fun sendMessageToNewDonationTopic(transaction: TransactionResponse) {
         kafkaTemplate.send(newDonationTopic, transaction)
         logger.info("Sent to Kafka $newDonationTopic: $transaction")
+    }
+
+    fun sendMessageToBalanceCheck(transaction: TransactionBalanceMessage) {
+        kafkaTemplate.send(balanceCheckTopic, transaction)
+        logger.info("Sent to Kafka $balanceCheckTopic: $transaction")
+    }
+
+    fun sendRollBackMessage(transaction: TransactionBalanceMessage) {
+        kafkaTemplate.send(rollBackTopic, transaction)
+        logger.info("Sent to Kafka $rollBackTopic: $transaction")
     }
 }
