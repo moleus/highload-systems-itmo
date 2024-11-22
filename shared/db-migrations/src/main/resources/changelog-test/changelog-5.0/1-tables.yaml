@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-balance
+      author: Korako2
+      changes:
+        - createTable:
+            tableName: balance
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: "BY DEFAULT"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: purpose
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: money_amount
+                  type: INT
+                  constraints:
+                    nullable: false
+                    checkConstraint: "money_amount >= 0"

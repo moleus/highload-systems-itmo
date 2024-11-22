@@ -10,6 +10,7 @@ include(
     "services:eureka-server",
     "services:notification",
     "services:transaction",
+    "services:balance",
     "services:images",
     "shared:security",
     "shared:web-security",

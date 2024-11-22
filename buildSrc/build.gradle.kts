@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.10")
-    implementation("com.google.cloud.tools:jib-gradle-plugin:3.4.3")
+    implementation("com.google.cloud.tools:jib-gradle-plugin:3.4.4")
 
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.7")
     implementation("org.jetbrains.kotlinx:kover-gradle-plugin:0.8.3")

@@ -1,0 +1,19 @@
+name: 'read version'
+description: 'Reads version from VERSION.txt'
+
+outputs:
+  version:
+    description: 'Version from VERSION.txt'
+    value: ${{ steps.read-version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Read version
+      id: read-version
+      shell: bash
+      run: |
+        version=$(cat VERSION.txt)
+        echo "version=$version" >> $GITHUB_OUTPUT

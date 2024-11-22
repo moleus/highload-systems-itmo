@@ -20,7 +20,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("\${app.base-url}/transactions/balances")
+@RequestMapping("\${app.base-url}/balances")
 @OpenAPIDefinition(
     servers = [
         Server(url = "http://localhost:8080")
@@ -70,7 +70,7 @@ class BalanceController(
         ]
     )
     fun getBalanceById(@PathVariable id: Int): Mono<BalanceResponse> {
-        return balanceService.getById(id).map { BalanceMapper.toBalanceResponse(it) }
+        return balanceService.getBalanceById(id).map { BalanceMapper.toBalanceResponse(it) }
     }
 
     @GetMapping("/purposes")

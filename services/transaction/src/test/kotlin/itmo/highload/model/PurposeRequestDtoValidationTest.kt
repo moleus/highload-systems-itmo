@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.model
 
 import itmo.highload.api.dto.PurposeRequestDto
 import jakarta.validation.ConstraintViolation

@@ -45,6 +45,11 @@
         stompClient.subscribe('/topic/adoption_requests/*', function (message) {
             showMessage("Request CHANGED TOPIC: " + message.body);
         });
+
+        // Подписка на топик /topic/transactions
+        stompClient.subscribe('/topic/transactions', function (message) {
+            showMessage("Transaction TOPIC: " + message.body);
+        });
     });
 
     // Закрытие WebSocket соединения
