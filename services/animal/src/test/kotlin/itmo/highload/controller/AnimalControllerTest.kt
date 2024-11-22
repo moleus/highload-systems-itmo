@@ -5,9 +5,9 @@ import io.mockk.mockk
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
-import itmo.highload.model.Animal
-import itmo.highload.model.AnimalMapper
-import itmo.highload.service.AnimalService
+import itmo.highload.domain.entity.AnimalEntity
+import itmo.highload.domain.interactor.AnimalService
+import itmo.highload.infrastructure.http.AnimalController
 import org.apache.kafka.common.errors.InvalidRequestException
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
@@ -23,11 +23,11 @@ class AnimalControllerTest {
     fun `getAll - should return all animals`() {
         val token = "validToken"
         val animals = listOf(
-            Animal(
+            AnimalEntity(
                 id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
                 healthStatus = HealthStatus.HEALTHY
             ),
-            Animal(
+            AnimalEntity(
                 id = 2, name = "Kate", typeOfAnimal = "Dog", gender = Gender.MALE, isCastrated = false,
                 healthStatus = HealthStatus.HEALTHY
             )
@@ -52,7 +52,7 @@ class AnimalControllerTest {
     @Test
     fun `getAnimal - should return animal by ID`() {
         val animalId = 1
-        val animal = Animal(
+        val animal = AnimalEntity(
             id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
             healthStatus = HealthStatus.HEALTHY
         )
@@ -73,7 +73,7 @@ class AnimalControllerTest {
             name = "Ave", type = "Cat", gender = Gender.MALE, isCastrated = false,
             healthStatus = HealthStatus.HEALTHY
         )
-        val animal = Animal(
+        val animal = AnimalEntity(
             id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
             healthStatus = HealthStatus.HEALTHY
         )
@@ -106,7 +106,7 @@ class AnimalControllerTest {
             name = "Bella", type = "Dog", gender = Gender.FEMALE, isCastrated = true,
             healthStatus = HealthStatus.HEALTHY
         )
-        val updatedAnimal = Animal(
+        val updatedAnimal = AnimalEntity(
             id = animalId, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE,
             isCastrated = true, healthStatus = HealthStatus.HEALTHY
         )

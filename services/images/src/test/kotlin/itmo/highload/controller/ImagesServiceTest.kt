@@ -1,28 +1,18 @@
 package itmo.highload.controller
 
-import io.mockk.*
-import itmo.highload.model.S3ObjectRef
-import itmo.highload.minio.S3Storage
-import itmo.highload.repository.ImageObjectRefRepository
-import itmo.highload.service.ImagesService
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import itmo.highload.domain.ImageObjectRefRepository
+import itmo.highload.domain.interactor.ImagesService
+import itmo.highload.infrastructure.minio.model.S3ObjectRef
 import itmo.highload.minio.MinioConfig
-import itmo.highload.minio.ObjectPutResult
-import itmo.highload.minio.PartDataStream
+import itmo.highload.minio.S3Storage
 import jakarta.persistence.EntityNotFoundException
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.springframework.core.io.buffer.DataBuffer
-import org.springframework.core.io.buffer.DataBufferUtils
-import org.springframework.core.io.buffer.DefaultDataBufferFactory
-import org.springframework.http.codec.multipart.FilePart
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
-import java.io.ByteArrayInputStream
-import java.net.http.HttpHeaders
 
 class ImagesServiceTest {
 

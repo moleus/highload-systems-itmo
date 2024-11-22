@@ -1,7 +1,7 @@
 package itmo.highload
 
-import itmo.highload.model.Ownership
-import itmo.highload.model.OwnershipId
+import itmo.highload.infrastructure.postgres.model.Ownership
+import itmo.highload.infrastructure.postgres.model.OwnershipId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

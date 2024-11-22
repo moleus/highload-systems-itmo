@@ -5,8 +5,9 @@ import io.mockk.mockk
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
+import itmo.highload.domain.interactor.TransactionService
+import itmo.highload.infrastructure.http.DonationController
 import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.TransactionService
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -21,7 +22,7 @@ class DonationControllerTest {
 
     @Test
     fun `getDonations - should return donations`() {
-        val purposeId: Int? = 1
+        val purposeId = 1
         val token = "validToken"
         val donations = listOf(
             TransactionResponse(

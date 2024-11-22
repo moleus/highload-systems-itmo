@@ -1,5 +1,6 @@
 package itmo.highload.model
 
+import itmo.highload.infrastructure.postgres.model.AnimalToImageKey
 import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 

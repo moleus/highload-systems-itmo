@@ -2,13 +2,13 @@ package itmo.highload
 
 import io.mockk.every
 import io.mockk.mockk
-import itmo.highload.controller.AuthController
-import itmo.highload.dto.LoginDto
-import itmo.highload.dto.RegisterDto
-import itmo.highload.model.Users
+import itmo.highload.domain.interactor.AuthService
+import itmo.highload.infrastructure.http.AuthController
+import itmo.highload.infrastructure.http.dto.LoginDto
+import itmo.highload.infrastructure.http.dto.RegisterDto
+import itmo.highload.infrastructure.postgres.model.Users
 import itmo.highload.security.Role
 import itmo.highload.security.dto.JwtResponse
-import itmo.highload.service.AuthService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus

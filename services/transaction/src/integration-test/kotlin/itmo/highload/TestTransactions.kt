@@ -5,21 +5,13 @@ import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
-import itmo.highload.api.dto.PurposeRequestDto
 import itmo.highload.api.dto.TransactionDto
-import itmo.highload.api.dto.response.BalanceResponse
-import itmo.highload.api.dto.response.PurposeResponse
-import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.configuration.TestContainerIntegrationTest
-import itmo.highload.fixtures.BalanceResponseFixture
-import itmo.highload.fixtures.PurposeResponseFixture
-import itmo.highload.fixtures.TransactionResponseFixture
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.defaultJsonRequestSpec
 import itmo.highload.utils.withJwt
-import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -60,7 +52,6 @@ class TestTransactions @Autowired constructor(
     private var port: Int = 0
     private val donationApiUrlBasePath = "/api/v1/transactions/donations"
     private val expenseApiUrlBasePath = "/api/v1/transactions/expenses"
-    private val balanceApiUrlBasePath = "/api/v1/balances"
 
     private val managerToken = jwtUtils.generateAccessToken(
         "emanager",

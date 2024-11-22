@@ -6,10 +6,14 @@ import io.mockk.verify
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
+import itmo.highload.domain.AnimalRepository
+import itmo.highload.domain.entity.AnimalEntity
+import itmo.highload.domain.interactor.AdoptionService
+import itmo.highload.domain.interactor.AnimalImageService
+import itmo.highload.domain.interactor.AnimalService
+import itmo.highload.domain.mapper.AnimalMapper
 import itmo.highload.exceptions.InvalidAnimalUpdateException
-import itmo.highload.model.Animal
-import itmo.highload.repository.AnimalRepository
-import jakarta.persistence.EntityNotFoundException
+import itmo.highload.infrastructure.postgres.model.Animal
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
@@ -145,10 +149,10 @@ class AnimalServiceTest {
     fun `save - should save a new animal`() {
         val request = AnimalDto(name = "Ave", type = "Cat", gender = Gender.MALE, isCastrated = false,
             healthStatus = HealthStatus.HEALTHY)
-        val savedAnimal = Animal(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE,
+        val savedAnimal = AnimalEntity(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE,
             isCastrated = false, healthStatus = HealthStatus.HEALTHY)
 
-        every { animalRepository.save(any()) } returns Mono.just(savedAnimal)
+        every { animalRepository.save(any()) } returns Mono.just(AnimalMapper.toJpaEntity(savedAnimal))
 
         StepVerifier.create(animalService.save(request))
             .expectNext(savedAnimal)
@@ -169,8 +173,8 @@ class AnimalServiceTest {
         every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal1, animal2)
 
         StepVerifier.create(animalService.getAll(null, true, token))
-            .expectNext(animal1)
-            .expectNext(animal2)
+            .expectNext(AnimalMapper.toEntity(animal1))
+            .expectNext(AnimalMapper.toEntity(animal2))
             .verifyComplete()
     }
 
@@ -186,7 +190,7 @@ class AnimalServiceTest {
         every { animalRepository.findByNameAndIdNotIn("Max", any()) } returns Flux.just(animal1)
 
         StepVerifier.create(animalService.getAll("Max", true, token))
-            .expectNext(animal1)
+            .expectNext(AnimalMapper.toEntity(animal1))
             .verifyComplete()
     }
 
@@ -213,8 +217,8 @@ class AnimalServiceTest {
         every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal1, animal2)
 
         StepVerifier.create(animalService.getAll(null, true, token))
-            .expectNext(animal1)
-            .expectNext(animal2)
+            .expectNext(AnimalMapper.toEntity(animal1))
+            .expectNext(AnimalMapper.toEntity(animal2))
             .verifyComplete()
 
         verify { adoptionService.getAllAdoptedAnimalsId(token) }
@@ -231,7 +235,7 @@ class AnimalServiceTest {
         every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal2)
 
         StepVerifier.create(animalService.getAll(null, true, token))
-            .expectNext(animal2)
+            .expectNext(AnimalMapper.toEntity(animal2))
             .verifyComplete()
 
         verify { adoptionService.getAllAdoptedAnimalsId(token) }
@@ -255,5 +259,4 @@ class AnimalServiceTest {
         verify { animalRepository.delete(animal) }
         verify { animalImageService.deleteAllByAnimalId(animal.id, token) }
     }
-
 }

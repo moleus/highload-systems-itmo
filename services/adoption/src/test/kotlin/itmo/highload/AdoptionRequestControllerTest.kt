@@ -4,11 +4,11 @@ import io.mockk.every
 import io.mockk.mockk
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
-import itmo.highload.controller.AdoptionRequestController
-import itmo.highload.model.AdoptionRequest
+import itmo.highload.domain.entity.AdoptionRequestEntity
+import itmo.highload.domain.interactor.AdoptionRequestInteractor
+import itmo.highload.infrastructure.http.AdoptionRequestController
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.AdoptionRequestService
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 
 class AdoptionRequestControllerTest {
 
-    private val adoptionRequestService = mockk<AdoptionRequestService>()
+    private val adoptionRequestService = mockk<AdoptionRequestInteractor>()
     private val jwtUtils = mockk<JwtUtils>()
     private val controller = AdoptionRequestController(adoptionRequestService, jwtUtils)
 
@@ -25,7 +25,7 @@ class AdoptionRequestControllerTest {
     fun `getAll - should return adoption requests for manager`() {
         val token = "validToken"
         val adoptionRequests = listOf(
-            AdoptionRequest(
+            AdoptionRequestEntity(
                 id = 1,
                 dateTime = LocalDateTime.now(),
                 status = AdoptionStatus.PENDING,
@@ -49,7 +49,7 @@ class AdoptionRequestControllerTest {
         val token = "validToken"
         val userId = 1
         val animalId = 101
-        val adoptionRequest = AdoptionRequest(
+        val adoptionRequest = AdoptionRequestEntity(
             id = 1,
             dateTime = LocalDateTime.now(),
             status = AdoptionStatus.PENDING,
@@ -92,7 +92,7 @@ class AdoptionRequestControllerTest {
             id = 1,
             status = AdoptionStatus.APPROVED
         )
-        val adoptionRequest = AdoptionRequest(
+        val adoptionRequest = AdoptionRequestEntity(
             id = 1,
             dateTime = LocalDateTime.now(),
             status = AdoptionStatus.APPROVED,

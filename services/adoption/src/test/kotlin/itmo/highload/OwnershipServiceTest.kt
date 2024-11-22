@@ -2,16 +2,16 @@ package itmo.highload
 
 import io.mockk.every
 import io.mockk.mockk
-import itmo.highload.model.Ownership
-import itmo.highload.repository.OwnershipRepository
-import itmo.highload.service.OwnershipService
+import itmo.highload.domain.OwnershipRepository
+import itmo.highload.domain.interactor.OwnershipInteractor
+import itmo.highload.infrastructure.postgres.model.Ownership
 import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier
 
 class OwnershipServiceTest {
 
     private val ownershipRepository: OwnershipRepository = mockk()
-    private val ownershipService = OwnershipService(ownershipRepository)
+    private val ownershipService = OwnershipInteractor(ownershipRepository)
 
     @Test
     fun `getAllAnimalsId - should return list of animal IDs`() {

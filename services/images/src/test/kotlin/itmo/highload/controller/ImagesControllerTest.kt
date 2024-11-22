@@ -2,9 +2,9 @@ package itmo.highload.controller
 
 import io.mockk.every
 import io.mockk.mockk
-
-import itmo.highload.model.S3ObjectRef
-import itmo.highload.service.ImagesService
+import itmo.highload.domain.interactor.ImagesService
+import itmo.highload.infrastructure.http.ImagesController
+import itmo.highload.infrastructure.minio.model.S3ObjectRef
 import org.junit.jupiter.api.Test
 import org.springframework.http.codec.multipart.FilePart
 import reactor.core.publisher.Mono

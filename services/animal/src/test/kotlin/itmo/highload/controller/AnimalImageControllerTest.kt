@@ -4,7 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
-import itmo.highload.service.AnimalImageService
+import itmo.highload.domain.interactor.AnimalImageService
+import itmo.highload.infrastructure.http.AnimalImageController
 import org.junit.jupiter.api.Test
 import org.springframework.http.codec.multipart.FilePart
 import reactor.core.publisher.Flux

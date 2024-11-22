@@ -6,15 +6,12 @@ import io.restassured.RestAssured
 import io.restassured.filter.log.LogDetail
 import io.restassured.parsing.Parser
 import itmo.highload.api.dto.PurposeRequestDto
-import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
-import itmo.highload.api.dto.response.TransactionResponse
 import itmo.highload.configuration.R2dbcIntegrationTestContext
 import itmo.highload.configuration.TestContainerIntegrationTest
 import itmo.highload.fixtures.BalanceResponseFixture
 import itmo.highload.fixtures.PurposeResponseFixture
-import itmo.highload.fixtures.TransactionResponseFixture
 import itmo.highload.security.Role
 import itmo.highload.security.jwt.JwtUtils
 import itmo.highload.utils.defaultJsonRequestSpec

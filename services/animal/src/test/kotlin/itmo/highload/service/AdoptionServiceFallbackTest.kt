@@ -1,5 +1,6 @@
 package itmo.highload.service
 
+import itmo.highload.domain.interactor.AdoptionServiceFallback
 import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier
 

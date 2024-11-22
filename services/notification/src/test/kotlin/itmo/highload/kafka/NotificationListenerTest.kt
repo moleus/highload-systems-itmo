@@ -1,11 +1,14 @@
 package itmo.highload.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.*
-import itmo.highload.kafka.message.AdoptionRequestMessage
-import itmo.highload.kafka.message.TransactionMessage
-import itmo.highload.kafka.message.AdoptionStatus
-import itmo.highload.kafka.message.PurposeMessage
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import itmo.highload.infrastructure.kafka.NotificationListener
+import itmo.highload.infrastructure.kafka.message.AdoptionRequestMessage
+import itmo.highload.infrastructure.kafka.message.AdoptionStatus
+import itmo.highload.infrastructure.kafka.message.PurposeMessage
+import itmo.highload.infrastructure.kafka.message.TransactionMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.kafka.annotation.EnableKafka

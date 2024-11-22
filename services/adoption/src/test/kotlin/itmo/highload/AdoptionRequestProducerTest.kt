@@ -1,11 +1,14 @@
 package itmo.highload
 
-import io.mockk.*
-import itmo.highload.kafka.AdoptionRequestProducer
 
-
-import itmo.highload.api.dto.response.AdoptionRequestResponse
+import io.mockk.Awaits
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
 import itmo.highload.api.dto.AdoptionStatus
+import itmo.highload.api.dto.response.AdoptionRequestResponse
+import itmo.highload.infrastructure.kafka.AdoptionRequestProducerImpl
 import org.junit.jupiter.api.Test
 import org.springframework.kafka.core.KafkaTemplate
 import java.time.LocalDateTime
@@ -13,7 +16,7 @@ import java.time.LocalDateTime
 class AdoptionRequestProducerTest {
 
     private val kafkaTemplate: KafkaTemplate<String, AdoptionRequestResponse> = mockk(relaxed = true)
-    private val producer = AdoptionRequestProducer(kafkaTemplate).apply {
+    private val producer = AdoptionRequestProducerImpl(kafkaTemplate).apply {
         adoptionRequestCreatedTopic = "adoption-request-created-topic"
         adoptionRequestChangedTopic = "adoption-request-changed-topic"
     }

@@ -3,6 +3,8 @@ package itmo.highload.model
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.Gender
 import itmo.highload.api.dto.HealthStatus
+import itmo.highload.domain.entity.AnimalEntity
+import itmo.highload.domain.mapper.AnimalMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -18,7 +20,7 @@ class AnimalMapperTest {
             healthStatus = HealthStatus.HEALTHY
         )
 
-        val entity = AnimalMapper.toEntity(dto)
+        val entity = AnimalMapper.toJpaEntity(dto)
 
         assertEquals(dto.name, entity.name)
         assertEquals(dto.type, entity.typeOfAnimal)
@@ -29,7 +31,7 @@ class AnimalMapperTest {
 
     @Test
     fun `toAnimalResponse should map Animal to AnimalResponse`() {
-        val entity = Animal(
+        val entity = AnimalEntity(
             id = 1,
             name = "Buddy",
             typeOfAnimal = "Dog",

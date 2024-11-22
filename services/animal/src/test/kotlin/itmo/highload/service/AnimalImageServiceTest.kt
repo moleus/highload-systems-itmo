@@ -1,13 +1,19 @@
 package itmo.highload.service
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import itmo.highload.api.dto.response.FileUrlResponse
 import itmo.highload.api.dto.response.UploadedFileResponse
-import itmo.highload.model.AnimalToImage
-import itmo.highload.repository.AnimalRepository
-import itmo.highload.repository.ImageToAnimalRepository
+import itmo.highload.domain.AnimalRepository
+import itmo.highload.domain.ImageToAnimalRepository
+import itmo.highload.domain.interactor.AnimalImageService
+import itmo.highload.domain.interactor.ImageService
+import itmo.highload.infrastructure.postgres.model.AnimalToImage
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import org.springframework.http.codec.multipart.FilePart
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

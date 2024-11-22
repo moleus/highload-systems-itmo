@@ -3,18 +3,17 @@ package itmo.highload.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import itmo.highload.domain.BalanceRepository
+import itmo.highload.domain.interactor.BalanceService
+import itmo.highload.domain.mapper.BalanceMapper
 import itmo.highload.exceptions.EntityAlreadyExistsException
-import itmo.highload.model.Balance
-import itmo.highload.repository.BalanceRepository
+import itmo.highload.infrastructure.postgres.model.Balance
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
-import java.time.Duration
 
 class BalanceServiceTest {
 
@@ -23,6 +22,7 @@ class BalanceServiceTest {
     private val balanceService = BalanceService(balanceRepository, delay)
 
     private val testBalance = Balance(id = 1, purpose = "test", moneyAmount = 100)
+    private val testBalanceEntity = BalanceMapper.toEntity(testBalance)
 
     @Test
     fun `should return balance by id`() {
@@ -31,7 +31,7 @@ class BalanceServiceTest {
         val result = balanceService.getBalanceById(1)
 
         StepVerifier.create(result)
-            .assertNext { assertEquals(testBalance, it) }
+            .assertNext { assertEquals(testBalanceEntity, it) }
             .verifyComplete()
 
         verify { balanceRepository.findById(1) }
@@ -57,7 +57,7 @@ class BalanceServiceTest {
         val result = balanceService.getAll()
 
         StepVerifier.create(result)
-            .assertNext { assertEquals(testBalance, it) }
+            .assertNext { assertEquals(testBalanceEntity, it) }
             .verifyComplete()
 
         verify { balanceRepository.findAll() }
@@ -71,7 +71,7 @@ class BalanceServiceTest {
         val result = balanceService.addPurpose("test")
 
         StepVerifier.create(result)
-            .assertNext { assertEquals(testBalance, it) }
+            .assertNext { assertEquals(testBalanceEntity, it) }
             .verifyComplete()
 
         verify { balanceRepository.findByPurpose("test") }
