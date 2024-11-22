@@ -31,24 +31,23 @@ class NotificationListenerTest {
             purpose = PurposeMessage(1, "Animal care"),
             userId = 1,
             moneyAmount = 100,
-            isDonation = true
+            isDonation = true,
+            status = "SUCCESS"
         )
 
         val messageJson = """{"dateTime":"2024-11-19T12:00:00","purpose":{"id":1,"name":"Animal care"},"userId":
-            |1,"moneyAmount":100,"isDonation":true}""".trimMargin()
+        |1,"moneyAmount":100,"isDonation":true, "status":"SUCCESS"}""".trimMargin()
 
-        // Mock objectMapper to return the parsed TransactionMessage object
         every { objectMapper.readValue(messageJson, TransactionMessage::class.java) } returns transactionMessage
 
-        // Call the listener method
         notificationListener.listenToNewDonationTopic(messageJson)
 
-        // Verify that the notification was sent to the correct topic
         verify {
             messagingTemplate.convertAndSend("/topic/donations", "New donation for purpose " +
-                    "\"Animal care\", amount: 100")
+                    "with id 1, amount: 100")
         }
     }
+
 
     @Test
     fun `listenToAdoptionRequestCreatedTopic - should send notification to correct topic`() {
@@ -64,13 +63,10 @@ class NotificationListenerTest {
         val messageJson = """{"id":1,"dateTime":"2024-11-19T12:00:00","status":"PENDING","customerId":1,
             |"managerId":null,"animalId":101}""".trimMargin()
 
-        // Mock objectMapper to return the parsed AdoptionRequestMessage object
         every { objectMapper.readValue(messageJson, AdoptionRequestMessage::class.java) } returns adoptionRequestMessage
 
-        // Call the listener method
         notificationListener.listenToAdoptionRequestCreatedTopic(messageJson)
 
-        // Verify that the notification was sent to the correct topic
         verify {
             messagingTemplate.convertAndSend("/topic/adoption_requests", "New adoption request")
         }
@@ -90,13 +86,10 @@ class NotificationListenerTest {
         val messageJson = """{"id":1,"dateTime":"2024-11-19T12:00:00","status":"APPROVED","customerId":1,
             |"managerId":2,"animalId":101}""".trimMargin()
 
-        // Mock objectMapper to return the parsed AdoptionRequestMessage object
         every { objectMapper.readValue(messageJson, AdoptionRequestMessage::class.java) } returns adoptionRequestMessage
 
-        // Call the listener method
         notificationListener.listenToAdoptionRequestChangedTopic(messageJson)
 
-        // Verify that the notification was sent to the correct customer topic
         verify {
             messagingTemplate.convertAndSend("/topic/adoption_requests/1", "Hey! " +
                     "Your request for an adoption has changed. New status: APPROVED")
