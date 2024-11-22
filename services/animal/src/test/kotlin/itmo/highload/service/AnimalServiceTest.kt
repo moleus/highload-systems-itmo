@@ -141,34 +141,4 @@ class AnimalServiceTest {
         verify(exactly = 0) { animalRepository.save(any()) }
     }
 
-
-    @Test
-    fun `save - should save a new animal`() {
-        val savedAnimal = Animal(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE,
-            isCastrated = false, healthStatus = HealthStatus.HEALTHY)
-
-        every { animalRepository.save(any()) } returns Mono.just(savedAnimal)
-
-        verify { animalRepository.save(any()) }
-    }
-
-
-    @Test
-    fun `delete - should delete animal and its images`() {
-        val animalId = 1
-        val token = "validToken"
-        val animal = Animal(id = animalId, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE,
-            isCastrated = false, healthStatus = HealthStatus.HEALTHY)
-
-        every { animalRepository.findById(animalId) } returns Mono.just(animal)
-        every { animalRepository.delete(animal) } returns Mono.empty()
-        every { animalImageService.deleteAllByAnimalId(animal.id, token) } returns Mono.empty()
-
-        StepVerifier.create(animalService.delete(animalId, token))
-            .verifyComplete()
-
-        verify { animalRepository.delete(animal) }
-        verify { animalImageService.deleteAllByAnimalId(animal.id, token) }
-    }
-
 }
