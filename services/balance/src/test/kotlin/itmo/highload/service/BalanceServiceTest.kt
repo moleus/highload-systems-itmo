@@ -85,7 +85,8 @@ class BalanceServiceTest {
         val result = balanceService.addPurpose("test")
 
         StepVerifier.create(result)
-            .expectErrorMatches { it is EntityAlreadyExistsException && it.message == "Purpose with name 'test' already exists" }
+            .expectErrorMatches { it is EntityAlreadyExistsException && it.message == "Purpose with name " +
+                    "'test' already exists" }
             .verify()
 
         verify { balanceRepository.findByPurpose("test") }
