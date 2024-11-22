@@ -22,7 +22,7 @@ services:
       - ./sonarqube/sonarqube_temp:/opt/sonarqube/temp
 
   postgres:
-    image: postgres:12.2-alpine
+    image: postgres:15.0-alpine
     restart: always
     container_name: postgres
     environment:
