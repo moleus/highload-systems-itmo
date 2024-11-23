@@ -38,3 +38,7 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+*.tfstate*
+.terraform
+*.tfvars

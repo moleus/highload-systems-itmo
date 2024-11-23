@@ -1,0 +1,66 @@
+image:
+  repository: ghcr.io/moleus/highload-systems-itmo/notification
+  tag: pavel-setup-k8s
+
+nameOverride: notification
+fullnameOverride: notification
+
+initContainers:
+  - name: liquibase-main
+    image: ghcr.io/moleus/highload-systems-itmo/db-init:pavel-setup-k8s
+    command:
+      - bash
+      - "-c"
+      - |
+        liquibase --changeLogFile=/changelog/changelog-root.yaml --url=jdbc:postgresql://$DB_HOST:5432/$POSTGRES_DB --username=$POSTGRES_USER --password=$POSTGRES_PASSWORD --log-level=debug update
+    env:
+      - name: POSTGRES_DB
+        value: postgres
+      - name: DB_HOST
+        value: db
+      - name: POSTGRES_USER
+        valueFrom:
+          secretKeyRef:
+              name: db-secrets
+              key: username
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+              name: db-secrets
+              key: password
+#  - name: liquibase-balance
+#    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:pavel-setup-k8s
+#    command:
+#      - liquibase
+#      - --changeLogFile=changelog/changelog-root.yaml
+#      - --url=jdbc:postgresql://db-balance:5432/$POSTGRES_DB
+#      - --username=$POSTGRES_USER
+#      - --password=$POSTGRES_PASSWORD
+#      - --log-level=debug
+#      - update
+
+envs:
+  - name: SERVER_PORT
+    value: "80"
+  - name: CLOUD_CONFIG_HOST
+    value: cloud-config
+  - name: EUREKA_HOST
+    value: eureka-server
+  - name: KAFKA_HOST
+    value: "kafka:9092"
+  - name: POSTGRES_DB
+    value: postgres
+  - name: DB_HOST
+    value: db
+  - name: DB_PORT
+    value: "5432"
+  - name: POSTGRES_USER
+    valueFrom:
+      secretKeyRef:
+        name: db-secrets
+        key: username
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-secrets
+        key: password

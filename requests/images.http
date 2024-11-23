@@ -1,4 +1,4 @@
-POST http://localhost:8080/api/v1/animals/images/2
+POST http://highload.duckdns.org/api/v1/animals/images/2
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: multipart/form-data; boundary=boundary
 
@@ -8,3 +8,6 @@ Content-Type: image/png
 
 < ../services/images/src/integration-test/resources/test-image.png
 --boundary--
+
+###
+GET http://highload.duckdns.org/api/v1/animals/images/2

@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux
 
 @ReactiveFeignClient(
     value = "adoption-service",
-    url = "http://localhost:8085/api/v1",
+    url = "http://\${services.endpoints.adoption:localhost:8085}/api/v1",
     fallback = AdoptionServiceFallback::class
 )
 interface AdoptionService {

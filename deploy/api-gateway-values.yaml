@@ -1,0 +1,35 @@
+image:
+  repository: ghcr.io/moleus/highload-systems-itmo/api-gateway
+  tag: pavel-setup-k8s
+
+nameOverride: api-gateway
+fullnameOverride: api-gateway
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  hosts:
+    - host: highload.duckdns.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: highload-lab.duckdns.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+
+service:
+  type: ClusterIP
+  port: 80
+
+envs:
+  - name: SERVER_PORT
+    value: "80"
+  - name: CLOUD_CONFIG_HOST
+    value: cloud-config
+  - name: EUREKA_HOST
+    value: eureka-server
+  - name: MINIO_HOST
+    value: "minio:9000"
