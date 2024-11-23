@@ -24,7 +24,7 @@ dependencies {
 
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-auth")
         property("sonar.projectName", "Highload Systems ITMO - auth")

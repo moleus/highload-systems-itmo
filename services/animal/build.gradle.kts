@@ -45,7 +45,7 @@ highloadApp {
     serviceName.set("animal")
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-animal")
         property("sonar.projectName", "Highload Systems ITMO - animal")

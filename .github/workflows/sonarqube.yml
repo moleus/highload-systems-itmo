@@ -1,4 +1,4 @@
-name: Build
+name: Sonar
 on:
   push:
     branches:
@@ -36,4 +36,4 @@ jobs:
           GRADLE_OPTS: "-Dorg.gradle.caching=true -Xmx2048m -XX:MaxMetaspaceSize=1024m"
         run: |
           ./gradlew jacocoTestReport
-          ./gradlew sonarqube
+          ./gradlew sonar
