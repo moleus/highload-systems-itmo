@@ -44,7 +44,7 @@ testing {
     }
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-transaction")
         property("sonar.projectName", "Highload Systems ITMO - transaction")

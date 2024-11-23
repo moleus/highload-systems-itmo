@@ -46,7 +46,7 @@ highloadApp {
     serviceName.set("images")
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-images")
         property("sonar.projectName", "Highload Systems ITMO - images")

@@ -37,7 +37,7 @@ testing {
     }
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-balance")
         property("sonar.projectName", "Highload Systems ITMO - balance")

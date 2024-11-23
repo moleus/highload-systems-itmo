@@ -42,7 +42,7 @@ testing {
     }
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-adoption")
         property("sonar.projectName", "Highload Systems ITMO - adoption")

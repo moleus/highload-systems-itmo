@@ -30,7 +30,7 @@ highloadApp {
     serviceName.set("notification")
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-notification")
         property("sonar.projectName", "Highload Systems ITMO - notification")
