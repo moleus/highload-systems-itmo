@@ -11,6 +11,7 @@ plugins {
     id("io.spring.dependency-management")
     id("org.springframework.boot")
     id ("org.sonarqube") version "5.1.0.4882"
+    id ("jacoco")
 }
 
 dependencies {
@@ -51,4 +52,14 @@ sonarqube {
         property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
         property("sonar.sourceEncoding", "UTF-8")
     }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+    dependsOn(tasks.test)
 }

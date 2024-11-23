@@ -9,6 +9,7 @@ plugins {
     id("highload.e2e-test")
     id("highload.common")
     id ("org.sonarqube") version "5.1.0.4882"
+    id ("jacoco")
 }
 
 testing {
@@ -52,4 +53,14 @@ sonarqube {
         property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
         property("sonar.sourceEncoding", "UTF-8")
     }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+    dependsOn(tasks.test)
 }
