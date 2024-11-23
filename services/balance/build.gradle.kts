@@ -1,7 +1,4 @@
 @file:Suppress("UnstableApiUsage")
-
-
-
 plugins {
     id("highload.web")
     id("highload.application")
@@ -11,6 +8,7 @@ plugins {
 
     id("io.spring.dependency-management")
     id("org.springframework.boot")
+    id ("org.sonarqube") version "5.1.0.4882"
 }
 
 dependencies {
@@ -35,5 +33,15 @@ testing {
                 implementation("org.testcontainers:kafka:1.20.3")
             }
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "highload-systems-itmo-balance")
+        property("sonar.projectName", "Highload Systems ITMO - balance")
+        property("sonar.host.url", System.getenv("SONAR_HOST_URL") ?: "")
+        property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
+        property("sonar.sourceEncoding", "UTF-8")
     }
 }
