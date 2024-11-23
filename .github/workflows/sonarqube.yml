@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'main'
+  pull_request:
 jobs:
   build:
     name: Build
@@ -34,4 +35,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           GRADLE_OPTS: "-Dorg.gradle.caching=true -Xmx2048m -XX:MaxMetaspaceSize=1024m"
-        run: ./gradlew build sonarqube --info
+        run: |
+          ./gradlew jacocoTestReport
+          ./gradlew sonarqube
