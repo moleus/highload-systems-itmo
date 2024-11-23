@@ -2,13 +2,12 @@ package itmo.highload
 
 import io.mockk.every
 import io.mockk.mockk
-import itmo.highload.dto.RegisterDto
-import itmo.highload.model.Users
+import itmo.highload.domain.interactor.AuthService
+import itmo.highload.domain.interactor.UserService
+import itmo.highload.infrastructure.http.dto.RegisterDto
+import itmo.highload.infrastructure.postgres.model.Users
 import itmo.highload.security.Role
-import itmo.highload.security.dto.JwtResponse
 import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.AuthService
-import itmo.highload.service.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.BadCredentialsException

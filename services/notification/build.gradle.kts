@@ -7,6 +7,7 @@ plugins {
     id("io.spring.dependency-management")
     id ("org.sonarqube") version "5.1.0.4882"
     id("highload.e2e-test")
+    id ("jacoco")
 }
 
 dependencies {
@@ -28,7 +29,7 @@ highloadApp {
     serviceName.set("notification")
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-notification")
         property("sonar.projectName", "Highload Systems ITMO - notification")
@@ -36,4 +37,14 @@ sonarqube {
         property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
         property("sonar.sourceEncoding", "UTF-8")
     }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+    dependsOn(tasks.test)
 }

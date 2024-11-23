@@ -1,5 +1,8 @@
 package itmo.highload.model
 
+import itmo.highload.domain.entity.BalanceEntity
+import itmo.highload.domain.mapper.BalanceMapper
+import itmo.highload.infrastructure.postgres.model.Balance
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -18,7 +21,7 @@ class BalanceTest {
 
     @Test
     fun `should map to BalanceResponse`() {
-        val balance = Balance(purpose = "Медицина", moneyAmount = 500)
+        val balance = BalanceEntity(purpose = "Медицина", moneyAmount = 500)
         val balanceResponse = BalanceMapper.toBalanceResponse(balance)
 
         assertEquals("Медицина", balanceResponse.purpose.name)

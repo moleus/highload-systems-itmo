@@ -5,6 +5,7 @@ plugins {
     id("highload.application")
     id("highload.security")
     id ("org.sonarqube") version "5.1.0.4882"
+    id ("jacoco")
 }
 
 highloadApp {
@@ -21,7 +22,7 @@ dependencies {
 
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "highload-systems-itmo-auth")
         property("sonar.projectName", "Highload Systems ITMO - auth")
@@ -29,4 +30,14 @@ sonarqube {
         property("sonar.login", System.getenv("SONAR_TOKEN") ?: "")
         property("sonar.sourceEncoding", "UTF-8")
     }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+    dependsOn(tasks.test)
 }

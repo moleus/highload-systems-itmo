@@ -3,11 +3,12 @@ package itmo.highload.controller
 import io.mockk.every
 import io.mockk.mockk
 import itmo.highload.api.dto.PurposeRequestDto
-import itmo.highload.model.Balance
-import itmo.highload.service.BalanceService
+import itmo.highload.domain.entity.BalanceEntity
+import itmo.highload.domain.interactor.BalanceService
+import itmo.highload.infrastructure.http.BalanceController
 import org.junit.jupiter.api.Test
-import reactor.core.publisher.Mono
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 class BalanceControllerTest {
@@ -18,8 +19,8 @@ class BalanceControllerTest {
     @Test
     fun `getAllBalances - should return all balances`() {
         val balances = listOf(
-            Balance(id = 1, purpose = "Медикаменты", moneyAmount = 100),
-            Balance(id = 2, purpose = "Питание", moneyAmount = 200),
+            BalanceEntity(id = 1, purpose = "Медикаменты", moneyAmount = 100),
+            BalanceEntity(id = 2, purpose = "Питание", moneyAmount = 200),
         )
 
         every { balanceService.getAll() } returns Flux.fromIterable(balances)
@@ -33,7 +34,7 @@ class BalanceControllerTest {
     @Test
     fun `getBalanceById - should return balance by ID`() {
         val balanceId = 1
-        val balance = Balance(id = 1, purpose = "Медикаменты", moneyAmount = 100)
+        val balance = BalanceEntity(id = 1, purpose = "Медикаменты", moneyAmount = 100)
 
         every { balanceService.getBalanceById(balanceId) } returns Mono.just(balance)
 
@@ -45,8 +46,8 @@ class BalanceControllerTest {
     @Test
     fun `getAllPurposes - should return all purposes`() {
         val balances = listOf(
-            Balance(id = 1, purpose = "Purpose 1", moneyAmount = 100),
-            Balance(id = 2, purpose = "Purpose 2", moneyAmount = 200),
+            BalanceEntity(id = 1, purpose = "Purpose 1", moneyAmount = 100),
+            BalanceEntity(id = 2, purpose = "Purpose 2", moneyAmount = 200),
         )
 
         every { balanceService.getAllPurposes() } returns Flux.fromIterable(balances)
@@ -60,7 +61,7 @@ class BalanceControllerTest {
     @Test
     fun `addPurpose - should add a new purpose`() {
         val request = PurposeRequestDto(name = "New Purpose")
-        val purpose = Balance(id = 3, purpose = "New Purpose", moneyAmount = 1000)
+        val purpose = BalanceEntity(id = 3, purpose = "New Purpose", moneyAmount = 1000)
 
         every { balanceService.addPurpose(request.name) } returns Mono.just(purpose)
 

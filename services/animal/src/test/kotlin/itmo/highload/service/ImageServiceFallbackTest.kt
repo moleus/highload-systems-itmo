@@ -1,5 +1,6 @@
 package itmo.highload.service
 
+import itmo.highload.domain.interactor.ImageServiceFallback
 import itmo.highload.exceptions.ServiceUnavailableException
 import org.junit.jupiter.api.Test
 import org.springframework.http.codec.multipart.FilePart

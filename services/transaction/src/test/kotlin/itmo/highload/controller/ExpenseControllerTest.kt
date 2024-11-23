@@ -5,8 +5,9 @@ import io.mockk.mockk
 import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
+import itmo.highload.domain.interactor.TransactionService
+import itmo.highload.infrastructure.http.ExpenseController
 import itmo.highload.security.jwt.JwtUtils
-import itmo.highload.service.TransactionService
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -21,7 +22,7 @@ class ExpenseControllerTest {
 
     @Test
     fun `getExpenses - should return expenses`() {
-        val purposeId: Int? = 2
+        val purposeId = 2
         val token = "validToken"
         val expenses = listOf(
             TransactionResponse(

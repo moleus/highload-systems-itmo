@@ -166,7 +166,7 @@ services:
       - ./config:/app/config
     environment:
       <<: *small-jvm-heap-envs
-#      SPRING_PROFILES_ACTIVE: cloud
+      #      SPRING_PROFILES_ACTIVE: cloud
       SPRING_PROFILES_ACTIVE: standalone,native
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
     env_file:

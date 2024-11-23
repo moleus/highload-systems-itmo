@@ -7,10 +7,12 @@ import itmo.highload.api.dto.TransactionDto
 import itmo.highload.api.dto.response.BalanceResponse
 import itmo.highload.api.dto.response.PurposeResponse
 import itmo.highload.api.dto.response.TransactionResponse
-import itmo.highload.kafka.TransactionProducer
+import itmo.highload.domain.TransactionProducer
+import itmo.highload.domain.TransactionRepository
+import itmo.highload.domain.interactor.BalanceService
+import itmo.highload.domain.interactor.TransactionService
+import itmo.highload.infrastructure.postgres.model.Transaction
 import itmo.highload.kafka.TransactionResultMessage
-import itmo.highload.model.Transaction
-import itmo.highload.repository.TransactionRepository
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

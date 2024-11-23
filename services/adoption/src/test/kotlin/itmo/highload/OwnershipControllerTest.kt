@@ -2,15 +2,15 @@ package itmo.highload
 
 import io.mockk.every
 import io.mockk.mockk
-import itmo.highload.controller.OwnershipController
-import itmo.highload.service.OwnershipService
+import itmo.highload.domain.interactor.OwnershipInteractor
+import itmo.highload.infrastructure.http.OwnershipController
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
 class OwnershipControllerTest {
 
-    private val ownershipService = mockk<OwnershipService>()
+    private val ownershipService = mockk<OwnershipInteractor>()
     private val controller = OwnershipController(ownershipService)
 
     @Test
