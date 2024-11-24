@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/moleus/highload-systems-itmo/cloud-config
-  tag: pavel-setup-k8s
+  tag: lab4
 
 nameOverride: cloud-config
 fullnameOverride: cloud-config

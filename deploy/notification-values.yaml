@@ -1,13 +1,13 @@
 image:
   repository: ghcr.io/moleus/highload-systems-itmo/notification
-  tag: pavel-setup-k8s
+  tag: lab4
 
 nameOverride: notification
 fullnameOverride: notification
 
 initContainers:
   - name: liquibase-main
-    image: ghcr.io/moleus/highload-systems-itmo/db-init:pavel-setup-k8s
+    image: ghcr.io/moleus/highload-systems-itmo/db-init:lab4
     command:
       - bash
       - "-c"
@@ -29,7 +29,7 @@ initContainers:
               name: db-secrets
               key: password
 #  - name: liquibase-balance
-#    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:pavel-setup-k8s
+#    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:lab4
 #    command:
 #      - liquibase
 #      - --changeLogFile=changelog/changelog-root.yaml

@@ -7,7 +7,7 @@ locals {
   default_context = "k3s"
   kubeconfig_path = "/Users/krot/.kube/highload"
   ssh_host = yandex_vpc_address.static_ip.external_ipv4_address[0].address
-  developers = ["pavel", "kirill", "eva"]
+  developers = ["pavel", "kirill", "eva", "github-cd"]
   dev_namespaces = ["dev", "demo"]
   dev_ns_combinations = toset(flatten([for ns in local.dev_namespaces : [for dev in local.developers : { ns = ns, dev = dev }]]))
 }
