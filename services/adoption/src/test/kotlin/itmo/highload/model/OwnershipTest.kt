@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.model
 
 import itmo.highload.infrastructure.postgres.model.Ownership
 import itmo.highload.infrastructure.postgres.model.OwnershipId
