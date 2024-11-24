@@ -20,6 +20,10 @@ server:
 
 app:
   base-url: /api/v1
+
+api:
+  address: ${API_ADDRESS:localhost:8080}
+
 jwt:
   secret:
     sign: ${JWT_SECRET:0LHQvtC20LUg0L/QvtC80L7Qs9C4INC90LDQvCDQt9Cw0LrRgNGL0YLRjCDRjdGC0L7RgiDQv9GA0LXQtNC80LXRgg==}

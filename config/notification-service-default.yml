@@ -23,3 +23,5 @@ spring:
 server:
   port: ${APP_SERVER_PORT:8089}
 
+api:
+  address: ${API_ADDRESS:localhost:8080}

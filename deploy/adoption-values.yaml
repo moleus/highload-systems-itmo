@@ -46,6 +46,8 @@ initContainers:
 envs:
   - name: SERVER_PORT
     value: "80"
+  - name: API_ADDRESS
+    value: "highload.duckdns.org"
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
   - name: EUREKA_HOST
