@@ -330,6 +330,18 @@ services:
     networks:
       - backend
 
+  hazelcast:
+    image: hazelcast/hazelcast:5-jdk21
+    ports:
+      - "5701:5701"
+  management-center:
+    image: hazelcast/management-center:5.6
+    ports:
+      - "8586:8586"
+    environment:
+      - MC_DEFAULT_CLUSTER=dev
+      - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast
+
 volumes:
   postgres-data:
   kafka-1-data-signle-node:
