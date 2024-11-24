@@ -19,7 +19,9 @@ jobs:
       - uses: github/branch-deploy@v9.9.1
         id: branch-deploy
         with:
+          checks: "required"
           trigger: ".deploy"
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
