@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux
 @RequestMapping("\${app.base-url}/ownerships")
 @OpenAPIDefinition(
     servers = [
-        Server(url = "http://localhost:8080")
+        Server(url = "http://\${api.address}")
     ]
 )
 class OwnershipController(private val ownershipService: OwnershipInteractor) {

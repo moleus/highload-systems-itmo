@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("\${app.base-url}/images")
 @OpenAPIDefinition(
-    servers = [Server(url = "http://localhost:8080")]
+    servers = [Server(url = "http://\${api.address}")]
 )
 class ImagesController(
     private val imagesService: ImagesService

@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("\${app.base-url}/animals")
 @OpenAPIDefinition(
     servers = [
-        Server(url = "http://localhost:8080")
+        Server(url = "http://\${api.address}")
     ]
 )
 class AnimalController(val animalService: AnimalService) {

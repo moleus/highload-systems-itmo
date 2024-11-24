@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("\${app.base-url}/balances")
 @OpenAPIDefinition(
     servers = [
-        Server(url = "http://localhost:8080")
+        Server(url = "http://\${api.address}")
     ]
 )
 class BalanceController(

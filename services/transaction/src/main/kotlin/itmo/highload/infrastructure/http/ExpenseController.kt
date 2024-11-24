@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("\${app.base-url}/transactions/expenses")
 @OpenAPIDefinition(
     servers = [
-        Server(url = "http://localhost:8080")
+        Server(url = "http://\${api.address}")
     ]
 )
 class ExpenseController(
