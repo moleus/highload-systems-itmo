@@ -34,6 +34,7 @@ jobs:
         if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         run: |
           services_to_deploy="${{ steps.branch-deploy.outputs.params }}"
+          echo "Deploying services: $services_to_deploy"
           IFS=' ' read -r -a services <<< "$services_to_deploy"
           for service in "${services[@]}"; do
             helm template -f "deploy/${service}-values.yaml" $service | kubectl apply -n dev -f -
