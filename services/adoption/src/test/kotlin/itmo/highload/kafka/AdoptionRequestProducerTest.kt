@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.kafka
 
 
 import io.mockk.Awaits

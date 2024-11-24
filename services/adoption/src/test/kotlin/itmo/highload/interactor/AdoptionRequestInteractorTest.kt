@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.interactor
 
 import io.mockk.every
 import io.mockk.mockk

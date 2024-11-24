@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.service
 
 import io.mockk.every
 import io.mockk.mockk
