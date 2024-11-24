@@ -218,7 +218,8 @@ class TransactionServiceTest {
 
         StepVerifier.create(result)
             .expectNextMatches {
-                it.moneyAmount == transaction.moneyAmount && it.purpose.id == balanceResponse.id && it.isDonation == isDonation
+                it.moneyAmount == transaction.moneyAmount && it.purpose.id == balanceResponse.id
+                        && it.isDonation == isDonation
             }
             .verifyComplete()
 
@@ -269,7 +270,4 @@ class TransactionServiceTest {
         verify { transactionProducer.sendMessageToBalanceCheck(any()) }
         verify { transactionProducer.sendMessageToNewDonationTopic(any()) }
     }
-
-
-
 }
