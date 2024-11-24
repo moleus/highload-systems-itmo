@@ -30,6 +30,7 @@ jobs:
 
       - name: Set up Kubeconfig
         run: |
+          mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_KUBECONFIG_CONTENTS }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
