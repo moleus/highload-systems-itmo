@@ -13,7 +13,6 @@ class HazelcastConfig {
     fun hazelcastClientConfig(): ClientConfig {
         val config = ClientConfig()
         config.networkConfig.addresses = listOf("localhost:5701")
-        config.clusterName = "dev"
         return config
     }
 
