@@ -1,6 +1,5 @@
 name: Deploy services
 
-
 on:
   issue_comment:
     types: [ created ]
