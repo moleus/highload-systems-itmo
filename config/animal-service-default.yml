@@ -49,3 +49,11 @@ logging:
         security: INFO
         web: INFO
         web.cors.reactive.DefaultCorsProcessor: DEBUG
+    com.hazelcast: DEBUG
+hazelcast:
+  client:
+    cluster-name: dev
+    network:
+      addresses:
+        - hazelcast:5701
+

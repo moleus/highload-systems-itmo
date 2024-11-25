@@ -7,6 +7,7 @@ import itmo.highload.model.Animal
 import itmo.highload.model.AnimalMapper
 import itmo.highload.repository.AnimalRepository
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -18,6 +19,7 @@ class AnimalService(
     private val animalImageService: AnimalImageService
 ) {
 
+    @Cacheable(cacheNames = ["animals"], key = "#animalId")
     fun getById(animalId: Int): Mono<Animal> = animalRepository.findById(animalId)
         .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
 
