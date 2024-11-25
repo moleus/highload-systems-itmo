@@ -42,3 +42,6 @@ out/
 *.tfstate*
 .terraform
 *.tfvars
+
+node_modules/
+package-lock.json
