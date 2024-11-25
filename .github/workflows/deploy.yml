@@ -41,5 +41,5 @@ jobs:
           echo "Deploying services: $services_to_deploy"
           IFS=' ' read -r -a services <<< "$services_to_deploy"
           for service in "${services[@]}"; do
-            helm template -f "deploy/${service}-values.yaml" $service | kubectl apply -n dev -f -
+            helm template -f "deploy/${service}-values.yaml" microservice | kubectl apply -n dev -f -
           done
