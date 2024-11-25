@@ -41,6 +41,7 @@ jobs:
       - name: Parse deployment parameters
         id: parse-params
         uses: actions/github-script@v7
+        if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         with:
           script: |
             const parsedParams = JSON.parse('${{ steps.branch-deploy.outputs.parsed_params }}');
