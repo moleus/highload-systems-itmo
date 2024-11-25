@@ -29,16 +29,29 @@ initContainers:
           secretKeyRef:
               name: db-secrets
               key: password
-#  - name: liquibase-balance
-#    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:lab4
-#    command:
-#      - liquibase
-#      - --changeLogFile=changelog/changelog-root.yaml
-#      - --url=jdbc:postgresql://db-balance:5432/$POSTGRES_DB
-#      - --username=$POSTGRES_USER
-#      - --password=$POSTGRES_PASSWORD
-#      - --log-level=debug
-#      - update
+  - name: liquibase-balance
+    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:lab4
+    imagePullPolicy: Always
+    command:
+      - bash
+      - "-c"
+      - |
+        liquibase --changeLogFile=/changelog/changelog-root.yaml --url=jdbc:postgresql://$DB_HOST:5432/$POSTGRES_DB --username=$POSTGRES_USER --password=$POSTGRES_PASSWORD --log-level=debug update
+    env:
+      - name: POSTGRES_DB
+        value: postgres
+      - name: DB_HOST
+        value: db-balance
+      - name: POSTGRES_USER
+        valueFrom:
+          secretKeyRef:
+            name: db-secrets
+            key: username
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: db-secrets
+            key: password
 
 envs:
   - name: APP_SERVER_PORT
