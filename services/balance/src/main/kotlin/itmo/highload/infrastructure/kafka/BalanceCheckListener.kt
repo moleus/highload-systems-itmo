@@ -22,7 +22,6 @@ class BalanceCheckListener(
     fun listenToBalanceCheckTopic(@Payload message: TransactionBalanceMessage) {
         balanceService.checkAndAdjustBalance(message.balanceId, message.isDonation, message.moneyAmount)
             .doOnSuccess { success ->
-                // Обрабатываем успешный результат и отправляем в Kafka
                 val resultMessage = TransactionResultMessage(
                     dateTime = LocalDateTime.now(),
                     transactionId = message.transactionId,

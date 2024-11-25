@@ -1,4 +1,4 @@
-package itmo.highload
+package itmo.highload.model
 
 import itmo.highload.api.dto.AdoptionStatus
 import itmo.highload.api.dto.UpdateAdoptionRequestStatusDto
