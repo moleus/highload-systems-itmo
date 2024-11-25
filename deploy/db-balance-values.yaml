@@ -34,7 +34,7 @@ envs:
         name: db-secrets
         key: password
   - name: POSTGRES_PORT
-    value: 5432
+    value: "5432"
   - name: POSTGRES_SHARED_BUFFERS
     value: 4MB
   - name: POSTGRES_WAL_BUFFERS
