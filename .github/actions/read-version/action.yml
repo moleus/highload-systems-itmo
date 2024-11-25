@@ -16,4 +16,10 @@ runs:
       shell: bash
       run: |
         version=$(cat VERSION.txt)
-        echo "version=$version" >> $GITHUB_OUTPUT
+        if [[ ${{ github.event_name }} == 'push' ]]; then
+          echo "version=$version" >> $GITHUB_OUTPUT
+        else 
+          branch_name=${{ env.BRANCH_NAME }}
+          tag=${branch_name//\//-}
+          echo "version=$tag" >> $GITHUB_OUTPUT
+        fi

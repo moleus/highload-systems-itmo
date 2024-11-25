@@ -1,6 +1,5 @@
 name: Deploy services
 
-
 on:
   issue_comment:
     types: [ created ]
@@ -35,13 +34,32 @@ jobs:
           echo "${{ secrets.K8S_KUBECONFIG_CONTENTS }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
+      - name: Read default version
+        id: read-version
+        uses: ./.github/actions/read-version
+
+      - name: Parse deployment parameters
+        id: parse-params
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const parsedParams = JSON.parse('${{ steps.branch-deploy.outputs.parsed_params }}');
+            const apps = parsedParams.apps;
+            let tag = parsedParams.tag;
+            if (!tag) {
+              tag = '${{ steps.read-version.outputs.version }}';
+            }
+            core.exportVariable('apps', apps);
+            core.exportVariable('tag', tag);
+
       - name: Deploy services
         if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         run: |
-          services_to_deploy="${{ steps.branch-deploy.outputs.params }}"
-          echo "Deploying services: $services_to_deploy"
+          services_to_deploy="${{ env.apps }}"
+          version="${{ env.tag }}"
+          echo "Deploying services: $services_to_deploy with tag: $version"
           cd ./deploy
           IFS=' ' read -r -a services <<< "$services_to_deploy"
           for service in "${services[@]}"; do
-            helm template -f "${service}-values.yaml" microservice | kubectl apply -n dev -f -
+            helm template -f "${service}-values.yaml" --set image.tag=$version microservice | kubectl apply -n dev -f -
           done
