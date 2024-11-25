@@ -8,37 +8,37 @@ spring:
     gateway:
       routes:
         - id: animal-service
-          uri: http://animal
+          uri: http://${ANIMAL_LOCALHOST:animal}
           predicates:
             - Path=/api/v1/animals/**,/animal-api-service/**
           filters:
             - RewritePath=/animal-api-service/(?<segment>/?.*), /$\{segment}
         - id: adoption-service
-          uri: http://adoption
+          uri: http://${ADOPTION_LOCALHOST:adoption}
           predicates:
             - Path=/api/v1/adoptions/**,/adoption-api-service/**
           filters:
             - RewritePath=/adoption-api-service/(?<segment>/?.*), /$\{segment}
         - id: transaction-service
-          uri: http://transaction
+          uri: http://${TRANSACTION_LOCALHOST:transaction}
           predicates:
             - Path=/api/v1/transactions/**,/transaction-api-service/**
           filters:
             - RewritePath=/transaction-api-service/(?<segment>/?.*), /$\{segment}
         - id: authentication-service
-          uri: http://authentication
+          uri: http://${AUTH_LOCALHOST:authentication}
           predicates:
             - Path=/api/v1/auth/**,/auth-api-service/**
           filters:
             - RewritePath=/auth-api-service/(?<segment>/?.*), /$\{segment}
         - id: notification-service
-          uri: http://notification
+          uri: http://${NOTIFICATION_LOCALHOST:notification}
           predicates:
             - Path=/api/v1/notifications/ws/**
           filters:
             - RewritePath=/api/v1/notifications/ws/(?<segment>/?.*), /ws/$\{segment}
         - id: images-service
-          uri: http://images
+          uri: http://${IMAGES_LOCALHOST:images}
           predicates:
             - Path=/images-api-service/**
           filters:
@@ -50,7 +50,7 @@ spring:
           filters:
             - RewritePath=/images/(?<segment>/?.*), /$\{segment}
         - id: balance-service
-          uri: http://balance
+          uri: http://${BALANCE_LOCALHOST:balance}
           predicates:
             - Path=/api/v1/balances/**,/balances-api-service/**
           filters:

@@ -19,7 +19,7 @@ envs:
   - name: SPRING_PROFILES_ACTIVE
     value: cloud
   - name: SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL
-    value: 'pavel/setup-k8s'
+    value: 'main'
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
   - name: EUREKA_HOST
