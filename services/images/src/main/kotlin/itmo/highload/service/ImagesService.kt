@@ -80,34 +80,45 @@ class ImagesService @Autowired constructor(
             }
     }
 
+    fun extractContentType(data: FilePart): String {
+        return data.headers().contentType.toString()
+    }
+
+    fun extractDataStream(data: FilePart): Mono<PartDataStream> {
+        return data.content().collectList().map { parts ->
+            val byteArray = parts.flatMap { it.asInputStream().readAllBytes().toList() }.toByteArray()
+            PartDataStream(
+                stream = byteArray.inputStream(),
+                size = byteArray.size.toLong(),
+                partSize = -1,
+            )
+        }
+    }
+
     fun updateImageById(id: Int, data: FilePart): Mono<S3ObjectRef> {
+        return extractDataStream(data).flatMap {
+                updateImageById(id, extractContentType(data), Mono.just(it))
+            }
+    }
+
+    fun updateImageById(id: Int, contentType: String, data: Mono<PartDataStream>): Mono<S3ObjectRef> {
         return imageObjectRefRepository.findById(id)
             .switchIfEmpty(Mono.error(EntityNotFoundException("Image with ID $id not found")))
             .flatMap { existingObjectRef ->
                 val fileName = existingObjectRef.key
                 val bucketName = existingObjectRef.bucket
 
-                data.content().collectList().map { parts ->
-                    val byteArray = parts.flatMap { it.asInputStream().readAllBytes().toList() }.toByteArray()
-                    PartDataStream(
-                        stream = byteArray.inputStream(),
-                        size = byteArray.size.toLong(),
-                        partSize = -1,
-                    )
-                }.doOnNext {
+                data.doOnNext {
                     logger.info { "Updating ${it.size} bytes to $fileName" }
                 }.handle<PartDataStream> { partDataStream, sink ->
                     try {
                         minioStorage.putObject(
-                            bucketName, fileName, data.headers().contentType.toString(), partDataStream
+                            bucketName, fileName, contentType, partDataStream
                         )
                     } catch (e: ConnectException) {
                         sink.error(ImageServiceException("Failed to connect to MinIO", e))
                     }
-                }.doOnNext {
-                    logger.info { "Updated ${it.size} bytes in $fileName" }
                 }.thenReturn(existingObjectRef)
             }
     }
-
 }
