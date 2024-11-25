@@ -1,13 +1,14 @@
 image:
-  repository: ghcr.io/moleus/highload-systems-itmo/transaction
+  repository: ghcr.io/moleus/highload-systems-itmo/balance
   tag: lab4
 
-nameOverride: transaction
-fullnameOverride: transaction
+nameOverride: balance
+fullnameOverride: balance
 
 initContainers:
-  - name: liquibase-main
-    image: ghcr.io/moleus/highload-systems-itmo/db-init:lab4
+  - name: liquibase-balance
+    # TODO: change tag to lab4
+    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:pavel-deploy-db-balance
     imagePullPolicy: Always
     command:
       - bash
@@ -18,7 +19,7 @@ initContainers:
       - name: POSTGRES_DB
         value: postgres
       - name: DB_HOST
-        value: db
+        value: db-balance
       - name: POSTGRES_USER
         valueFrom:
           secretKeyRef:
@@ -27,8 +28,8 @@ initContainers:
       - name: POSTGRES_PASSWORD
         valueFrom:
           secretKeyRef:
-              name: db-secrets
-              key: password
+            name: db-secrets
+            key: password
 
 envs:
   - name: APP_SERVER_PORT
