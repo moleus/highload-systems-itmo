@@ -1,14 +1,13 @@
 package itmo.highload.kafka
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkClass
 import io.mockk.verify
 import itmo.highload.infrastructure.kafka.NotificationListener
-import itmo.highload.infrastructure.kafka.message.AdoptionRequestMessage
-import itmo.highload.infrastructure.kafka.message.AdoptionStatus
-import itmo.highload.infrastructure.kafka.message.PurposeMessage
-import itmo.highload.infrastructure.kafka.message.TransactionMessage
+import itmo.highload.infrastructure.kafka.message.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.kafka.annotation.EnableKafka
@@ -46,8 +45,10 @@ class NotificationListenerTest {
         notificationListener.listenToNewDonationTopic(messageJson)
 
         verify {
-            messagingTemplate.convertAndSend("/topic/donations", "New donation for purpose " +
-                    "with id 1, amount: 100")
+            messagingTemplate.convertAndSend(
+                "/topic/donations", "New donation for purpose " +
+                        "with id 1, amount: 100"
+            )
         }
     }
 
@@ -94,9 +95,76 @@ class NotificationListenerTest {
         notificationListener.listenToAdoptionRequestChangedTopic(messageJson)
 
         verify {
-            messagingTemplate.convertAndSend("/topic/adoption_requests/1", "Hey! " +
-                    "Your request for an adoption has changed. New status: APPROVED")
+            messagingTemplate.convertAndSend(
+                "/topic/adoption_requests/1", "Hey! " +
+                        "Your request for an adoption has changed. New status: APPROVED"
+            )
         }
     }
 
+    @Test
+    fun `listenToTransactionResultTopic - should send notification to correct topic`() {
+        val transactionResultMessage = TransactionResultMessage(
+            dateTime = LocalDateTime.parse("2024-11-19T12:00:00"),
+            transactionId = 1,
+            success = true,
+            message = "Transaction successful"
+        )
+
+        val messageJson = """{
+            |"dateTime":"2024-11-19T12:00:00",
+            |"transactionId":1,
+            |"success":true,
+            |"message":"Transaction successful"
+        }""".trimMargin()
+
+        every {
+            objectMapper.readValue(
+                messageJson,
+                TransactionResultMessage::class.java
+            )
+        } returns transactionResultMessage
+
+        notificationListener.listenToTransactionResultTopic(messageJson)
+
+        verify {
+            messagingTemplate.convertAndSend(
+                "/topic/transactions",
+                "Transaction 1 : Transaction successful"
+            )
+        }
+    }
+
+    @Test
+    fun `listenToTransactionResultTopic - should handle failed transaction`() {
+        val transactionResultMessage = TransactionResultMessage(
+            dateTime = LocalDateTime.parse("2024-11-19T12:00:00"),
+            transactionId = 2,
+            success = false,
+            message = "Insufficient funds"
+        )
+
+        val messageJson = """{
+            |"dateTime":"2024-11-19T12:00:00",
+            |"transactionId":2,
+            |"success":false,
+            |"message":"Insufficient funds"
+        }""".trimMargin()
+
+        every {
+            objectMapper.readValue(
+                messageJson,
+                TransactionResultMessage::class.java
+            )
+        } returns transactionResultMessage
+
+        notificationListener.listenToTransactionResultTopic(messageJson)
+
+        verify {
+            messagingTemplate.convertAndSend(
+                "/topic/transactions",
+                "Transaction 2 failed: Insufficient funds"
+            )
+        }
+    }
 }

@@ -204,4 +204,70 @@ class TransactionServiceTest {
         verify { transactionProducer.sendRollBackMessage(any()) }
     }
 
+    @Test
+    fun `getAllByUser should return transactions for user and isDonation flag`() {
+        val token = "test-token"
+        val isDonation = true
+        val transaction = testTransaction.copy(isDonation = isDonation, userId = userId)
+        val balanceResponse = testBalanceResponse.copy(id = transaction.balanceId)
+
+        every { transactionRepository.findByIsDonationAndUserId(isDonation, userId) } returns Flux.just(transaction)
+        every { balanceService.getBalanceById(token, transaction.balanceId) } returns Mono.just(balanceResponse)
+
+        val result = transactionService.getAllByUser(isDonation, userId, token)
+
+        StepVerifier.create(result)
+            .expectNextMatches {
+                it.moneyAmount == transaction.moneyAmount && it.purpose.id == balanceResponse.id
+                        && it.isDonation == isDonation
+            }
+            .verifyComplete()
+
+        verify { transactionRepository.findByIsDonationAndUserId(isDonation, userId) }
+        verify { balanceService.getBalanceById(token, transaction.balanceId) }
+    }
+
+    @Test
+    fun `getDonations should return all donations when purposeId is null`() {
+        val token = "test-token"
+        val transaction = testTransaction.copy(isDonation = true)
+        val balanceResponse = testBalanceResponse.copy(id = transaction.balanceId)
+
+        every { transactionRepository.findByIsDonation(true) } returns Flux.just(transaction)
+        every { balanceService.getBalanceById(token, transaction.balanceId) } returns Mono.just(balanceResponse)
+
+        val result = transactionService.getDonations(null, token)
+
+        StepVerifier.create(result)
+            .expectNextMatches {
+                it.moneyAmount == transaction.moneyAmount && it.purpose.id == balanceResponse.id && it.isDonation
+            }
+            .verifyComplete()
+
+        verify { transactionRepository.findByIsDonation(true) }
+        verify { balanceService.getBalanceById(token, transaction.balanceId) }
+    }
+
+    @Test
+    fun `addTransaction should send donation message to Kafka when isDonation is true`() {
+        val transactionDto = testTransactionDto.copy(purposeId = 1, moneyAmount = 100)
+        val transactionEntity = testTransaction.copy(id = 1, isDonation = true)
+        val response = testTransactionResponse.copy(isDonation = true)
+
+        every { transactionRepository.save(any()) } returns Mono.just(transactionEntity)
+        every { transactionProducer.sendMessageToBalanceCheck(any()) } returns Unit
+        every { transactionProducer.sendMessageToNewDonationTopic(any()) } returns Unit
+
+        val result = transactionService.addTransaction(transactionDto, managerId = 1, isDonation = true)
+
+        StepVerifier.create(result)
+            .expectNextMatches {
+                it.moneyAmount == response.moneyAmount && it.purpose.id == response.purpose.id && it.isDonation
+            }
+            .verifyComplete()
+
+        verify { transactionRepository.save(any()) }
+        verify { transactionProducer.sendMessageToBalanceCheck(any()) }
+        verify { transactionProducer.sendMessageToNewDonationTopic(any()) }
+    }
 }
