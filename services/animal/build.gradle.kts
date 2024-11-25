@@ -37,6 +37,7 @@ dependencies {
     implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
 
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
+    implementation("com.hazelcast:hazelcast-spring:5.3.2")
 }
 
 highloadApp {

@@ -7,6 +7,7 @@ import itmo.highload.domain.entity.AnimalEntity
 import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.domain.mapper.AnimalMapper
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -18,6 +19,7 @@ class AnimalService(
     private val animalImageService: AnimalImageService
 ) {
 
+    @Cacheable(cacheNames = ["animals"], key = "#animalId")
     fun getById(animalId: Int): Mono<AnimalEntity> = animalRepository.findById(animalId)
         .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
         .map { animal -> AnimalMapper.toEntity(animal) }
@@ -41,6 +43,7 @@ class AnimalService(
             .then(animalImageService.deleteAllByAnimalId(existingAnimal.id, token))
     }
 
+    @Cacheable(cacheNames = ["animalList"], key = "#name ?: 'all'")
     fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<AnimalEntity> {
         val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null && isNotAdopted)
             adoptionService.getAllAdoptedAnimalsId(token) else Flux.empty()
