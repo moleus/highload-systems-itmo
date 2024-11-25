@@ -19,7 +19,10 @@ jobs:
       - uses: github/branch-deploy@v9.9.1
         id: branch-deploy
         with:
+          checks: "required"
+          skip_ci: "production"
           trigger: ".deploy"
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -27,6 +30,7 @@ jobs:
 
       - name: Set up Kubeconfig
         run: |
+          mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_KUBECONFIG_CONTENTS }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
@@ -34,6 +38,7 @@ jobs:
         if: ${{ steps.branch-deploy.outputs.continue == 'true' && steps.branch-deploy.outputs.noop != 'true' }}
         run: |
           services_to_deploy="${{ steps.branch-deploy.outputs.params }}"
+          echo "Deploying services: $services_to_deploy"
           IFS=' ' read -r -a services <<< "$services_to_deploy"
           for service in "${services[@]}"; do
             helm template -f "deploy/${service}-values.yaml" $service | kubectl apply -n dev -f -
