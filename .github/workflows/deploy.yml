@@ -20,7 +20,7 @@ jobs:
         id: branch-deploy
         with:
           checks: "required"
-          skip_ci: "true"
+          skip_ci: "production"
           trigger: ".deploy"
 
       - name: Checkout code
