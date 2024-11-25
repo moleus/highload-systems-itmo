@@ -9,4 +9,3 @@ done
 for microservice in "${microservices[@]}"; do
   helm template -f "${microservice}"-values.yaml microservice | kubectl --kubeconfig ~/.kube/pavel -n dev apply -f -
 done
-
