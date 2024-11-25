@@ -7,7 +7,6 @@ terraform {
   required_version = ">= 0.13"
 }
 
-
 variable "function_name" {
   type = string
 }
@@ -35,20 +34,35 @@ variable "oauth_token" {
   sensitive = true
 }
 
+variable "vpc_network_id" {
+  type = string
+}
+
+variable "function_sa_id" {
+  type = string
+}
+
+data "yandex_resourcemanager_folder" "this" {
+  name = var.resource_manager_folder_name
+}
+
 data "archive_file" "this" {
   type        = "zip"
   source_dir = var.dir_with_function_code
+  excludes = ["node_modules", "package-lock.json"]
   output_path = "/tmp/terraform-${var.function_name}.zip"
 }
 
 resource "yandex_function" "this" {
+  folder_id = data.yandex_resourcemanager_folder.this.folder_id
   entrypoint = "index.handler"
   runtime    = "nodejs18"
   environment = var.function_envs
   memory = 128
   name = var.function_name
-  service_account_id = yandex_iam_service_account.this.id
-  user_hash = ""
+  service_account_id = var.function_sa_id
+  user_hash = filemd5(data.archive_file.this.output_path)
+  tags = []
   connectivity {
     network_id = var.vpc_network_id
   }
@@ -75,13 +89,13 @@ resource "yandex_function_trigger" "this" {
   }
   function {
     id = yandex_function.this.id
-    service_account_id = yandex_iam_service_account.this.id
+    service_account_id = var.function_sa_id
     tag = "$latest"
   }
 }
 
 resource "yandex_lockbox_secret" "oauth_token" {
-  name = "oauth-token"
+  name = "${var.function_name}-oauth-token"
 }
 
 resource "yandex_lockbox_secret_version" "oauth_token_version" {
@@ -90,29 +104,4 @@ resource "yandex_lockbox_secret_version" "oauth_token_version" {
     key = "key_token"
     text_value = var.oauth_token
   }
-}
-
-resource "yandex_iam_service_account" "this" {
-  name = "cloud-function-restart-vms"
-}
-
-data "yandex_iam_policy" "admin" {
-  binding {
-    role = "functions.functionInvoker"
-
-    members = [
-      "serviceAccount:${yandex_iam_service_account.this.id}",
-    ]
-  }
-  binding {
-    role = "lockbox.payloadViewer"
-    members = [
-      "serviceAccount:${yandex_iam_service_account.this.id}",
-    ]
-  }
-}
-
-resource "yandex_iam_service_account_iam_policy" "function_invoke_and_see_secrets" {
-  policy_data        = data.yandex_iam_policy.admin.policy_data
-  service_account_id = yandex_iam_service_account.this.id
 }

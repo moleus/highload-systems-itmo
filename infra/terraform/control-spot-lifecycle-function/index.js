@@ -1,5 +1,4 @@
 import {serviceClients, Session, cloudApi} from '@yandex-cloud/nodejs-sdk';
-import {Instance_Status} from "@yandex-cloud/nodejs-sdk/dist/generated/yandex/cloud/compute/v1/instance";
 
 const {
     compute: {
@@ -11,6 +10,9 @@ const {
         },
     },
 } = cloudApi;
+
+const RUNNING = 2
+const STOPPED = 4
 
 const FOLDER_ID = process.env.FOLDER_ID;
 const INSTANCE_ID = process.env.INSTANCE_ID;
@@ -45,15 +47,15 @@ export const handler = async function (event, context) {
     };
 };
 
-async function getInstance(instanceClient: any, instanceId: string) {
+async function getInstance(instanceClient, instanceId) {
     return instanceClient.get(GetInstanceRequest.fromPartial({
         instanceId: instanceId,
     }));
 }
 
-async function startInstance(instanceClient: any, instanceId: string) {
+async function startInstance(instanceClient, instanceId) {
     const state = await getInstance(instanceClient, instanceId);
-    if (state.status !== Instance_Status.STOPPED) {
+    if (state.status !== STOPPED) {
         return
     }
     return instanceClient.start(StartInstanceRequest.fromPartial({
@@ -61,9 +63,9 @@ async function startInstance(instanceClient: any, instanceId: string) {
     }));
 }
 
-async function stopInstance(instanceClient: any, instanceId: string) {
+async function stopInstance(instanceClient, instanceId) {
     const state = await getInstance(instanceClient, instanceId);
-    if (state.status !== Instance_Status.RUNNING) {
+    if (state.status !== RUNNING) {
         return
     }
     return instanceClient.stop(StopInstanceRequest.fromPartial({

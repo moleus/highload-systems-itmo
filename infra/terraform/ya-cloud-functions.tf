@@ -2,7 +2,7 @@ locals {
   oauth_token = data.sops_file.secrets.data["yandex_oauth_token"]
 }
 
-module "cloud_function" {
+module "starter_function" {
   source = "./modules/cloud_function"
   cron   = "*/15 8-23 ? * *"
   dir_with_function_code = "./control-spot-lifecycle-function"
@@ -13,9 +13,11 @@ module "cloud_function" {
     INSTANCE_ID = yandex_compute_instance.this.id
     RUN_MODE = "starter"
   }
+  vpc_network_id = yandex_vpc_network.this.id
+  function_sa_id = yandex_iam_service_account.this.id
 }
 
-module "cloud_function" {
+module "stopper_function" {
   source = "./modules/cloud_function"
   cron   = "59 23 ? * *"
   dir_with_function_code = "./control-spot-lifecycle-function"
@@ -26,4 +28,22 @@ module "cloud_function" {
     INSTANCE_ID = yandex_compute_instance.this.id
     RUN_MODE = "stopper"
   }
+  vpc_network_id = yandex_vpc_network.this.id
+  function_sa_id = yandex_iam_service_account.this.id
+}
+
+resource "yandex_iam_service_account" "this" {
+  name = "cloud-function-restart-vms"
+}
+
+resource "yandex_resourcemanager_folder_iam_member" "function_invoker" {
+  folder_id   = data.yandex_resourcemanager_folder.this.folder_id
+  role        = "functions.functionInvoker"
+  member      = "serviceAccount:${yandex_iam_service_account.this.id}"
+}
+
+resource "yandex_resourcemanager_folder_iam_member" "lockbox_access" {
+  folder_id   = data.yandex_resourcemanager_folder.this.folder_id
+  role        = "lockbox.payloadViewer"
+  member      = "serviceAccount:${yandex_iam_service_account.this.id}"
 }
