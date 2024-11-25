@@ -69,9 +69,11 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/services/adoption/build/reports/kover/report.xml
-            ${{ github.workspace }}/services/api-gateway/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/animal/build/reports/kover/report.xml
             ${{ github.workspace }}/services/authentication/build/reports/kover/report.xml
-            ${{ github.workspace }}/services/cloud-config/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/balance/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/images/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/notification/build/reports/kover/report.xml
             ${{ github.workspace }}/services/transaction/build/reports/kover/report.xml
           title: Code Coverage
           update-comment: true
