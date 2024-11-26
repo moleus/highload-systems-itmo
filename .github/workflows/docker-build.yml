@@ -73,7 +73,7 @@ jobs:
             build-args: |
               MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog
           - app: db-balance-init
-            dockerfile: ./deploy/db-init.Dockerfile
+            dockerfile: ./deploy/db-balance-init.Dockerfile
             build-args: |
               MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog-balance
     steps:
