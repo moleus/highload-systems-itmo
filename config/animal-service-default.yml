@@ -62,7 +62,6 @@ logging:
 hazelcast:
   client:
     cluster-name: dev
-    instance-name: dev-node-1
     network:
       addresses:
-        - 127.0.0.1:5701
+        - hazelcast:5701
