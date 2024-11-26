@@ -72,10 +72,10 @@ jobs:
             dockerfile: ./deploy/db-init.Dockerfile
             build-args: |
               MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog
-#          - app: db-balance-init
-#            dockerfile: ./deploy/db-init.Dockerfile
-#            build-args: |
-#              MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog-balance
+          - app: db-balance-init
+            dockerfile: ./deploy/db-balance-init.Dockerfile
+            build-args: |
+              MIGRATIONS_DIR=./shared/db-migrations/src/main/resources/changelog-balance
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

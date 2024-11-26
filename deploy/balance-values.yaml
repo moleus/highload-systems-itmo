@@ -1,36 +1,38 @@
 image:
-  repository: ghcr.io/moleus/highload-systems-itmo/notification
+  repository: ghcr.io/moleus/highload-systems-itmo/balance
   tag: lab4
 
-nameOverride: notification
-fullnameOverride: notification
+nameOverride: balance
+fullnameOverride: balance
 
 initContainers:
-  - name: liquibase-main
-    image: ghcr.io/moleus/highload-systems-itmo/db-init:lab4
+  - name: liquibase-balance
+    # TODO: change tag to lab4
+    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:pavel-deploy-db-balance
+    imagePullPolicy: Always
     command:
       - bash
       - "-c"
       - |
-        liquibase --changeLogFile=/changelog/changelog-root.yaml --url=jdbc:postgresql://$DB_HOST:5432/$POSTGRES_DB --username=$POSTGRES_USER --password=$POSTGRES_PASSWORD --log-level=debug update
+        liquibase --changeLogFile=/changelog-balance/changelog-root.yaml --url=jdbc:postgresql://$DB_HOST:5432/$POSTGRES_DB --username=$POSTGRES_USER --password=$POSTGRES_PASSWORD --log-level=debug update
     env:
       - name: POSTGRES_DB
         value: postgres
       - name: DB_HOST
-        value: db
+        value: db-balance
       - name: POSTGRES_USER
         valueFrom:
           secretKeyRef:
-              name: db-secrets
-              key: username
+            name: db-secrets
+            key: username
       - name: POSTGRES_PASSWORD
         valueFrom:
           secretKeyRef:
-              name: db-secrets
-              key: password
+            name: db-secrets
+            key: password
 
 envs:
-  - name: SERVER_PORT
+  - name: APP_SERVER_PORT
     value: "80"
   - name: API_ADDRESS
     value: "highload.duckdns.org"
