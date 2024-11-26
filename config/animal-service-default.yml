@@ -65,4 +65,4 @@ hazelcast:
     instance-name: dev-node-1
     network:
       addresses:
-        - hazelcast:5701
+        - 127.0.0.1:5701
