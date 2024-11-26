@@ -1,6 +1,8 @@
 plugins {
     id("io.spring.dependency-management")
     id("highload.common")
+    id ("java-library")
+
 }
 
 dependencies {
@@ -11,3 +13,6 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
 }
 
+tasks.named("bootJar") {
+    enabled = false
+}

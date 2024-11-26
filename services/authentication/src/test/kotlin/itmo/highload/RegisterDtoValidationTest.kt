@@ -1,7 +1,7 @@
 package itmo.highload
 
 
-import itmo.highload.dto.RegisterDto
+import itmo.highload.infrastructure.http.dto.RegisterDto
 import itmo.highload.security.Role
 import jakarta.validation.ConstraintViolation
 import jakarta.validation.Validation

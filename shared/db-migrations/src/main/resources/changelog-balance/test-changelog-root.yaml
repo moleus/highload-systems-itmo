@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - includeAll:
+      path: changelog-balance/changelog-1.0/
+  - changeSet:
+      id: 1
+      author: korako2
+      context: test
+      changes:
+        - sqlFile:
+            path: changelog-balance/test-data.sql

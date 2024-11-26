@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-status-to-transaction
+      author: Korako2
+      changes:
+          - addColumn:
+              tableName: transaction
+              columns:
+                - column:
+                    name: status
+                    type: VARCHAR(50)
+                    constraints:
+                      nullable: false
+                      defaultValue: 'PENDING'
+
+  - changeSet:
+      id: drop-fk-transaction-balance
+      author: Korako2
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: transaction
+            constraintName: fk_transaction_balance
+
+  - changeSet:
+      id: delete-balance-table
+      author: Korako2
+      changes:
+        - dropTable:
+            tableName: balance
