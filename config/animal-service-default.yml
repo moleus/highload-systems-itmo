@@ -25,7 +25,8 @@ spring:
       validation-query-timeout: 1000 # 1 секунда
       connection-timeout: 10000 # 10 секунд
       idle-timeout: 300000 # 5 минут
-
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: ${APP_SERVER_PORT:8086}
 
@@ -56,11 +57,12 @@ logging:
         security: INFO
         web: INFO
         web.cors.reactive.DefaultCorsProcessor: DEBUG
-
+    com.hazelcast: DEBUG
 
 hazelcast:
   client:
     cluster-name: dev
+    instance-name: dev-node-1
     network:
       addresses:
         - hazelcast:5701
