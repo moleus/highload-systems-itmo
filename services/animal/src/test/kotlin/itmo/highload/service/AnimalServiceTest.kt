@@ -1,5 +1,6 @@
 package itmo.highload.service
 
+import com.hazelcast.core.HazelcastInstance
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -27,7 +28,8 @@ class AnimalServiceTest {
     private val animalRepository: AnimalRepository = mockk()
     private val adoptionService: AdoptionService = mockk()
     private val animalImageService: AnimalImageService = mockk()
-    private val animalService = AnimalService(animalRepository, adoptionService, animalImageService)
+    private val hazelcastInstance: HazelcastInstance = mockk()
+    private val animalService = AnimalService(animalRepository, adoptionService, animalImageService, hazelcastInstance)
 
     private val existingAnimal = Animal(
         id = 1,

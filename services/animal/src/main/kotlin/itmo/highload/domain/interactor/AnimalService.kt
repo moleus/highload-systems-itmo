@@ -1,5 +1,6 @@
 package itmo.highload.domain.interactor
 
+import com.hazelcast.core.HazelcastInstance
 import itmo.highload.api.dto.AnimalDto
 import itmo.highload.api.dto.HealthStatus
 import itmo.highload.domain.AnimalRepository
@@ -7,7 +8,7 @@ import itmo.highload.domain.entity.AnimalEntity
 import itmo.highload.exceptions.InvalidAnimalUpdateException
 import itmo.highload.domain.mapper.AnimalMapper
 import jakarta.persistence.EntityNotFoundException
-import org.springframework.cache.annotation.Cacheable
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,34 +17,68 @@ import reactor.core.publisher.Mono
 class AnimalService(
     private val animalRepository: AnimalRepository,
     private val adoptionService: AdoptionService,
-    private val animalImageService: AnimalImageService
+    private val animalImageService: AnimalImageService,
+    @Qualifier("hazelcastInstance")
+    private val hazelcastInstance: HazelcastInstance
 ) {
 
-    @Cacheable(cacheNames = ["animals"], key = "#animalId")
-    fun getById(animalId: Int): Mono<AnimalEntity> = animalRepository.findById(animalId)
-        .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
-        .map { animal -> AnimalMapper.toEntity(animal) }
+    private val cacheName = "animals"
 
-    fun save(request: AnimalDto): Mono<AnimalEntity> =
-        animalRepository.save(AnimalMapper.toJpaEntity(request)).map { animal -> AnimalMapper.toEntity(animal) }
+    fun getById(animalId: Int): Mono<AnimalEntity> {
+        val cache = hazelcastInstance.getMap<Int, AnimalEntity>(cacheName)
+        val cachedAnimal = cache[animalId]
+
+        return if (cachedAnimal != null) {
+            Mono.just(cachedAnimal)
+        } else {
+            animalRepository.findById(animalId)
+                .switchIfEmpty(Mono.error(EntityNotFoundException("Animal with ID $animalId not found")))
+                .map { animal ->
+                    val entity = AnimalMapper.toEntity(animal)
+                    cache[animalId] = entity
+                    entity
+                }
+        }
+    }
+
+    fun save(request: AnimalDto): Mono<AnimalEntity> {
+        val cache = hazelcastInstance.getMap<Int, AnimalEntity>(cacheName)
+        return animalRepository.save(AnimalMapper.toJpaEntity(request))
+            .map { animal ->
+                val entity = AnimalMapper.toEntity(animal)
+                cache[animal.id] = entity
+                entity
+            }
+    }
 
     fun update(animalId: Int, request: AnimalDto): Mono<AnimalEntity> {
+        val cache = hazelcastInstance.getMap<Int, AnimalEntity>(cacheName)
+
         return getById(animalId).flatMap { existingAnimal ->
             validateAnimal(existingAnimal, request)
             existingAnimal.name = request.name
             existingAnimal.isCastrated = request.isCastrated!!
             existingAnimal.healthStatus = request.healthStatus!!
+
             animalRepository.save(AnimalMapper.toJpaEntity(existingAnimal))
-                .map { animal -> AnimalMapper.toEntity(animal) }
+                .map { animal ->
+                    val entity = AnimalMapper.toEntity(animal)
+                    cache[animal.id] = entity
+                    entity
+                }
         }
     }
 
-    fun delete(animalId: Int, token: String): Mono<Void> = getById(animalId).flatMap { existingAnimal ->
-        animalRepository.delete(AnimalMapper.toJpaEntity(existingAnimal))
-            .then(animalImageService.deleteAllByAnimalId(existingAnimal.id, token))
+
+    fun delete(animalId: Int, token: String): Mono<Void> {
+        val cache = hazelcastInstance.getMap<Int, AnimalEntity>(cacheName)
+        return getById(animalId).flatMap { existingAnimal ->
+            animalRepository.delete(AnimalMapper.toJpaEntity(existingAnimal))
+                .then(animalImageService.deleteAllByAnimalId(existingAnimal.id, token))
+                .doOnSuccess { cache.remove(animalId) } // Удаляем из кэша
+        }
     }
 
-    @Cacheable(cacheNames = ["animalList"], key = "#name ?: 'all'")
     fun getAll(name: String?, isNotAdopted: Boolean?, token: String): Flux<AnimalEntity> {
         val adoptedAnimalsIdFlux: Flux<Int> = if (isNotAdopted != null && isNotAdopted)
             adoptionService.getAllAdoptedAnimalsId(token) else Flux.empty()
