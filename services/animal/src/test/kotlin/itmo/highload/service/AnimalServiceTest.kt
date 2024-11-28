@@ -49,7 +49,7 @@ class AnimalServiceTest {
             isCastrated = true,
             healthStatus = HealthStatus.RECOVERING
         )
-
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
         every { animalRepository.save(existingAnimal) } returns Mono.just(existingAnimal.copy(
             name = "Bobik",
@@ -78,6 +78,7 @@ class AnimalServiceTest {
             healthStatus = HealthStatus.HEALTHY
         )
 
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
 
         animalService.update(1, request).test().verifyErrorMatches {
@@ -96,7 +97,7 @@ class AnimalServiceTest {
             isCastrated = true,
             healthStatus = HealthStatus.HEALTHY
         )
-
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
 
         animalService.update(1, request).test().verifyErrorMatches {
@@ -116,6 +117,7 @@ class AnimalServiceTest {
             healthStatus = HealthStatus.HEALTHY
         )
 
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
 
         animalService.update(1, request).test().verifyErrorMatches {
@@ -136,7 +138,7 @@ class AnimalServiceTest {
             isCastrated = false,
             healthStatus = HealthStatus.HEALTHY
         )
-
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
 
         animalService.update(1, request).test().verifyErrorMatches {
@@ -154,6 +156,7 @@ class AnimalServiceTest {
         val savedAnimal = AnimalEntity(id = 1, name = "Ave", typeOfAnimal = "Cat", gender = Gender.MALE,
             isCastrated = false, healthStatus = HealthStatus.HEALTHY)
 
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.save(any()) } returns Mono.just(AnimalMapper.toJpaEntity(savedAnimal))
 
         StepVerifier.create(animalService.save(request))
@@ -251,6 +254,7 @@ class AnimalServiceTest {
         val animal = Animal(id = animalId, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE,
             isCastrated = false, healthStatus = HealthStatus.HEALTHY)
 
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
         every { animalRepository.findById(animalId) } returns Mono.just(animal)
         every { animalRepository.delete(animal) } returns Mono.empty()
         every { animalImageService.deleteAllByAnimalId(animal.id, token) } returns Mono.empty()
