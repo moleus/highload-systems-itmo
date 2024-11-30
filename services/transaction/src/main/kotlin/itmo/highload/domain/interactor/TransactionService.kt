@@ -158,91 +158,51 @@ class TransactionService(
         }
     }
 
-//
-//    fun addTransaction(
-//        donationDto: TransactionDto,
-//        managerId: Int,
-//        isDonation: Boolean
-//    ): Mono<TransactionResponse> {
-//        val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
-//        logger.info { "Adding transaction: $transactionEntity" }
-//        val transactionCache = hazelcastInstance.getMap<Int, TransactionResponse>(transactionCacheName)
-//        return transactionRepository.save(transactionEntity)
-//            .flatMap { savedTransaction ->
-//                val message = TransactionMapper.toBalanceMessage(savedTransaction)
-//                Mono.fromCallable {
-//                    logger.info { "Sending transaction check message to Kafka" }
-//                    transactionProducer.sendMessageToBalanceCheck(message)
-//                }
-//                    .subscribeOn(Schedulers.boundedElastic())
-//                    .onErrorContinue { error, _ ->
-//                        logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
-//                        rollbackTransaction(savedTransaction.id)
-//                            .then(Mono.error<Void>(error))
-//                    }
-//                    .thenReturn(savedTransaction)
-//            }
-//            .flatMap { savedTransaction ->
-//                if (isDonation) {
-//                    val donationMessage = TransactionMapper.toResponseFromTransaction(savedTransaction)
-//                    Mono.fromCallable {
-//                        transactionProducer.sendMessageToNewDonationTopic(donationMessage)
-//                    }
-//                        .subscribeOn(Schedulers.boundedElastic())
-//                        .onErrorContinue { error, _ ->
-//                            logger.error { "Failed to send donation message to Kafka: ${error.message}" }
-//                        }
-//                        .thenReturn(savedTransaction)
-//                } else {
-//                    Mono.just(savedTransaction)
-//                }
-//            }
-//            .map { savedTransaction ->
-//                val response = TransactionMapper.toResponseFromTransaction(savedTransaction)
-//                transactionCache[savedTransaction.id] = response
-//                response
-//            }
-//    }
-fun addTransaction(
-    donationDto: TransactionDto,
-    managerId: Int,
-    isDonation: Boolean
-): Mono<TransactionResponse> {
-    val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
 
-    return transactionRepository.save(transactionEntity)
-        .flatMap { savedTransaction ->
-            val message = TransactionMapper.toBalanceMessage(savedTransaction)
-            Mono.fromCallable {
-                transactionProducer.sendMessageToBalanceCheck(message)
-            }
-                .subscribeOn(Schedulers.boundedElastic())
-                .onErrorContinue { error, _ ->
-                    logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
-                    rollbackTransaction(savedTransaction.id)
-                        .then(Mono.error<Void>(error))
-                }
-                .thenReturn(savedTransaction)
-        }
-        .flatMap { savedTransaction ->
-            if (isDonation) {
-                val donationMessage = TransactionMapper.toResponseFromTransaction(savedTransaction)
+    fun addTransaction(
+        donationDto: TransactionDto,
+        managerId: Int,
+        isDonation: Boolean
+    ): Mono<TransactionResponse> {
+        val transactionEntity = TransactionMapper.toEntityFromTransactionDTO(donationDto, managerId, isDonation)
+        logger.info { "Adding transaction: $transactionEntity" }
+        val transactionCache = hazelcastInstance.getMap<Int, TransactionResponse>(transactionCacheName)
+        return transactionRepository.save(transactionEntity)
+            .flatMap { savedTransaction ->
+                val message = TransactionMapper.toBalanceMessage(savedTransaction)
                 Mono.fromCallable {
-                    transactionProducer.sendMessageToNewDonationTopic(donationMessage)
+                    logger.info { "Sending transaction check message to Kafka" }
+                    transactionProducer.sendMessageToBalanceCheck(message)
                 }
                     .subscribeOn(Schedulers.boundedElastic())
                     .onErrorContinue { error, _ ->
-                        logger.error { "Failed to send donation message to Kafka: ${error.message}" }
+                        logger.error { "Failed to send transaction check message to Kafka: ${error.message}" }
+                        rollbackTransaction(savedTransaction.id)
+                            .then(Mono.error<Void>(error))
                     }
                     .thenReturn(savedTransaction)
-            } else {
-                Mono.just(savedTransaction)
             }
-        }
-        .map { savedTransaction ->
-            TransactionMapper.toResponseFromTransaction(savedTransaction)
-        }
-}
+            .flatMap { savedTransaction ->
+                if (isDonation) {
+                    val donationMessage = TransactionMapper.toResponseFromTransaction(savedTransaction)
+                    Mono.fromCallable {
+                        transactionProducer.sendMessageToNewDonationTopic(donationMessage)
+                    }
+                        .subscribeOn(Schedulers.boundedElastic())
+                        .onErrorContinue { error, _ ->
+                            logger.error { "Failed to send donation message to Kafka: ${error.message}" }
+                        }
+                        .thenReturn(savedTransaction)
+                } else {
+                    Mono.just(savedTransaction)
+                }
+            }
+            .map { savedTransaction ->
+                val response = TransactionMapper.toResponseFromTransaction(savedTransaction)
+                transactionCache[savedTransaction.id] = response
+                response
+            }
+    }
 
     fun rollbackTransaction(transactionId: Int): Mono<Void> {
         val transactionCache = hazelcastInstance.getMap<Int, TransactionResponse>(transactionCacheName)

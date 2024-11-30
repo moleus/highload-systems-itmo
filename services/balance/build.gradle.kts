@@ -21,6 +21,8 @@ dependencies {
     @Suppress("VulnerableDependency")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.hazelcast:hazelcast-spring:5.3.2")
 }
 
 highloadApp {
