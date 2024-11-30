@@ -20,7 +20,8 @@ Content-Type: application/json
 %}
 
 ### Get all purposes
-GET http://highload.duckdns.org/api/v1/balances/purposes
+#GET http://highload.duckdns.org/api/v1/balances/purposes
+GET http://localhost:8080/api/v1/balances/purposes
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 > {%

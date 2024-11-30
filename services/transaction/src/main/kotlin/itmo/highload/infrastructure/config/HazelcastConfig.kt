@@ -14,7 +14,7 @@ class HazelcastConfig {
         val config = ClientConfig()
         config.networkConfig.addresses = listOf("localhost:5701")
         config.clusterName = "dev"
-        config.instanceName = "animal-service"
+        config.instanceName = "transaction-service"
         return config
     }
     @Bean

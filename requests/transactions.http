@@ -40,7 +40,8 @@ Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 %}
 
 ### Get donations by purpose ID
-GET http://highload.duckdns.org/api/v1/transactions/donations?purposeId=1
+#GET http://highload.duckdns.org/api/v1/transactions/donations?purposeId=1
+GET http://localhost:8080/api/v1/transactions/donations?purposeId=1
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 
@@ -97,7 +98,8 @@ Content-Type: application/json
 %}
 
 ### Get all expenses
-GET http://highload.duckdns.org/api/v1/transactions/expenses
+#GET http://highload.duckdns.org/api/v1/transactions/expenses
+GET http://localhost:8080/api/v1/transactions/expenses
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 > {%
