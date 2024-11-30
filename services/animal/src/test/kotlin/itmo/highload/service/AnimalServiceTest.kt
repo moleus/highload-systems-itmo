@@ -145,7 +145,7 @@ class AnimalServiceTest {
 
         val request = AnimalDto(
             name = "Buddy",
-            type = "Dog", // Пытаемся изменить тип
+            type = "Dog",
             gender = Gender.MALE,
             isCastrated = true,
             healthStatus = HealthStatus.HEALTHY
@@ -340,7 +340,6 @@ class AnimalServiceTest {
             healthStatus = animalEntity.healthStatus
         )
 
-        // Мок операций
         val hazelcastMap = mockk<IMap<Int, AnimalEntity>>(relaxed = true)
         every { hazelcastInstance.getMap<Int, AnimalEntity>("animals") } returns hazelcastMap
         every { hazelcastMap[animalId] } returns null
@@ -349,7 +348,6 @@ class AnimalServiceTest {
         every { animalRepository.delete(mappedAnimal) } returns Mono.empty()
         every { animalImageService.deleteAllByAnimalId(animalId, token) } returns Mono.empty()
 
-        // Проверка
         StepVerifier.create(animalService.delete(animalId, token))
             .verifyComplete()
 

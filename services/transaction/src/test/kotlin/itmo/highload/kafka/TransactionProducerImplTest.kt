@@ -29,11 +29,12 @@ class TransactionProducerImplTest {
     fun `sendMessageToNewDonationTopic - should send message to correct topic`() {
         val transaction = TransactionResponse(
             dateTime = LocalDateTime.parse("2024-11-19T12:00:00"),
-            purpose = mockk(), // Можете заменить на реальные данные, если нужно
+            purpose = mockk(),
             userId = 123,
             moneyAmount = 5000,
             isDonation = true,
-            status = "COMPLETED"
+            status = "COMPLETED",
+            id = 1
         )
 
         producer.sendMessageToNewDonationTopic(transaction)
@@ -66,13 +67,10 @@ class TransactionProducerImplTest {
             isDonation = true
         )
 
-        // Устанавливаем ожидание вызова метода send
         every { kafkaTemplate.send(producer.rollBackTopic, transaction) } returns mockk()
 
-        // Вызываем метод, который тестируем
         producer.sendRollBackMessage(transaction)
 
-        // Проверяем, что вызов произошел с правильными параметрами
         verify { kafkaTemplate.send(producer.rollBackTopic, transaction) }
     }
 

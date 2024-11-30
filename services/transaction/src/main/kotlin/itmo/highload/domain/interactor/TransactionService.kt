@@ -10,7 +10,6 @@ import itmo.highload.domain.TransactionProducer
 import itmo.highload.domain.TransactionRepository
 import itmo.highload.domain.mapper.TransactionMapper
 import itmo.highload.kafka.TransactionResultMessage
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

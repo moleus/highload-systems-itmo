@@ -31,7 +31,8 @@ class DonationControllerTest {
                 userId = 123,
                 moneyAmount = 500,
                 isDonation = true,
-                status = "SUCCESS"
+                status = "SUCCESS",
+                id = 1
             ),
             TransactionResponse(
                 dateTime = LocalDateTime.now(),
@@ -39,7 +40,8 @@ class DonationControllerTest {
                 userId = 124,
                 moneyAmount = 700,
                 isDonation = true,
-                status = "PENDING"
+                status = "PENDING",
+                id = 1
             )
         )
 
@@ -66,7 +68,8 @@ class DonationControllerTest {
             userId = userId,
             moneyAmount = 500,
             isDonation = true,
-            status = "SUCCESS"
+            status = "SUCCESS",
+            id = 1
         )
 
         every { jwtUtils.extractUserId(token) } returns userId
@@ -89,7 +92,8 @@ class DonationControllerTest {
                 userId = customerId,
                 moneyAmount = 500,
                 isDonation = true,
-                status = "SUCCESS"
+                status = "SUCCESS",
+                id = 1
             ),
             TransactionResponse(
                 dateTime = LocalDateTime.now(),
@@ -97,7 +101,8 @@ class DonationControllerTest {
                 userId = customerId,
                 moneyAmount = 700,
                 isDonation = true,
-                status = "PENDING"
+                status = "PENDING",
+                id = 1
             )
         )
 

@@ -31,7 +31,8 @@ class ExpenseControllerTest {
                 userId = 321,
                 moneyAmount = 300,
                 isDonation = false,
-                status = "SUCCESS"
+                status = "SUCCESS",
+                id = 1
             ),
             TransactionResponse(
                 dateTime = LocalDateTime.now(),
@@ -39,7 +40,8 @@ class ExpenseControllerTest {
                 userId = 322,
                 moneyAmount = 150,
                 isDonation = false,
-                status = "PENDING"
+                status = "PENDING",
+                id = 1
             )
         )
 
@@ -66,7 +68,8 @@ class ExpenseControllerTest {
             userId = expenseManagerId,
             moneyAmount = 300,
             isDonation = false,
-            status = "SUCCESS"
+            status = "SUCCESS",
+            id = 1
         )
 
         every { jwtUtils.extractUserId(token) } returns expenseManagerId
