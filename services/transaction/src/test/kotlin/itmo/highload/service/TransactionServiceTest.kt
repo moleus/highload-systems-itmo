@@ -51,20 +51,20 @@ class TransactionServiceTest {
         moneyAmount = 100
     )
 
-    private val testTransactionResponse = TransactionResponse(
-        dateTime = LocalDateTime.now(),
-        purpose = PurposeResponse(id = 1, name = "Test Purpose"),
-        userId = 1,
-        moneyAmount = 100,
-        isDonation = false,
-        status = "PENDING",
-        id = 1
-    )
-
-    private val testTransactionDto = TransactionDto(
-        purposeId = 1,
-        moneyAmount = 100
-    )
+//    private val testTransactionResponse = TransactionResponse(
+//        dateTime = LocalDateTime.now(),
+//        purpose = PurposeResponse(id = 1, name = "Test Purpose"),
+//        userId = 1,
+//        moneyAmount = 100,
+//        isDonation = false,
+//        status = "PENDING",
+//        id = 1
+//    )
+//
+//    private val testTransactionDto = TransactionDto(
+//        purposeId = 1,
+//        moneyAmount = 100
+//    )
 
     private val testTransactionResultMessage = TransactionResultMessage(
         dateTime = LocalDateTime.now(),

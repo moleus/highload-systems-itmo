@@ -244,7 +244,8 @@ class TransactionService(
                                     transactionProducer.sendRollBackMessage(
                                         TransactionMapper.toTransactionRollBackMessageFromResultMessage(transaction)
                                     )
-                                    transactionCache.computeIfPresent(transaction.transactionId) { _, cachedTransaction ->
+                                    transactionCache.computeIfPresent(transaction.transactionId)
+                                    { _, cachedTransaction ->
                                         cachedTransaction.copy(status = "CANCELED")
                                     }
                                 }

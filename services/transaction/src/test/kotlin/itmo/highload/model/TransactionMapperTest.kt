@@ -22,7 +22,8 @@ class TransactionMapperTest {
         val balanceResponse = BalanceResponse(id = 1, purpose = PurposeResponse(id = 1, name = "Test Purpose"),
             moneyAmount = 100)
 
-        val transactionEntity = TransactionMapper.toEntity(dto, userId = 1, balance = balanceResponse, isDonation = true)
+        val transactionEntity = TransactionMapper.toEntity(dto, userId = 1, balance = balanceResponse,
+            isDonation = true)
 
         assertNotNull(transactionEntity)
         assertEquals(transactionEntity.moneyAmount, 100)
