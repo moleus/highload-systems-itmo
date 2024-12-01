@@ -43,6 +43,9 @@ resource "yandex_vpc_subnet" "this" {
 
 resource "yandex_compute_instance" "this" {
   boot_disk {
+    initialize_params {
+      size = 40
+    }
   }
   name = "compute-vm-2-8-20-hdd-1731741773086"
   description = "highload k8s labs"
@@ -65,9 +68,9 @@ resource "yandex_compute_instance" "this" {
     nat_ip_address = yandex_vpc_address.static_ip.external_ipv4_address[0].address
   }
   resources {
-    core_fraction = 20
-    cores = 2
-    memory = 8
+    core_fraction = 100
+    cores = 4
+    memory = 12
   }
 
   provisioner "local-exec" {
