@@ -5,6 +5,8 @@ image:
 nameOverride: balance
 fullnameOverride: balance
 
+serviceAccountName: "hazelcast"
+
 initContainers:
   - name: liquibase-balance
     # TODO: change tag to lab4

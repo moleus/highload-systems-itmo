@@ -5,6 +5,8 @@ image:
 nameOverride: animal
 fullnameOverride: animal
 
+serviceAccountName: "hazelcast"
+
 initContainers:
   - name: liquibase-main
     image: ghcr.io/moleus/highload-systems-itmo/db-init:lab4
