@@ -25,7 +25,7 @@ spec:
         {{- end }}
     spec:
       {{- if .Values.serviceAccountName }}
-        serviceAccountName: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
