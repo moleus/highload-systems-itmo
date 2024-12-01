@@ -19,7 +19,7 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /hazelcast/health/ready
+    path: /hazelcast/health
     port: 5701
   initialDelaySeconds: 100
   periodSeconds: 10
@@ -27,7 +27,7 @@ livenessProbe:
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
-    path: /hazelcast/health/ready
+    path: /hazelcast/health
     port: 5701
   initialDelaySeconds: 100
   periodSeconds: 10
