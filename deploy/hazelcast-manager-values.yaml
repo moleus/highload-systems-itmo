@@ -19,3 +19,9 @@ resources:
 
 livenessProbe:
 readinessProbe:
+
+envs:
+  - name: MC_DEFAULT_CLUSTER
+    value: "dev"
+  - name: MC_DEFAULT_CLUSTER_MEMBERS
+    value: "hazelcast"
