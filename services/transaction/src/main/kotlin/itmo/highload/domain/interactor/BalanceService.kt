@@ -45,33 +45,36 @@ interface BalanceService {
 @Component
 class BalanceServiceFallback : BalanceService {
 
+    companion object {
+        private const val BALANCE_SERVICE_IS_CURRENTLY_UNAVAILABLE = "Balance service is currently unavailable."
+    }
     private val logger = KotlinLogging.logger {}
 
     override fun getAllBalances(token: String): Flux<BalanceResponse> {
         logger.warn { "Fallback triggered for getAllBalances" }
         return Flux.error {
-            ServiceUnavailableException("Balance service is currently unavailable.")
+            ServiceUnavailableException(BALANCE_SERVICE_IS_CURRENTLY_UNAVAILABLE)
         }
     }
 
     override fun getBalanceById(token: String, id: Int): Mono<BalanceResponse> {
         logger.warn { "${"Fallback triggered for getBalanceById, id: {}"} $id" }
         return Mono.error {
-            ServiceUnavailableException("Balance service is currently unavailable.")
+            ServiceUnavailableException(BALANCE_SERVICE_IS_CURRENTLY_UNAVAILABLE)
         }
     }
 
     override fun getAllPurposes(token: String): Flux<PurposeResponse> {
         logger.warn { "Fallback triggered for getAllPurposes" }
         return Flux.error {
-            ServiceUnavailableException("Balance service is currently unavailable.")
+            ServiceUnavailableException(BALANCE_SERVICE_IS_CURRENTLY_UNAVAILABLE)
         }
     }
 
     override fun addPurpose(token: String, purposeRequestDto: PurposeRequestDto): Mono<PurposeResponse> {
         logger.warn { "${"Fallback triggered for addPurpose, purposeRequestDto: {}"} $purposeRequestDto" }
         return Mono.error {
-            ServiceUnavailableException("Balance service is currently unavailable.")
+            ServiceUnavailableException(BALANCE_SERVICE_IS_CURRENTLY_UNAVAILABLE)
         }
     }
 
