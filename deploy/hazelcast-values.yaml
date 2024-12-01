@@ -42,3 +42,5 @@ envs:
     value: "true"
   - name: HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_HEALTHCHECK_ENABLED
     value: "true"
+  - name: HZ_EXECUTORSERVICE_DEFAULT_POOLSIZE
+    value: "2"
