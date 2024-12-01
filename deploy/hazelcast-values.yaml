@@ -47,5 +47,5 @@ serviceAccountName: "hazelcast"
 envs:
   - name: HZ_NETWORK_RESTAPI_ENABLED
     value: "true"
-  - name: HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_HEALTH_CHECK_ENABLED
+  - name: HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_HEALTHCHECK_ENABLED
     value: "true"
