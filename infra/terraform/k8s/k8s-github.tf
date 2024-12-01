@@ -13,6 +13,7 @@ resource "kubernetes_secret_v1" "ro_deploy_key" {
   data = {
     "id_rsa" = file(local.deploy_key_path)
   }
+  depends_on = [kubernetes_namespace_v1.this]
 }
 
 // image pull secrets for github container registry
@@ -35,4 +36,5 @@ resource "kubernetes_secret_v1" "ghcr_pull_secret" {
       }
     })
   }
+  depends_on = [kubernetes_namespace_v1.this]
 }
