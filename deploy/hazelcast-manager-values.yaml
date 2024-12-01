@@ -1,0 +1,24 @@
+image:
+  repository: hazelcast/management-center
+  tag: 5.6
+
+nameOverride: hazelcast-manager
+fullnameOverride: hazelcast-manager
+
+replicaCount: 1
+
+service:
+  port: 8587
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+
+livenessProbe:
+readinessProbe:
+
+
+serviceAccountName: "hazelcast-manager"
