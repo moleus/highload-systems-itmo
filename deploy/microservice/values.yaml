@@ -46,14 +46,14 @@ livenessProbe:
     path: /actuator/health/liveness
     port: http
   initialDelaySeconds: 60
-  periodSeconds: 5
+  periodSeconds: 10
   failureThreshold: 5
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
     port: http
-  initialDelaySeconds: 10
-  periodSeconds: 5
+  initialDelaySeconds: 60
+  periodSeconds: 10
   failureThreshold: 5
 
 envs:
