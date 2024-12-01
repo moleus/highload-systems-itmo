@@ -43,7 +43,9 @@ resource "yandex_vpc_subnet" "this" {
 
 resource "yandex_compute_instance" "this" {
   boot_disk {
+    disk_id = ""
     initialize_params {
+      image_id = "fd8hp9las7k42nhld0pe"
       size = 40
     }
   }
