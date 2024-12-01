@@ -7,5 +7,5 @@ hazelcast:
         enabled: true
         service-name: hazelcast
         service-port: 5701
-      multicast:
-        enabled: true
+#      multicast:
+#        enabled: true
