@@ -16,6 +16,8 @@ namespace: "dev"
 podAnnotations: {}
 podLabels: {}
 
+serviceAccountName: "default"
+
 service:
   type: ClusterIP
   port: 80

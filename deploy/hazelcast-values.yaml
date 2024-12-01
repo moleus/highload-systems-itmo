@@ -32,3 +32,5 @@ readinessProbe:
   periodSeconds: 10
   timeoutSeconds: 10
 
+
+serviceAccountName: "hazelcast"
