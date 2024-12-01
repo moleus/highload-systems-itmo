@@ -44,4 +44,4 @@ readinessProbe:
       - bash
       - "-c"
       - |
-        mc ready local  
+        mc ready local
