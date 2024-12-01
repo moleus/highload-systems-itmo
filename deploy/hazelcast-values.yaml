@@ -21,7 +21,7 @@ livenessProbe:
   httpGet:
     path: /hazelcast/health
     port: 5701
-  initialDelaySeconds: 100
+  initialDelaySeconds: 50
   periodSeconds: 10
   failureThreshold: 5
   timeoutSeconds: 10
@@ -29,21 +29,13 @@ readinessProbe:
   httpGet:
     path: /hazelcast/health
     port: 5701
-  initialDelaySeconds: 100
+  initialDelaySeconds: 50
   periodSeconds: 10
   failureThreshold: 5
   timeoutSeconds: 10
 
-
 serviceAccountName: "hazelcast"
 
-#hazelcast:
-#  network:
-#    rest-api:
-#      enabled: true
-#      endpoint-groups:
-#        HEALTH_CHECK:
-#          enabled: true
 envs:
   - name: HZ_NETWORK_RESTAPI_ENABLED
     value: "true"
