@@ -19,6 +19,3 @@ resources:
 
 livenessProbe:
 readinessProbe:
-
-
-serviceAccountName: "hazelcast-manager"
