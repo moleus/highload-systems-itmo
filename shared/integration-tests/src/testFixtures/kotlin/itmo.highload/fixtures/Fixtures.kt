@@ -44,7 +44,7 @@ object TransactionResponseFixture {
         userId: Int = -2,
         moneyAmount: Int = 100,
         isDonation: Boolean = true
-    ) = TransactionResponse(dateTime, purpose, userId, moneyAmount, isDonation, "PENDING")
+    ) = TransactionResponse(-1, dateTime, purpose, userId, moneyAmount, isDonation, "PENDING")
 }
 
 object AdoptionRequestResponseFixture {
