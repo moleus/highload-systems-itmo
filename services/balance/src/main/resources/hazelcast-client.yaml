@@ -5,6 +5,7 @@ hazelcast:
     join:
       kubernetes:
         enabled: true
+        namespace: dev
         service-name: hazelcast
         service-port: 5701
 #      multicast:
