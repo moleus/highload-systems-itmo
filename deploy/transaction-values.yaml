@@ -7,6 +7,7 @@ fullnameOverride: transaction
 
 serviceAccountName: "hazelcast"
 
+
 initContainers:
   - name: liquibase-main
     image: ghcr.io/moleus/highload-systems-itmo/db-init:lab4
@@ -33,6 +34,8 @@ initContainers:
               key: password
 
 envs:
+#  - name: TRANSACTION_DELAY
+#    value: "10"
   - name: APP_SERVER_PORT
     value: "80"
   - name: API_ADDRESS

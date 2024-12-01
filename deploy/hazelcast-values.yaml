@@ -21,15 +21,17 @@ livenessProbe:
   httpGet:
     path: /hazelcast/health/ready
     port: 5701
-  initialDelaySeconds: 60
+  initialDelaySeconds: 100
   periodSeconds: 10
+  failureThreshold: 5
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
     path: /hazelcast/health/ready
     port: 5701
-  initialDelaySeconds: 60
+  initialDelaySeconds: 100
   periodSeconds: 10
+  failureThreshold: 5
   timeoutSeconds: 10
 
 

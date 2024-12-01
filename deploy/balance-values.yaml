@@ -34,6 +34,8 @@ initContainers:
             key: password
 
 envs:
+  #  - name: TRANSACTION_DELAY
+  #    value: "10"
   - name: APP_SERVER_PORT
     value: "80"
   - name: API_ADDRESS
