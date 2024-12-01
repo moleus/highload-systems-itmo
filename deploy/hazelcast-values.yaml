@@ -7,9 +7,28 @@ fullnameOverride: hazelcast
 
 replicaCount: 2
 
+service:
+  port: 5701
+
 resources:
   requests:
     memory: "256Mi"
     cpu: "250m"
   limits:
     memory: "512Mi"
+
+livenessProbe:
+  httpGet:
+    path: /hazelcast/health/ready
+    port: 5701
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /hazelcast/health/ready
+    port: 5701
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+
