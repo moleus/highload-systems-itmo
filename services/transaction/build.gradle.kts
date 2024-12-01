@@ -39,6 +39,7 @@ testing {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("org.testcontainers:kafka:1.20.3")
+                implementation("com.hazelcast:hazelcast-spring:5.3.2")
             }
         }
     }
