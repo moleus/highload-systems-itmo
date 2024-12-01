@@ -185,7 +185,8 @@ class TransactionServiceTest {
         val transactionCacheMock = mockk<IMap<Int, TransactionResponse>>()
         every { hazelcastInstance.getMap<Int, TransactionResponse>("transaction") } returns transactionCacheMock
         every { transactionCacheMock.computeIfPresent(eq(transactionId), any()) } answers {
-            val computeFunction = secondArg<java.util.function.BiFunction<Int, TransactionResponse, TransactionResponse>>()
+            val computeFunction = secondArg<java.util.function.BiFunction<Int, TransactionResponse,
+                    TransactionResponse>>()
             computeFunction.apply(transactionId, TransactionMapper.toResponseFromTransaction(testTransaction))
         }
 
