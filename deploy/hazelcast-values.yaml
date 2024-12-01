@@ -1,0 +1,15 @@
+image:
+  repository: hazelcast/hazelcast
+  tag: 5-jdk21
+
+nameOverride: hazelcast
+fullnameOverride: hazelcast
+
+replicaCount: 2
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
