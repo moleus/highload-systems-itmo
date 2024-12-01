@@ -31,10 +31,6 @@ class TransactionServiceTest {
     private val transactionService = TransactionService(transactionRepository, balanceService, transactionProducer,
         hazelcastInstance, 0)
 
-    private val userId = -1
-    private val purposeId = 1
-    private val token = "test-token"
-
     private val testTransaction = Transaction(
         id = 1,
         dateTime = LocalDateTime.now(),
@@ -50,21 +46,6 @@ class TransactionServiceTest {
         purpose = PurposeResponse(id = 1, name = "Test Purpose"),
         moneyAmount = 100
     )
-
-//    private val testTransactionResponse = TransactionResponse(
-//        dateTime = LocalDateTime.now(),
-//        purpose = PurposeResponse(id = 1, name = "Test Purpose"),
-//        userId = 1,
-//        moneyAmount = 100,
-//        isDonation = false,
-//        status = "PENDING",
-//        id = 1
-//    )
-//
-//    private val testTransactionDto = TransactionDto(
-//        purposeId = 1,
-//        moneyAmount = 100
-//    )
 
     private val testTransactionResultMessage = TransactionResultMessage(
         dateTime = LocalDateTime.now(),
@@ -164,6 +145,57 @@ class TransactionServiceTest {
         verify { transactionRepository.updateStatus(transactionMessage.transactionId, "COMPLETED") }
         verify { transactionRepository.updateStatus(transactionMessage.transactionId, "CANCELED") }
         verify { transactionProducer.sendRollBackMessage(any()) }
+    }
+
+    @Test
+    fun `addTransaction should save transaction and send Kafka messages`() {
+        val transactionDto = TransactionDto(
+            moneyAmount = 100,
+            purposeId = 1
+        )
+        val managerId = 2
+        val isDonation = true
+        val savedTransaction = testTransaction.copy(id = 2)
+
+        every { transactionRepository.save(any()) } returns Mono.just(savedTransaction)
+        every { transactionProducer.sendMessageToBalanceCheck(any()) } returns Unit
+        every { transactionProducer.sendMessageToNewDonationTopic(any()) } returns Unit
+
+        val transactionCacheMock = mockk<IMap<Int, TransactionResponse>>()
+        every { hazelcastInstance.getMap<Int, TransactionResponse>("transaction") } returns transactionCacheMock
+        every { transactionCacheMock[savedTransaction.id] = any() } returns Unit
+
+        val result = transactionService.addTransaction(transactionDto, managerId, isDonation)
+
+        StepVerifier.create(result)
+            .expectNextMatches { it.id == savedTransaction.id }
+            .verifyComplete()
+
+        verify { transactionRepository.save(any()) }
+        verify { transactionProducer.sendMessageToBalanceCheck(any()) }
+        verify { transactionProducer.sendMessageToNewDonationTopic(any()) }
+    }
+
+    @Test
+    fun `rollbackTransaction should update status and log rollback`() {
+        val transactionId = 1
+
+        every { transactionRepository.updateStatus(transactionId, "CANCELED") } returns Mono.empty()
+
+        val transactionCacheMock = mockk<IMap<Int, TransactionResponse>>()
+        every { hazelcastInstance.getMap<Int, TransactionResponse>("transaction") } returns transactionCacheMock
+        every { transactionCacheMock.computeIfPresent(eq(transactionId), any()) } answers {
+            val computeFunction = secondArg<java.util.function.BiFunction<Int, TransactionResponse, TransactionResponse>>()
+            computeFunction.apply(transactionId, TransactionMapper.toResponseFromTransaction(testTransaction))
+        }
+
+        val result = transactionService.rollbackTransaction(transactionId)
+
+        StepVerifier.create(result)
+            .verifyComplete()
+
+        verify { transactionRepository.updateStatus(transactionId, "CANCELED") }
+        verify { transactionCacheMock.computeIfPresent(eq(transactionId), any()) }
     }
 
 

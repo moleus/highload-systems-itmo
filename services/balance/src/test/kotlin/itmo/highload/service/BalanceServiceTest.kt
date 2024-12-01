@@ -28,43 +28,16 @@ class BalanceServiceTest {
     private val testBalance = Balance(id = 1, purpose = "test", moneyAmount = 100)
     private val testBalanceEntity = BalanceMapper.toEntity(testBalance)
 
-    // Mocking the Hazelcast IMap
     private val balanceMap: IMap<Int, BalanceEntity> = mockk()
 
     init {
-        // When getMap is called, return the mocked map
         every { hazelcastInstance.getMap<Int, BalanceEntity>("balance") } returns balanceMap
     }
-//
-//    @Test
-//    fun `should return balance by id`() {
-//        // Mock repository to return the balance
-//        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
-//
-//        // Simulate cache miss
-//        every { balanceMap[1] } returns null
-//
-//        // Mock the `put` method to do nothing or return a value
-//        every { balanceMap.put(1, any()) } returns null
-//
-//        // Call the service method
-//        val result = balanceService.getBalanceById(1)
-//
-//        // Verify the result
-//        StepVerifier.create(result)
-//            .assertNext { assertEquals(testBalanceEntity, it) }
-//            .verifyComplete()
-//
-//        // Verify interactions
-//        verify { balanceRepository.findById(1) }
-//        verify { balanceMap.put(1, testBalanceEntity) }
-//    }
-
 
     @Test
     fun `should throw EntityNotFoundException when balance by id is not found`() {
         every { balanceRepository.findById(1) } returns Mono.empty()
-        every { balanceMap[1] } returns null // Simulating cache miss
+        every { balanceMap[1] } returns null
 
         val result = balanceService.getBalanceById(1)
 
@@ -75,37 +48,6 @@ class BalanceServiceTest {
         verify { balanceRepository.findById(1) }
     }
 
-//    @Test
-//    fun `should return all balances`() {
-//        every { balanceRepository.findAll() } returns Flux.just(testBalance)
-//        every { balanceMap[1] } returns null // Simulating cache miss
-//
-//        val result = balanceService.getAll()
-//
-//        StepVerifier.create(result)
-//            .assertNext { assertEquals(testBalanceEntity, it) }
-//            .verifyComplete()
-//
-//        verify { balanceRepository.findAll() }
-//        verify { balanceMap.put(1, testBalanceEntity) }
-//    }
-//
-//    @Test
-//    fun `should add purpose successfully`() {
-//        every { balanceRepository.findByPurpose("test") } returns Mono.empty()
-//        every { balanceRepository.save(any()) } returns Mono.just(testBalance)
-//        every { balanceMap[1] } returns null // Simulating cache miss
-//
-//        val result = balanceService.addPurpose("test")
-//
-//        StepVerifier.create(result)
-//            .assertNext { assertEquals(testBalanceEntity, it) }
-//            .verifyComplete()
-//
-//        verify { balanceRepository.findByPurpose("test") }
-//        verify { balanceRepository.save(any()) }
-//        verify { balanceMap.put(1, testBalanceEntity) }
-//    }
 
     @Test
     fun `should throw EntityAlreadyExistsException when purpose already exists`() {
@@ -122,23 +64,6 @@ class BalanceServiceTest {
         verify { balanceRepository.findByPurpose("test") }
     }
 
-//    @Test
-//    fun `should adjust balance correctly for donation`() {
-//        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
-//        every { balanceRepository.save(any()) } returns Mono.just(testBalance.copy(moneyAmount = 150))
-//        every { balanceMap[1] } returns testBalanceEntity // Simulating cache hit
-//
-//        val result = balanceService.checkAndAdjustBalance(1, isDonation = true, moneyAmount = 50)
-//
-//        StepVerifier.create(result)
-//            .expectNext(true)
-//            .verifyComplete()
-//
-//        verify { balanceRepository.findById(1) }
-//        verify { balanceRepository.save(testBalance.copy(moneyAmount = 150)) }
-//        verify { balanceMap.put(1, testBalanceEntity.copy(moneyAmount = 150)) }
-//    }
-
     @Test
     fun `should fail to adjust balance for negative amount`() {
         every { balanceRepository.findById(1) } returns Mono.just(testBalance)
@@ -153,21 +78,83 @@ class BalanceServiceTest {
         verify { balanceRepository.findById(1) }
     }
 
-//    @Test
-//    fun `should rollback balance correctly`() {
-//        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
-//        every { balanceRepository.save(any()) } returns Mono.just(testBalance.copy(moneyAmount = 50))
-//        every { balanceMap[1] } returns testBalanceEntity // Simulating cache hit
-//
-//        val result = balanceService.rollbackBalance(1, isDonation = true, moneyAmount = 50)
-//
-//        StepVerifier.create(result)
-//            .expectNext(true)
-//            .verifyComplete()
-//
-//        verify { balanceRepository.findById(1) }
-//        verify { balanceRepository.save(testBalance.copy(moneyAmount = 50)) }
-//        verify { balanceMap.put(1, testBalanceEntity.copy(moneyAmount = 50)) }
-//    }
+    @Test
+    fun `should retrieve all balances and populate cache`() {
+        every { balanceRepository.findAll() } returns Flux.just(testBalance)
+        every { balanceMap[1] } returns null
+        every { balanceMap[1] = testBalanceEntity } returns Unit
+
+        val result = balanceService.getAll()
+
+        StepVerifier.create(result)
+            .expectNextMatches { it.id == testBalance.id && it.purpose == testBalance.purpose }
+            .verifyComplete()
+
+        verify { balanceRepository.findAll() }
+        verify { balanceMap[1] = testBalanceEntity }
+    }
+
+    @Test
+    fun `should retrieve all purposes`() {
+        every { balanceRepository.findAll() } returns Flux.just(testBalance)
+        every { balanceMap[1] } returns null
+        every { balanceMap[1] = testBalanceEntity } returns Unit
+
+        val result = balanceService.getAllPurposes()
+
+        StepVerifier.create(result)
+            .expectNextMatches { it.id == testBalance.id && it.purpose == testBalance.purpose }
+            .verifyComplete()
+
+        verify { balanceRepository.findAll() }
+        verify { balanceMap[1] = testBalanceEntity }
+    }
+
+    @Test
+    fun `should successfully adjust balance for donation`() {
+        val adjustedBalance = testBalance.copy(moneyAmount = testBalance.moneyAmount + 50)
+        val adjustedEntity = BalanceMapper.toEntity(adjustedBalance)
+
+        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
+        every { balanceMap[1] } returns testBalanceEntity
+        every { balanceRepository.save(any<Balance>()) } returns Mono.just(adjustedBalance)
+        every { balanceMap.computeIfPresent(1, any()) } answers {
+            adjustedEntity
+        }
+
+        val result = balanceService.checkAndAdjustBalance(1, isDonation = true, moneyAmount = 50)
+
+        StepVerifier.create(result)
+            .expectNext(true)
+            .verifyComplete()
+
+        verify { balanceRepository.findById(1) }
+        verify { balanceRepository.save(any<Balance>()) }
+        verify { balanceMap.computeIfPresent(1, any()) }
+    }
+
+    @Test
+    fun `should successfully rollback balance for non-donation`() {
+        val adjustedBalance = testBalance.copy(moneyAmount = testBalance.moneyAmount + 50)
+        val adjustedEntity = BalanceMapper.toEntity(adjustedBalance)
+
+        every { balanceRepository.findById(1) } returns Mono.just(testBalance)
+        every { balanceMap[1] } returns testBalanceEntity
+        every { balanceRepository.save(any<Balance>()) } returns Mono.just(adjustedBalance)
+        every { balanceMap.computeIfPresent(1, any()) } answers {
+            adjustedEntity
+        }
+
+        val result = balanceService.rollbackBalance(1, isDonation = false, moneyAmount = 50)
+
+        StepVerifier.create(result)
+            .expectNext(true)
+            .verifyComplete()
+
+        verify { balanceRepository.findById(1) }
+        verify { balanceRepository.save(any<Balance>()) }
+        verify { balanceMap.computeIfPresent(1, any()) }
+    }
+
 
 }
