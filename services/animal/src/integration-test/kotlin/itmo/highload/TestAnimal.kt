@@ -1,8 +1,6 @@
 package itmo.highload
 
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.stubFor
-import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactory
 import io.restassured.RestAssured
@@ -31,6 +29,10 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.r2dbc.connection.init.ScriptUtils
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.junit.jupiter.Container
 import reactor.core.publisher.Mono
 
 
@@ -39,6 +41,19 @@ import reactor.core.publisher.Mono
 class TestAnimal @Autowired constructor(
     private val connectionFactory: ConnectionFactory, jwtUtils: JwtUtils
 ) : TestContainerIntegrationTest() {
+    companion object {
+        @Container
+        @Suppress("UnusedPrivateProperty")
+        private val hazelcast = GenericContainer<Nothing>("hazelcast/hazelcast:5-jdk21").apply {
+            this.withExposedPorts(5701)
+        }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun hazelcastProps(registry: DynamicPropertyRegistry) {
+            registry.add("spring.hazelcast.config") { "classpath:hazelcast-client.yaml" }
+        }
+    }
 
     @LocalServerPort
     private var port: Int = 0

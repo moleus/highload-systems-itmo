@@ -17,6 +17,7 @@ testing {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("org.springframework.cloud:spring-cloud-contract-wiremock:4.1.4")
+                implementation("com.hazelcast:hazelcast-spring:5.3.2")
             }
         }
     }
