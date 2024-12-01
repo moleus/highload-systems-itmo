@@ -39,7 +39,7 @@ envs:
   - name: HAZELCAST_NETWORK_JOIN_KUBERNETES_SERVICEDNS
     value: "hazelcast.dev.svc.cluster.local"
   - name: HAZELCAST_NETWORK_JOIN_KUBERNETES_SERVICEPORT
-    value: 0
+    value: "0"
   - name: APP_SERVER_PORT
     value: "80"
   - name: API_ADDRESS
