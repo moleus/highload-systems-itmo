@@ -50,7 +50,6 @@ jobs:
             const parsedParams = JSON.parse(process.env.PARSED_PARAMS);
             const apps = parsedParams.apps;
             let tag = parsedParams.tag;
-            apps = apps.filter(app => !['kafka-ui', 'db-balance', 'db', 'minio', 'kafka'].includes(app));
             if (!tag) {
               tag = process.env.TAG;
             }
