@@ -36,3 +36,16 @@ readinessProbe:
 
 
 serviceAccountName: "hazelcast"
+
+#hazelcast:
+#  network:
+#    rest-api:
+#      enabled: true
+#      endpoint-groups:
+#        HEALTH_CHECK:
+#          enabled: true
+envs:
+  - name: HZ_NETWORK_RESTAPI_ENABLED
+    value: "true"
+  - name: HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_HEALTH_CHECK_ENABLED
+    value: "true"
