@@ -24,6 +24,10 @@ class AdoptionRequestInteractor(
     private val ownershipRepository: OwnershipRepository,
     private val adoptionRequestProducer: AdoptionRequestProducer
 ) {
+    companion object {
+        private const val ADOPTION_REQUEST_NOT_FOUND = "Adoption request not found"
+    }
+
     private val logger = LoggerFactory.getLogger(AdoptionRequestInteractor::class.java)
 
     fun save(customerId: Int, animalId: Int): Mono<AdoptionRequestEntity> {
@@ -57,7 +61,7 @@ class AdoptionRequestInteractor(
     fun update(managerId: Int, request: UpdateAdoptionRequestStatusDto): Mono<AdoptionRequestEntity> {
         return Mono.fromCallable {
             adoptionRequestRepository.findById(request.id!!).orElseThrow {
-                EntityNotFoundException("Adoption request not found")
+                EntityNotFoundException(ADOPTION_REQUEST_NOT_FOUND)
             }
         }.subscribeOn(Schedulers.boundedElastic()).flatMap { adoptionRequest ->
             adoptionRequest.status = request.status!!
@@ -92,9 +96,9 @@ class AdoptionRequestInteractor(
     fun delete(customerId: Int, animalId: Int): Mono<Void> {
         return Mono.fromCallable {
             adoptionRequestRepository.findByCustomerIdAndAnimalId(customerId, animalId)
-                .orElseThrow { EntityNotFoundException("Adoption request not found") }
+                .orElseThrow { EntityNotFoundException(ADOPTION_REQUEST_NOT_FOUND) }
         }.subscribeOn(Schedulers.boundedElastic())
-            .switchIfEmpty(Mono.error(EntityNotFoundException("Adoption request not found")))
+            .switchIfEmpty(Mono.error(EntityNotFoundException(ADOPTION_REQUEST_NOT_FOUND)))
             .flatMap { adoptionRequest ->
                 if (adoptionRequest.status != AdoptionStatus.PENDING) {
                     return@flatMap Mono.error<Void>(

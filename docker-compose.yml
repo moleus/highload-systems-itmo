@@ -181,32 +181,9 @@ services:
     networks:
       - backend
 
-  eureka-server:
-    image: ghcr.io/moleus/highload/eureka-server:${LAB_TAG:?error}
-    ports:
-      - "8761:8761"
-    depends_on:
-      cloud-config:
-        condition: service_healthy
-      init-db:
-        condition: service_completed_successfully
-    env_file:
-      - .env
-    environment:
-      <<: *medium-jvm-heap-envs
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - backend
-
   adoption:
     image: ghcr.io/moleus/highload/adoption:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     environment:
@@ -220,8 +197,6 @@ services:
   animal:
     image: ghcr.io/moleus/highload/animal:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     environment:
@@ -238,9 +213,6 @@ services:
       - "8080:8080"
     env_file:
       - .env
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     environment:
       <<: *small-jvm-heap-envs
     healthcheck:
@@ -254,8 +226,6 @@ services:
   authentication:
     image: ghcr.io/moleus/highload/authentication:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     env_file:
@@ -269,8 +239,6 @@ services:
   transaction:
     image: ghcr.io/moleus/highload/transaction:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
       init-balance-db:
@@ -286,8 +254,6 @@ services:
   balance:
     image: ghcr.iomoleus/highload/balance:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     env_file:
@@ -301,8 +267,6 @@ services:
   images:
     image: ghcr.io/moleus/highload/images:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       minio:
         condition: service_healthy
       init-db:
@@ -317,9 +281,6 @@ services:
 
   notification:
     image: ghcr.io/moleus/highload/notification:${LAB_TAG:?error}
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     ports:
       - "8089:8080"
     env_file:
@@ -329,6 +290,18 @@ services:
     <<: *default-healthcheck
     networks:
       - backend
+
+  hazelcast:
+    image: hazelcast/hazelcast:5-jdk21
+    ports:
+      - "5701:5701"
+  management-center:
+    image: hazelcast/management-center:5.6
+    ports:
+      - "8587:8080"
+    environment:
+      - MC_DEFAULT_CLUSTER=dev
+      - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast
 
 volumes:
   postgres-data:

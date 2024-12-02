@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class TransactionResponse(
+    val id: Int,
     @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val dateTime: LocalDateTime,
     val purpose: PurposeResponse,

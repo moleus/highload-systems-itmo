@@ -1,0 +1,50 @@
+image:
+  repository: hazelcast/hazelcast
+  tag: 5-jdk21
+
+nameOverride: hazelcast
+fullnameOverride: hazelcast
+
+replicaCount: 1
+
+service:
+  port: 5701
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "400m"
+
+livenessProbe:
+  httpGet:
+    path: /hazelcast/health
+readinessProbe:
+  httpGet:
+    path: /hazelcast/health
+startupProbe:
+  httpGet:
+    path: /hazelcast/health
+
+serviceAccountName: "hazelcast"
+
+envs:
+  - name: HZ_NETWORK_RESTAPI_ENABLED
+    value: "true"
+  - name: HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_HEALTHCHECK_ENABLED
+    value: "true"
+  - name: HZ_EXECUTORSERVICE_DEFAULT_POOLSIZE
+    value: "2"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_ENABLED
+    value: "true"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_NAMESPACE
+    value: "dev"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_SERVICENAME
+    value: "hazelcast"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_EXPOSEEXTERNALLY
+    value: "false"
+  - name: HZ_NETWORK_JOIN_MULTICAST_ENABLED
+    value: "false"
+

@@ -9,21 +9,6 @@ service:
   type: ClusterIP
   port: 8080
 
-livenessProbe:
-  httpGet:
-    path: /actuator/health
-    port: http
-  initialDelaySeconds: 60
-  periodSeconds: 30
-  timeoutSeconds: 10
-readinessProbe:
-  httpGet:
-    path: /actuator/health
-    port: http
-  initialDelaySeconds: 60
-  periodSeconds: 30
-  timeoutSeconds: 10
-
 envs:
   - name: KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS
     value: "kafka-controller-0.kafka-controller-headless:9092"

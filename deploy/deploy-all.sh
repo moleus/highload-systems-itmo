@@ -1,6 +1,6 @@
-microservices=("adoption" "animal" "api-gateway" "authentication" "cloud-config" "images" "notification" "transaction" "kafka-ui")
+microservices=("adoption" "animal" "api-gateway" "authentication" "cloud-config" "images" "notification" "transaction" "kafka-ui" "balance" "hazelcast" "hazelcast-manager")
 
-storage=("db" "minio")
+storage=("db" "minio" "db-balance")
 
 for storage in "${storage[@]}"; do
   helm template -f "${storage}"-values.yaml storage | kubectl --kubeconfig ~/.kube/pavel -n dev apply -f -

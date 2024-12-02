@@ -16,6 +16,7 @@ resource "kubernetes_secret_v1" "db_secrets" {
     "username"     = sensitive(local.app_db_username)
     "password" = sensitive(local.app_db_password)
   }
+  depends_on = [kubernetes_namespace_v1.this]
 }
 
 resource "kubernetes_secret_v1" "minio_secrets" {
@@ -28,4 +29,5 @@ resource "kubernetes_secret_v1" "minio_secrets" {
     "username"     = sensitive(local.app_minio_username)
     "password" = sensitive(local.app_minio_password)
   }
+  depends_on = [kubernetes_namespace_v1.this]
 }

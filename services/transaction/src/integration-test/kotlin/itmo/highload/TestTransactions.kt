@@ -24,6 +24,7 @@ import org.springframework.r2dbc.connection.init.ScriptUtils
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.kafka.KafkaContainer
 import reactor.core.publisher.Mono
@@ -45,6 +46,18 @@ class TestTransactions @Autowired constructor(
         @JvmStatic
         fun kafkaProps(registry: DynamicPropertyRegistry) {
             registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers)
+        }
+
+        @Container
+        @Suppress("UnusedPrivateProperty")
+        private val hazelcast = GenericContainer<Nothing>("hazelcast/hazelcast:5-jdk21").apply {
+            this.withExposedPorts(5701)
+        }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun hazelcastProps(registry: DynamicPropertyRegistry) {
+            registry.add("spring.hazelcast.config") { "classpath:hazelcast-client.yaml" }
         }
     }
 

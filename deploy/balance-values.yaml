@@ -5,10 +5,12 @@ image:
 nameOverride: balance
 fullnameOverride: balance
 
+serviceAccountName: "hazelcast"
+
 initContainers:
   - name: liquibase-balance
     # TODO: change tag to lab4
-    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:pavel-deploy-db-balance
+    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:add-hazelcast
     imagePullPolicy: Always
     command:
       - bash
@@ -32,20 +34,20 @@ initContainers:
             key: password
 
 envs:
+  - name: TRANSACTION_DELAY
+    value: "10"
   - name: APP_SERVER_PORT
     value: "80"
   - name: API_ADDRESS
     value: "highload.duckdns.org"
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
-  - name: EUREKA_HOST
-    value: eureka-server
   - name: KAFKA_HOST
     value: "kafka:9092"
   - name: POSTGRES_DB
     value: postgres
   - name: DB_HOST
-    value: db
+    value: db-balance
   - name: DB_PORT
     value: "5432"
   - name: POSTGRES_USER

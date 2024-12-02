@@ -16,6 +16,8 @@ namespace: "dev"
 podAnnotations: {}
 podLabels: {}
 
+serviceAccountName: "default"
+
 service:
   type: ClusterIP
   port: 80
@@ -34,7 +36,7 @@ ingress:
 
 resources:
   limits:
-    memory: 400Mi
+    memory: 800Mi
   requests:
     cpu: 50m
     memory: 200Mi
@@ -43,19 +45,21 @@ livenessProbe:
   httpGet:
     path: /actuator/health/liveness
     port: http
-  initialDelaySeconds: 60
-  periodSeconds: 5
-  failureThreshold: 5
+  periodSeconds: 10
+  failureThreshold: 20
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
     port: http
-  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 20
+startupProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http
   periodSeconds: 5
-  failureThreshold: 5
+  failureThreshold: 60
 
 envs:
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
-  - name: EUREKA_HOST
-    value: eureka-server

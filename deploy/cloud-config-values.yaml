@@ -22,8 +22,6 @@ envs:
     value: 'main'
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
-  - name: EUREKA_HOST
-    value: eureka-server
 
 service:
   port: 8888

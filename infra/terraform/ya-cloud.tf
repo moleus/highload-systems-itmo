@@ -28,6 +28,11 @@ data "yandex_resourcemanager_folder" "this" {
   name = "default"
 }
 
+# import {
+#   id = "enps0o0esc3rvbe6n724"
+#   to = yandex_vpc_network.this
+# }
+#
 resource "yandex_vpc_network" "this" {
   description = "Auto-created network"
   folder_id = data.yandex_resourcemanager_folder.this.folder_id
@@ -43,6 +48,11 @@ resource "yandex_vpc_subnet" "this" {
 
 resource "yandex_compute_instance" "this" {
   boot_disk {
+    disk_id = ""
+    initialize_params {
+      image_id = "fd8hp9las7k42nhld0pe"
+      size = 40
+    }
   }
   name = "compute-vm-2-8-20-hdd-1731741773086"
   description = "highload k8s labs"
@@ -65,20 +75,27 @@ resource "yandex_compute_instance" "this" {
     nat_ip_address = yandex_vpc_address.static_ip.external_ipv4_address[0].address
   }
   resources {
-    core_fraction = 20
-    cores = 2
-    memory = 8
+    core_fraction = 100
+    cores = 4
+    memory = 12
+    gpus = 0
   }
+}
 
-  provisioner "local-exec" {
-    command = <<EOT
-            k3sup install \
-            --ip ${self.network_interface[0].nat_ip_address} \
-            --context k3s \
-            --ssh-key ${local.ssh_identity}] \
-            --user ${local.ssh_user}
-        EOT
-  }
+resource "null_resource" "this" {
+    triggers = {
+        instance_id = yandex_compute_instance.this.id
+    }
+    provisioner "local-exec" {
+        command = <<EOT
+                k3sup install \
+                --host ${yandex_compute_instance.this.network_interface[0].nat_ip_address} \
+                --ip ${yandex_compute_instance.this.network_interface[0].nat_ip_address} \
+                --ssh-key ${local.ssh_identity} \
+                --user ${local.ssh_user} \
+                --local-path $HOME/.kube/highload
+            EOT
+    }
 }
 
 resource "yandex_vpc_address" "static_ip" {

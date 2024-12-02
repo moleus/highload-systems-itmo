@@ -31,7 +31,5 @@ envs:
     value: "highload.duckdns.org"
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
-  - name: EUREKA_HOST
-    value: eureka-server
   - name: MINIO_HOST
     value: "minio:9000"

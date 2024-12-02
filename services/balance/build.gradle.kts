@@ -19,8 +19,8 @@ dependencies {
 
     implementation("org.springframework.cloud:spring-cloud-starter-config:4.1.3")
     @Suppress("VulnerableDependency")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.3")
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0")
+    implementation("com.hazelcast:hazelcast-spring:5.3.2")
 }
 
 highloadApp {
@@ -32,6 +32,7 @@ testing {
         val integrationTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("org.testcontainers:kafka:1.20.3")
+                implementation("com.hazelcast:hazelcast-spring:5.3.2")
             }
         }
     }
