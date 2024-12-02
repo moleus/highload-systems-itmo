@@ -8,13 +8,7 @@ Content-Type: application/json
   "name": "Корм для собак"
 }
 
-###
-# 2. Останавливаем основную БД
-# 3. Демонстрируем работу БД db-balance
-# 4. ???
-
-###
-
+### Добавили хоть какой-то донат (20 секунд)
 POST http://highload.duckdns.org/api/v1/transactions/donations
 Authorization: Bearer {{$auth.token("customer-auth")}}
 Content-Type: application/json
@@ -23,3 +17,35 @@ Content-Type: application/json
   "purpose_id": 1,
   "money_amount": 100
 }
+
+###
+# форвордим порт для кафки
+# открываем кафку - http://localhost:8081/ui/clusters/kafka-0/all-topics/balance_change/messages?keySerde=String&valueSerde=String&limit=100
+# transaction DB (pending)
+# balance DB (обновился через 10)
+# transaction DB (complete)
+###
+
+### Тригерим создание кеша
+GET http://highload.duckdns.org/api/v1/balances/purposes/1
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+### Добавили донат (20 секунд)
+POST http://highload.duckdns.org/api/v1/transactions/donations
+Authorization: Bearer {{$auth.token("customer-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 800
+}
+
+###
+# transaction DB (pending)
+# смотрим в hazelcast - balance обновился (balance DB)
+# в логах transaction service начинается подтверждение транзацуии
+# сломать transaction DB
+# смотрим на роллбек (кафка + логи transaction service)
+# смотрим hazelcast - balance service - откатывается сумма на старое значение
+###
