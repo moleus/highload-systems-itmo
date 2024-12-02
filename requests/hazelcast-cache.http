@@ -1,0 +1,38 @@
+### update/delete
+# http://localhost:8080/clusters/dev/maps/animals
+# send POST
+POST http://highload.duckdns.org/api/v1/animals
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
+Content-Type: application/json
+
+{
+  "name": "Барсик2",
+  "type": "Кот",
+  "gender": "MALE",
+  "is_castrated": true,
+  "health_status": "HEALTHY"
+}
+
+### Update
+# after POST
+# http://localhost:8080/clusters/dev/maps/animals
+PUT http://highload.duckdns.org/api/v1/animals/1
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "type": "Кот",
+  "gender": "MALE",
+  "is_castrated": true,
+  "health_status": "SICK"
+}
+
+### Delete
+# http://localhost:8080/clusters/dev/maps/animals
+DELETE http://highload.duckdns.org/api/v1/animals/1
+Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
+
+### Distributed test
+GET http://highload.duckdns.org/api/v1/transactions/expenses?purposeID=1
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}

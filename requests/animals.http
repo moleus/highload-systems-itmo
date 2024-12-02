@@ -90,7 +90,6 @@ Content-Type: application/json
     });
 %}
 
-
 ### Shows that we can't change animal's gender
 PUT http://highload.duckdns.org/api/v1/animals/1
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
