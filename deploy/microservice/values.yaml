@@ -59,5 +59,3 @@ readinessProbe:
 envs:
   - name: CLOUD_CONFIG_HOST
     value: cloud-config
-  - name: EUREKA_HOST
-    value: eureka-server
