@@ -45,16 +45,20 @@ livenessProbe:
   httpGet:
     path: /actuator/health/liveness
     port: http
-  initialDelaySeconds: 60
   periodSeconds: 10
   failureThreshold: 20
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
     port: http
-  initialDelaySeconds: 60
   periodSeconds: 10
   failureThreshold: 20
+startupProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http
+  periodSeconds: 5
+  failureThreshold: 60
 
 envs:
   - name: CLOUD_CONFIG_HOST

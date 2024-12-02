@@ -21,19 +21,12 @@ resources:
 livenessProbe:
   httpGet:
     path: /hazelcast/health
-    port: 5701
-  initialDelaySeconds: 50
-  periodSeconds: 10
-  failureThreshold: 5
-  timeoutSeconds: 10
 readinessProbe:
   httpGet:
     path: /hazelcast/health
-    port: 5701
-  initialDelaySeconds: 50
-  periodSeconds: 10
-  failureThreshold: 5
-  timeoutSeconds: 10
+startupProbe:
+  httpGet:
+    path: /hazelcast/health
 
 serviceAccountName: "hazelcast"
 
