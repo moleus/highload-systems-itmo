@@ -3,8 +3,9 @@ locals {
 }
 
 module "starter_function" {
+  count = 0
   source = "./modules/cloud_function"
-  cron   = "*/15 8-23 ? * *"
+  cron   = "*/15 12-23 ? * *"  // UTC time
   dir_with_function_code = "./${path.module}/control-spot-lifecycle-function"
   function_name = "start-spot-instance"
   oauth_token = local.oauth_token
@@ -19,7 +20,7 @@ module "starter_function" {
 
 module "stopper_function" {
   source = "./modules/cloud_function"
-  cron   = "59 23 ? * *"
+  cron   = "59 1 ? * *" // UTC time
   dir_with_function_code = "./${path.module}/control-spot-lifecycle-function"
   function_name = "stop-spot-instance"
   oauth_token = local.oauth_token
