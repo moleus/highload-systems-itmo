@@ -1,4 +1,4 @@
-###
+### 1. Добавляем цель для сбора средств
 
 POST http://highload.duckdns.org/api/v1/balances/purposes
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
@@ -9,6 +9,17 @@ Content-Type: application/json
 }
 
 ###
-POST http://highload.duckdns.org/api/v1/adoptions/4
-Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+# 2. Останавливаем основную БД
+# 3. Демонстрируем работу БД db-balance
+# 4. ???
 
+###
+
+POST http://highload.duckdns.org/api/v1/transactions/donations
+Authorization: Bearer {{$auth.token("customer-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 100
+}
