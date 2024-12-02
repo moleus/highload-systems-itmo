@@ -44,3 +44,14 @@ envs:
     value: "true"
   - name: HZ_EXECUTORSERVICE_DEFAULT_POOLSIZE
     value: "2"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_ENABLED
+    value: "true"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_NAMESPACE
+    value: "dev"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_SERVICE_NAME
+    value: "hazelcast"
+  - name: HZ_NETWORK_JOIN_KUBERNETES_EXPOSEEXTERNALLY
+    value: "false"
+  - name: HZ_NETWORK_JOIN_MULTICAST_ENABLED
+    value: "false"
+

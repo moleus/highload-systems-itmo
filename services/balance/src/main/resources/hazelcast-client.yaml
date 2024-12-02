@@ -1,12 +1,6 @@
-hazelcast:
+hazelcast-client:
   cluster-name: dev
   instance-name: balance-service
   network:
-    join:
-      kubernetes:
-        enabled: true
-        namespace: dev
-        service-name: hazelcast
-        service-port: 5701
-#      multicast:
-#        enabled: true
+    cluster-members:
+      - hazelcast

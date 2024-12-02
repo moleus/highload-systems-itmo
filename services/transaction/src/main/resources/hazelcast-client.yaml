@@ -1,11 +1,6 @@
-hazelcast:
+hazelcast-client:
   cluster-name: dev
   instance-name: transaction-service
   network:
-    join:
-      kubernetes:
-        enabled: true
-        service-name: hazelcast
-        service-port: 5701
-      multicast:
-        enabled: true
+    cluster-members:
+      - hazelcast
