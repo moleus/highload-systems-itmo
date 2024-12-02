@@ -38,14 +38,42 @@ Content-Type: application/json
 
 {
   "purpose_id": 1,
-  "money_amount": 800
+  "money_amount": 30000
 }
 
-###
+### Трата (не хватит денег). Отрицательный ответ от саги
+# transaction - pending
+# balance - остался прежним
+# transaction - canceled
+# kafka - http://localhost:8081/ui/clusters/kafka-0/all-topics/transaction_result/messages?keySerde=String&valueSerde=String&limit=100
+POST http://highload.duckdns.org/api/v1/transactions/expenses
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 9000000
+}
+
+### Траты с бадающей бд и откатом саги
+# balance - запоминаем значение в БД
+# run POST
 # transaction DB (pending)
-# смотрим в hazelcast - balance обновился (balance DB)
-# в логах transaction service начинается подтверждение транзацуии
-# сломать transaction DB
+# смотрим в hazelcast/balance DB - balance обновился
+# в логах transaction service начинается подтверждение транзацуии. "Starting to confirm transaction 1"
+# kubectl --kubeconfig=$HOME/.kube/highload -n dev logs transaction-5dc4d88dd6-knkmz -f
+# kubectl --kubeconfig=$HOME/.kube/highload patch statefulset db -p '{"spec":{"replicas":0}}'
 # смотрим на роллбек (кафка + логи transaction service)
+# http://localhost:8081/ui/clusters/kafka-0/all-topics/roll-back/messages?keySerde=String&valueSerde=String&limit=100
 # смотрим hazelcast - balance service - откатывается сумма на старое значение
-###
+
+# запускаем БД + форворд порт 15432
+# смотрим в БД transaction
+POST http://highload.duckdns.org/api/v1/transactions/expenses
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 90
+}
