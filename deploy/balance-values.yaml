@@ -10,7 +10,7 @@ serviceAccountName: "hazelcast"
 initContainers:
   - name: liquibase-balance
     # TODO: change tag to lab4
-    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:pavel-deploy-db-balance
+    image: ghcr.io/moleus/highload-systems-itmo/db-balance-init:add-hazelcast
     imagePullPolicy: Always
     command:
       - bash
@@ -47,7 +47,7 @@ envs:
   - name: POSTGRES_DB
     value: postgres
   - name: DB_HOST
-    value: db
+    value: db-balance
   - name: DB_PORT
     value: "5432"
   - name: POSTGRES_USER
