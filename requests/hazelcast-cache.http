@@ -36,3 +36,7 @@ Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 ### Distributed test
 GET http://highload.duckdns.org/api/v1/transactions/expenses?purposeID=1
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+
+### Distributed test
+GET http://highload.duckdns.org/api/v1/transactions/donations
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
