@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class BalanceResponse(
+    val id: Int,
     val purpose: PurposeResponse,
     val moneyAmount: Int
 )

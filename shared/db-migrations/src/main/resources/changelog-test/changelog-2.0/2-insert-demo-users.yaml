@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Korako2
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: superuser
+              - column:
+                  name: password
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
+              - column:
+                  name: role
+                  value: SUPERUSER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: customer
+              - column:
+                  name: password
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
+              - column:
+                  name: role
+                  value: CUSTOMER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: emanager
+              - column:
+                  name: password
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
+              - column:
+                  name: role
+                  value: EXPENSE_MANAGER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: login
+                  value: amanager
+              - column:
+                  name: password
+                  value: $2a$10$ISK8t2WKiPOJ64D8uHTk0OAKHneW3fg/1kxfw0UHbtkJ7GyKH6g2m
+              - column:
+                  name: role
+                  value: ADOPTION_MANAGER
+              - column:
+                  name: creation_date
+                  value: 2024-01-01

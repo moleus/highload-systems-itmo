@@ -5,6 +5,16 @@ spring:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:15432}/postgres
     username: ${POSTGRES_USERNAME:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
+    pool:
+      initial-size: 0
+      max-size: 15
+      max-idle-time: 300000 # 5 минут
+      max-lifetime: 600000 # 10 минут
+      validation-query: SELECT 1
+      validation-query-timeout: 1000 # 1 секунда
+      connection-timeout: 10000 # 10 секунд
+      idle-timeout: 300000 # 5 минут
+
   jpa:
     show-sql: true
     open-in-view: false
@@ -14,7 +24,7 @@ spring:
     web-application-type: reactive
 
   kafka:
-    bootstrap-servers: "${KAFKA_HOST:localhost:9092}"
+    bootstrap-servers: "${KAFKA_HOST:localhost:29092}"
     admin:
       auto-create: true
     topics:
@@ -32,13 +42,11 @@ spring:
 
 app.base-url: /api/v1
 
+api:
+  address: ${API_ADDRESS:localhost:8080}
+
 server:
   port: ${APP_SERVER_PORT:8085}
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
 
 debug: true
 logging:
