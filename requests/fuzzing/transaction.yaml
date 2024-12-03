@@ -1,0 +1,48 @@
+configs:
+  bbSwaggerUrl: "http://highload.duckdns.org:80/transaction-api-service/v3/api-docs"
+  bbTargetUrl: "http://highload.duckdns.org:80"
+
+  problemType: REST
+  blackBox: true
+  seed: -1
+  prematureStop: 1m
+  maxTime: 5m
+  ratePerMinute: 0
+
+  createTests: true
+  outputFilePrefix: "EvoMaster"
+  outputFileSuffix: "Test"
+  outputFolder: "build/transaction"
+  outputFormat: "KOTLIN_JUNIT_5"
+  testTimeout: 1
+
+auth:
+  - name: customer
+    loginEndpointAuth:
+      payloadUserPwd:
+        username: "customer"
+        password: "1234"
+        usernameField: login
+        passwordField: password
+      token:
+        headerPrefix: "Bearer "
+        extractFromField: "/access_token"
+        httpHeaderName: "Authorization"
+  - name: emanager
+    loginEndpointAuth:
+      payloadUserPwd:
+        username: "emanager"
+        password: "1234"
+        usernameField: login
+        passwordField: password
+      token:
+        headerPrefix: "Bearer "
+        extractFromField: "/access_token"
+        httpHeaderName: "Authorization"
+
+authTemplate:
+  loginEndpointAuth:
+    endpoint: /api/v1/auth/login
+    verb: POST
+    contentType: application/json
+    expectCookies: false

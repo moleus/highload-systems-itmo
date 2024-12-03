@@ -1,0 +1,48 @@
+configs:
+  bbSwaggerUrl: "http://highload.duckdns.org:80/adoption-api-service/v3/api-docs"
+  bbTargetUrl: "http://highload.duckdns.org:80"
+
+  problemType: REST
+  blackBox: true
+  seed: -1
+  prematureStop: 1m
+  maxTime: 5m
+  ratePerMinute: 0
+
+  createTests: false
+  outputFilePrefix: "EvoMaster"
+  outputFileSuffix: "Test"
+  outputFolder: "build/adoption"
+  outputFormat: "KOTLIN_JUNIT_5"
+  testTimeout: 2
+
+auth:
+  - name: customer
+    loginEndpointAuth:
+      payloadUserPwd:
+        username: "customer"
+        password: "1234"
+        usernameField: login
+        passwordField: password
+      token:
+        headerPrefix: "Bearer "
+        extractFromField: "/access_token"
+        httpHeaderName: "Authorization"
+  - name: amanager
+    loginEndpointAuth:
+      payloadUserPwd:
+        username: "amanager"
+        password: "1234"
+        usernameField: login
+        passwordField: password
+      token:
+        headerPrefix: "Bearer "
+        extractFromField: "/access_token"
+        httpHeaderName: "Authorization"
+
+authTemplate:
+  loginEndpointAuth:
+    endpoint: /api/v1/auth/login
+    verb: POST
+    contentType: application/json
+    expectCookies: false
