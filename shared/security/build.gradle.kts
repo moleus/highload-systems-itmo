@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot")
     id("highload.common")
     id("highload.security")
+    id ("java-library")
 }
 
 dependencies {
@@ -16,4 +17,8 @@ dependencies {
 
     implementation("org.springframework.security:spring-security-oauth2-resource-server")
     implementation("org.springframework.security:spring-security-oauth2-jose")
+}
+
+tasks.named("bootJar") {
+    enabled = false
 }

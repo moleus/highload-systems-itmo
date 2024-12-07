@@ -37,7 +37,7 @@ kover {
     reports {
         filters {
             excludes {
-                projects.add(":buildSrc")
+                projects.addAll(":buildSrc", ":shared")
             }
         }
         total {

@@ -1,5 +1,5 @@
 ### Add a new donation
-POST http://localhost:8080/api/v1/transactions/donations
+POST http://highload.duckdns.org/api/v1/transactions/donations
 Authorization: Bearer {{$auth.token("customer-auth")}}
 Content-Type: application/json
 
@@ -24,7 +24,7 @@ Content-Type: application/json
 %}
 
 ### Get all donations
-GET http://localhost:8080/api/v1/transactions/donations
+GET http://highload.duckdns.org/api/v1/transactions/donations
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 > {%
@@ -40,7 +40,7 @@ Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 %}
 
 ### Get donations by purpose ID
-GET http://localhost:8080/api/v1/transactions/donations?purposeId=1
+GET http://highload.duckdns.org/api/v1/transactions/donations?purposeId=1
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 
@@ -66,13 +66,13 @@ Authorization: Bearer {{$auth.token("expense-manager-auth")}}
     });
 %}
 ### Add a new expense
-POST http://localhost:8080/api/v1/transactions/expenses
+POST http://highload.duckdns.org/api/v1/transactions/expenses
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 Content-Type: application/json
 
 {
   "purpose_id": 1,
-  "money_amount": 100
+  "money_amount": 10000
 }
 
 > {%
@@ -97,6 +97,7 @@ Content-Type: application/json
 %}
 
 ### Get all expenses
+#GET http://highload.duckdns.org/api/v1/transactions/expenses
 GET http://localhost:8080/api/v1/transactions/expenses
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
@@ -113,7 +114,7 @@ Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 %}
 
 ### Get expenses by purpose ID
-GET http://localhost:8080/api/v1/transactions/expenses?purposeID=1
+GET http://highload.duckdns.org/api/v1/transactions/expenses?purposeID=1
 Authorization: Bearer {{$auth.token("expense-manager-auth")}}
 
 > {%
