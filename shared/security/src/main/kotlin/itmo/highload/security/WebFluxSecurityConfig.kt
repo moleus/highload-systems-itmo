@@ -61,6 +61,7 @@ class WebFluxSecurityConfig @Autowired constructor(
             "/transaction-api-service/v3/api-docs/**",
             "/auth-api-service/v3/api-docs/**",
             "/images-api-service/v3/api-docs/**",
+            "/balance-api-service/v3/api-docs/**"
         )
         val log = KotlinLogging.logger {}
     }

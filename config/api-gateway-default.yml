@@ -78,3 +78,5 @@ springdoc:
         url: /auth-api-service/v3/api-docs
     -   name: images-service
         url: /images-api-service/v3/api-docs
+    -   name: balance-service
+        url: /balance-api-service/v3/api-docs
