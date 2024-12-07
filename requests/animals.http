@@ -1,6 +1,6 @@
 ### Add new animal (send 2 requests for the correctness of further tests)
 
-POST http://highload.duckdns.org/api/v1/animals
+POST http://highload-lab.duckdns.org/api/v1/animals
 #POST http://localhost:8080/api/v1/animals
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
@@ -37,8 +37,8 @@ Authorization: Bearer {{$auth.token("customer-auth")}}
 
 
 ### Get all animals
-#GET http://highload.duckdns.org/api/v1/animals
-GET http://localhost:8080/api/v1/animals
+GET http://highload-lab.duckdns.org/api/v1/animals
+#GET http://localhost:8080/api/v1/animals
 Authorization: Bearer {{$auth.token("customer-auth")}}
 
 > {%
@@ -91,14 +91,14 @@ Content-Type: application/json
 %}
 
 ### Shows that we can't change animal's gender
-PUT http://highload.duckdns.org/api/v1/animals/1
+PUT http://highload-lab.duckdns.org/api/v1/animals/2
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 Content-Type: application/json
 
 {
   "name": "Барсик",
   "type": "Кот",
-  "gender": "FEMALE",
+  "gender": "MALE",
   "is_castrated": true,
   "health_status": "SICK"
 }
@@ -154,7 +154,7 @@ Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 
 ### Delete initial animal
 #DELETE http://highload.duckdns.org/api/v1/animals/1
-DELETE http://localhost:8080/api/v1/animals/19
+DELETE http://highload-lab.duckdns.org/api/v1/animals/2
 Authorization: Bearer {{$auth.token("adoption-manager-auth")}}
 
 > {%
