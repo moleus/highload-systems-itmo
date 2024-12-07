@@ -236,7 +236,6 @@ class TransactionService(
                             transactionCache.computeIfPresent(transaction.transactionId) { _, cachedTransaction ->
                                 cachedTransaction.copy(status = "COMPLETED")
                             }
-                            logger.info { "Transaction ${transaction.transactionId} successfully confirmed." }
                         }
                         .doOnError { error ->
                             rollbackTransaction(transaction.transactionId)
