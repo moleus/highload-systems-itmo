@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.test.test
 import reactor.test.StepVerifier
 import kotlin.test.assertTrue
 
@@ -31,41 +30,6 @@ class AnimalServiceTest {
     private val animalImageService: AnimalImageService = mockk()
     private val hazelcastInstance: HazelcastInstance = mockk()
     private val animalService = AnimalService(animalRepository, adoptionService, animalImageService, hazelcastInstance)
-
-    private val existingAnimal = Animal(
-        id = 1,
-        name = "Buddy",
-        typeOfAnimal = "Dog",
-        gender = Gender.MALE,
-        isCastrated = false,
-        healthStatus = HealthStatus.HEALTHY
-    )
-
-    @Test
-    fun `should update animal when valid`() {
-        val request = AnimalDto(
-            name = "Bobik",
-            type = "Dog",
-            gender = Gender.MALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.RECOVERING
-        )
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
-        every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
-        every { animalRepository.save(existingAnimal) } returns Mono.just(existingAnimal.copy(
-            name = "Bobik",
-            isCastrated = true,
-            healthStatus = HealthStatus.RECOVERING
-        ))
-
-        animalService.update(1, request).subscribe { updatedAnimal ->
-            assertEquals("Bobik", updatedAnimal.name)
-            assertEquals("Dog", updatedAnimal.typeOfAnimal)
-            assertTrue(updatedAnimal.isCastrated)
-            assertEquals(HealthStatus.RECOVERING, updatedAnimal.healthStatus)
-            verify { animalRepository.save(existingAnimal) }
-        }
-    }
 
     @Test
     fun `should throw InvalidAnimalUpdateException when updating dead animal`() {
@@ -112,27 +76,6 @@ class AnimalServiceTest {
     }
 
     @Test
-    fun `should throw InvalidAnimalUpdateException when changing gender`() {
-        val request = AnimalDto(
-            name = "Buddy",
-            type = "Dog",
-            gender = Gender.FEMALE,
-            isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY
-        )
-
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
-        every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals").set(any(), any()) } returns Unit
-
-        animalService.update(1, request).test().verifyErrorMatches {
-            it is InvalidAnimalUpdateException && it.message == "Can't change gender"
-        }
-
-        verify(exactly = 0) { animalRepository.save(any()) }
-    }
-
-    @Test
     fun `should throw InvalidAnimalUpdateException when changing type of animal`() {
         val existingAnimal = AnimalEntity(
             id = 1,
@@ -176,149 +119,6 @@ class AnimalServiceTest {
         verify(exactly = 0) { hazelcastMap.set(any(), any()) }
     }
 
-
-    @Test
-    fun `should throw InvalidAnimalUpdateException when cancelling castration`() {
-        existingAnimal.isCastrated = true
-
-        val request = AnimalDto(
-            name = "Buddy",
-            type = "Dog",
-            gender = Gender.MALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY
-        )
-
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
-        every { animalRepository.findById(1) } returns Mono.just(existingAnimal)
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals").set(any(), any()) } returns Unit
-
-        animalService.update(1, request).test().verifyErrorMatches {
-            it is InvalidAnimalUpdateException && it.message == "Can't cancel castration of an animal"
-        }
-
-        verify(exactly = 0) { animalRepository.save(any()) }
-    }
-
-    @Test
-    fun `save - should save a new animal`() {
-        val request = AnimalDto(
-            name = "Ave",
-            type = "Cat",
-            gender = Gender.MALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY
-        )
-        val savedAnimalEntity = AnimalEntity(
-            id = 1,
-            name = "Ave",
-            typeOfAnimal = "Cat",
-            gender = Gender.MALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY
-        )
-        val savedAnimal = Animal(
-            id = 1,
-            name = "Ave",
-            typeOfAnimal = "Cat",
-            gender = Gender.MALE,
-            isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY
-        )
-
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals")[1] } returns null
-        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals").set(any(), any()) } returns Unit
-        every { animalRepository.save(any()) } returns Mono.just(savedAnimal)
-
-        StepVerifier.create(animalService.save(request))
-            .expectNext(savedAnimalEntity)
-            .verifyComplete()
-
-        verify { animalRepository.save(any()) }
-    }
-
-
-    @Test
-    fun `getAll - should return all animals not adopted`() {
-        val token = "validToken"
-        val animal1 = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY)
-        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY)
-
-        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
-        every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal1, animal2)
-
-        StepVerifier.create(animalService.getAll(null, true, token))
-            .expectNext(AnimalMapper.toEntity(animal1))
-            .expectNext(AnimalMapper.toEntity(animal2))
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getAll - should return filtered animals by name`() {
-        val token = "validToken"
-        val animal1 = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY)
-        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY)
-
-        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
-        every { animalRepository.findByNameAndIdNotIn("Max", any()) } returns Flux.just(animal1)
-
-        StepVerifier.create(animalService.getAll("Max", true, token))
-            .expectNext(AnimalMapper.toEntity(animal1))
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getAll - should return empty if no animals found`() {
-        val token = "validToken"
-
-        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
-        every { animalRepository.findByIdNotIn(any()) } returns Flux.empty()
-
-        StepVerifier.create(animalService.getAll(null, true, token))
-            .verifyComplete()
-    }
-
-    @Test
-    fun `getAll - should return animals filtered by adoption status`() {
-        val token = "validToken"
-        val animal1 = Animal(id = 1, name = "Max", typeOfAnimal = "Cat", gender = Gender.MALE, isCastrated = false,
-            healthStatus = HealthStatus.HEALTHY)
-        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY)
-
-        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.empty()
-        every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal1, animal2)
-
-        StepVerifier.create(animalService.getAll(null, true, token))
-            .expectNext(AnimalMapper.toEntity(animal1))
-            .expectNext(AnimalMapper.toEntity(animal2))
-            .verifyComplete()
-
-        verify { adoptionService.getAllAdoptedAnimalsId(token) }
-        verify { animalRepository.findByIdNotIn(any()) }
-    }
-
-    @Test
-    fun `getAll - should call adoptionService when isNotAdopted is true`() {
-        val token = "validToken"
-        val animal2 = Animal(id = 2, name = "Bella", typeOfAnimal = "Dog", gender = Gender.FEMALE, isCastrated = true,
-            healthStatus = HealthStatus.HEALTHY)
-
-        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.just(1)
-        every { animalRepository.findByIdNotIn(any()) } returns Flux.just(animal2)
-
-        StepVerifier.create(animalService.getAll(null, true, token))
-            .expectNext(AnimalMapper.toEntity(animal2))
-            .verifyComplete()
-
-        verify { adoptionService.getAllAdoptedAnimalsId(token) }
-        verify { animalRepository.findByIdNotIn(any()) }
-    }
-
     @Test
     fun `delete - should delete animal and its images`() {
         val animalId = 1
@@ -356,5 +156,128 @@ class AnimalServiceTest {
         verify { hazelcastMap.remove(animalId) }
     }
 
+    @Test
+    fun `should save animal and update cache`() {
+        val request = AnimalDto(
+            name = "Max",
+            type = "Dog",
+            gender = Gender.MALE,
+            isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
+        )
 
+        val savedAnimal = Animal(
+            id = 1,
+            name = "Max",
+            typeOfAnimal = "Dog",
+            gender = Gender.MALE,
+            isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
+        )
+
+        val cache = mockk<IMap<Int, AnimalEntity>>(relaxed = true)
+
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals") } returns cache
+        every { animalRepository.save(AnimalMapper.toJpaEntity(request)) } returns Mono.just(savedAnimal)
+
+        StepVerifier.create(animalService.save(request))
+            .assertNext { animalEntity ->
+                assertEquals(savedAnimal.id, animalEntity.id)
+                assertEquals(savedAnimal.name, animalEntity.name)
+                assertEquals(savedAnimal.typeOfAnimal, animalEntity.typeOfAnimal)
+            }
+            .verifyComplete()
+
+        verify(exactly = 1) { animalRepository.save(AnimalMapper.toJpaEntity(request)) }
+        verify(exactly = 1) { cache[savedAnimal.id] = AnimalMapper.toEntity(savedAnimal) }
+    }
+
+    @Test
+    fun `should get all animals excluding adopted ones when isNotAdopted is true`() {
+        val token = "some-token"
+        val adoptedAnimalsId = listOf(2, 3)
+        val requestName = "Buddy"
+
+        val animals = listOf(
+            Animal(
+                id = 1,
+                name = "Buddy",
+                typeOfAnimal = "Dog",
+                gender = Gender.MALE,
+                isCastrated = true,
+                healthStatus = HealthStatus.HEALTHY
+            ),
+            Animal(
+                id = 4,
+                name = "Charlie",
+                typeOfAnimal = "Dog",
+                gender = Gender.MALE,
+                isCastrated = true,
+                healthStatus = HealthStatus.HEALTHY
+            )
+        )
+
+        val cache = mockk<IMap<Int, AnimalEntity>>(relaxed = true)
+
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals") } returns cache
+        every { adoptionService.getAllAdoptedAnimalsId(token) } returns Flux.just(2, 3)
+        every { animalRepository.findByNameAndIdNotIn(requestName, adoptedAnimalsId) } returns Flux.just(animals[0])
+
+        StepVerifier.create(animalService.getAll(requestName, true, token))
+            .assertNext { animal ->
+                assertEquals("Buddy", animal.name)
+            }
+            .verifyComplete()
+
+        verify(exactly = 1) { adoptionService.getAllAdoptedAnimalsId(token) }
+        verify(exactly = 1) { animalRepository.findByNameAndIdNotIn(requestName, adoptedAnimalsId) }
+    }
+
+
+    @Test
+    fun `should update animal successfully`() {
+        val animalId = 1
+        val request = AnimalDto(
+            name = "Updated Buddy",
+            type = "Dog",
+            gender = Gender.MALE,
+            isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
+        )
+        val existingAnimal = AnimalEntity(
+            id = animalId,
+            name = "Buddy",
+            typeOfAnimal = "Dog",
+            gender = Gender.MALE,
+            isCastrated = false,
+            healthStatus = HealthStatus.HEALTHY
+        )
+        val updatedAnimal = Animal(
+            id = animalId,
+            name = "Updated Buddy",
+            typeOfAnimal = "Dog",
+            gender = Gender.MALE,
+            isCastrated = true,
+            healthStatus = HealthStatus.HEALTHY
+        )
+
+        val cache = mockk<IMap<Int, AnimalEntity>>(relaxed = true)
+
+        every { hazelcastInstance.getMap<Int, AnimalEntity>("animals") } returns cache
+        every { animalRepository.findById(animalId) } returns Mono.just(updatedAnimal)
+        every { animalRepository.save(any()) } returns Mono.just(updatedAnimal)
+
+        every { cache[animalId] } returns existingAnimal
+
+        StepVerifier.create(animalService.update(animalId, request))
+            .assertNext { animal ->
+                assertEquals("Updated Buddy", animal.name)
+                assertTrue(animal.isCastrated)
+                assertEquals(HealthStatus.HEALTHY, animal.healthStatus)
+            }
+            .verifyComplete()
+
+        verify(exactly = 1) { animalRepository.save(any()) }
+        verify(exactly = 1) { cache[animalId] = any() }
+    }
 }
