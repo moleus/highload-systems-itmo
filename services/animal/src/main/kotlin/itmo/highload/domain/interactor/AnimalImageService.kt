@@ -50,10 +50,8 @@ class AnimalImageService(
     fun updateImageByImageId(imageId: Int, token: String, newImageData: Mono<FilePart>): Mono<UploadedFileResponse> {
         return imageRepository.findByImageId(imageId)
             .flatMap { existingImage ->
-                // Вызываем метод updateImage для обновления существующего изображения по его ID
                 imageService.updateImage(token, existingImage.imageId, newImageData)
                     .flatMap { updatedImage ->
-                        // Возвращаем обновленный ответ после успешного обновления
                         Mono.just(updatedImage)
                     }
             }

@@ -10,4 +10,5 @@ interface AnimalRepository {
     fun save(animal: Animal): Mono<Animal>
     fun delete(animal: Animal): Mono<Void>
     fun findById(id: Int): Mono<Animal>
+    fun findAll(): Flux<Animal>
 }
