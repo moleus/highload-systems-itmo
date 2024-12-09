@@ -1,0 +1,27 @@
+image:
+  repository: hazelcast/management-center
+  tag: 5.6
+
+nameOverride: hazelcast-manager
+fullnameOverride: hazelcast-manager
+
+replicaCount: 1
+
+service:
+  port: 8080
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "1024Mi"
+
+livenessProbe:
+readinessProbe:
+
+envs:
+  - name: MC_DEFAULT_CLUSTER
+    value: "dev"
+  - name: MC_DEFAULT_CLUSTER_MEMBERS
+    value: "hazelcast"

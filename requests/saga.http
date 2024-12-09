@@ -1,0 +1,79 @@
+### 1. Добавляем цель для сбора средств
+
+POST http://highload.duckdns.org/api/v1/balances/purposes
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "name": "Корм для собак"
+}
+
+### Добавили хоть какой-то донат (20 секунд)
+POST http://highload.duckdns.org/api/v1/transactions/donations
+Authorization: Bearer {{$auth.token("customer-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 100
+}
+
+###
+# форвордим порт для кафки
+# открываем кафку - http://localhost:8081/ui/clusters/kafka-0/all-topics/balance_change/messages?keySerde=String&valueSerde=String&limit=100
+# transaction DB (pending)
+# balance DB (обновился через 10)
+# transaction DB (complete)
+###
+
+### Тригерим создание кеша
+GET http://highload.duckdns.org/api/v1/balances/purposes/1
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+### Добавили донат (20 секунд)
+POST http://highload.duckdns.org/api/v1/transactions/donations
+Authorization: Bearer {{$auth.token("customer-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 30000
+}
+
+### Трата (не хватит денег). Отрицательный ответ от саги
+# transaction - pending
+# balance - остался прежним
+# transaction - canceled
+# kafka - http://localhost:8081/ui/clusters/kafka-0/all-topics/transaction_result/messages?keySerde=String&valueSerde=String&limit=100
+POST http://highload.duckdns.org/api/v1/transactions/expenses
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 9000000
+}
+
+### Траты с бадающей бд и откатом саги
+# balance - запоминаем значение в БД
+# run POST
+# transaction DB (pending)
+# смотрим в hazelcast/balance DB - balance обновился
+# в логах transaction service начинается подтверждение транзацуии. "Starting to confirm transaction 1"
+# kubectl --kubeconfig=$HOME/.kube/highload -n dev logs transaction-5dc4d88dd6-knkmz -f
+# kubectl --kubeconfig=$HOME/.kube/highload patch statefulset db -p '{"spec":{"replicas":0}}'
+# смотрим на роллбек (кафка + логи transaction service)
+# http://localhost:8081/ui/clusters/kafka-0/all-topics/roll-back/messages?keySerde=String&valueSerde=String&limit=100
+# смотрим hazelcast - balance service - откатывается сумма на старое значение
+
+# запускаем БД + форворд порт 15432
+# смотрим в БД transaction
+POST http://highload.duckdns.org/api/v1/transactions/expenses
+Authorization: Bearer {{$auth.token("expense-manager-auth")}}
+Content-Type: application/json
+
+{
+  "purpose_id": 1,
+  "money_amount": 90
+}

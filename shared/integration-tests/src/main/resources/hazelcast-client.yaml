@@ -1,0 +1,7 @@
+hazelcast:
+  cluster-name: dev
+  instance-name: transaction-service
+  network:
+    join:
+      multicast:
+        enabled: true

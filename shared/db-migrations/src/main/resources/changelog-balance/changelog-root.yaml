@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - includeAll:
+      path: changelog-balance/changelog-1.0/

@@ -3,10 +3,10 @@ package itmo.highload
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import itmo.highload.model.Users
-import itmo.highload.repository.UserRepository
+import itmo.highload.domain.UserRepository
+import itmo.highload.domain.interactor.UserService
+import itmo.highload.infrastructure.postgres.model.Users
 import itmo.highload.security.Role
-import itmo.highload.service.UserService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

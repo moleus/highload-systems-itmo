@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-images
+      author: Moleus
+      changes:
+        - createTable:
+            tableName: s3_object_ref
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  generationType: "BY DEFAULT"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: bucket
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: key
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-animal-to-image
+      author: Korako2
+      changes:
+        - createTable:
+            tableName: animal_to_image
+            columns:
+              - column:
+                  name: animal_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_animal_to_image_animal
+                    references: animal(id)
+                    deleteCascade: true
+                    validateForeignKey: true
+              - column:
+                  name: image_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: animal_to_image
+            columnNames: "animal_id, image_id"
+            constraintName: pk_animal_to_image
+        - addUniqueConstraint:
+            tableName: animal_to_image
+            columnNames: "image_id"
+            constraintName: uq_animal_to_image_image_id

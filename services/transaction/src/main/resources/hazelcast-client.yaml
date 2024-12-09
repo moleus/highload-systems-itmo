@@ -1,0 +1,6 @@
+hazelcast-client:
+  cluster-name: dev
+  instance-name: transaction-service
+  network:
+    cluster-members:
+      - hazelcast

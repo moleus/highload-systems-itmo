@@ -1,0 +1,27 @@
+image:
+  repository: ghcr.io/moleus/highload-systems-itmo/cloud-config
+  tag: lab4
+
+nameOverride: cloud-config
+fullnameOverride: cloud-config
+
+volumes:
+  - name: ssh-key
+    secret:
+      secretName: github-deploy-key-ro
+
+volumeMounts:
+  - name: ssh-key
+    mountPath: /root/.ssh/
+    readOnly: true
+
+envs:
+  - name: SPRING_PROFILES_ACTIVE
+    value: cloud
+  - name: SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL
+    value: 'main'
+  - name: CLOUD_CONFIG_HOST
+    value: cloud-config
+
+service:
+  port: 8888

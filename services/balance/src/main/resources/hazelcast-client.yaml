@@ -1,0 +1,6 @@
+hazelcast-client:
+  cluster-name: dev
+  instance-name: balance-service
+  network:
+    cluster-members:
+      - hazelcast
