@@ -7,9 +7,9 @@ x-defaults: &default-healthcheck
 
 # а что на порту 9093?
 x-kafka-cluster-envs: &kafka-cluster-envs
-  KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
-  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://:9092"
-  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+  KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092"
+  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:29092"
+  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT"
   KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
   KAFKA_KRAFT_CLUSTER_ID: abcdefghijklmnopqrstuv
   KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -51,6 +51,30 @@ services:
       timeout: 5s
       retries: 5
 
+  balance-db:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USERNAME:?error}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_PORT: 25432
+      POSTGRES_SHARED_BUFFERS: 4MB
+      POSTGRES_WAL_BUFFERS: 1MB
+      POSTGRES_WORK_MEM: 2MB
+    volumes:
+      - postgres-balance-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:25432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME:?error} -d postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
   init-db:
     image: liquibase/liquibase:4.29
     restart: no
@@ -69,6 +93,24 @@ services:
     networks:
       - backend
 
+  init-balance-db:
+    image: liquibase/liquibase:4.29
+    restart: no
+    depends_on:
+      balance-db:
+        condition: service_healthy
+    command:
+      - --changeLogFile=${BALANCE_DB_CHANGE_LOG_FILE:-changelog-balance/changelog-root.yaml}
+      - --url=jdbc:postgresql://balance-db:5432/postgres
+      - --username=postgres
+      - --password=postgres
+      - --log-level=debug
+      - update
+    volumes:
+      - ./shared/db-migrations/src/main/resources/changelog-balance:/liquibase/changelog-balance
+    networks:
+      - backend
+
   kafka-1:
     image: 'bitnami/kafka:3.8.0'
     environment:
@@ -78,6 +120,7 @@ services:
       - kafka-1-data-signle-node:/bitnami/kafka
     ports:
       - "127.0.0.1:9092:9092"
+      - "127.0.0.1:29092:29092"
     networks:
       - backend
 
@@ -116,14 +159,14 @@ services:
       - backend
 
   cloud-config:
-    image: moleus/highload/cloud-config:dev
+    image: ghcr.io/moleus/highload/cloud-config:${LAB_TAG:?error}
     working_dir: /app
     volumes:
       - ~/.ssh/highload-cloud-config-ro:/root/.ssh/id_rsa:ro
       - ./config:/app/config
     environment:
       <<: *small-jvm-heap-envs
-#      SPRING_PROFILES_ACTIVE: cloud
+      #      SPRING_PROFILES_ACTIVE: cloud
       SPRING_PROFILES_ACTIVE: standalone,native
       SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: 'pavel/fill-docker-compose-file'
     env_file:
@@ -138,32 +181,9 @@ services:
     networks:
       - backend
 
-  eureka-server:
-    image: moleus/highload/eureka-server:dev
-    ports:
-      - "8761:8761"
-    depends_on:
-      cloud-config:
-        condition: service_healthy
-      init-db:
-        condition: service_completed_successfully
-    env_file:
-      - .env
-    environment:
-      <<: *medium-jvm-heap-envs
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - backend
-
   adoption:
-    image: moleus/highload/adoption:dev
+    image: ghcr.io/moleus/highload/adoption:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     environment:
@@ -175,10 +195,8 @@ services:
       - backend
 
   animal:
-    image: moleus/highload/animal:dev
+    image: ghcr.io/moleus/highload/animal:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     environment:
@@ -190,14 +208,11 @@ services:
       - backend
 
   api-gateway:
-    image: moleus/highload/api-gateway:dev
+    image: ghcr.io/moleus/highload/api-gateway:${LAB_TAG:?error}
     ports:
       - "8080:8080"
     env_file:
       - .env
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     environment:
       <<: *small-jvm-heap-envs
     healthcheck:
@@ -209,10 +224,8 @@ services:
       - backend
 
   authentication:
-    image: moleus/highload/authentication:dev
+    image: ghcr.io/moleus/highload/authentication:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       init-db:
         condition: service_completed_successfully
     env_file:
@@ -224,10 +237,23 @@ services:
       - backend
 
   transaction:
-    image: moleus/highload/transaction:dev
+    image: ghcr.io/moleus/highload/transaction:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
+      init-db:
+        condition: service_completed_successfully
+      init-balance-db:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      <<: *small-jvm-heap-envs
+    <<: *default-healthcheck
+    networks:
+      - backend
+
+  balance:
+    image: ghcr.iomoleus/highload/balance:${LAB_TAG:?error}
+    depends_on:
       init-db:
         condition: service_completed_successfully
     env_file:
@@ -239,10 +265,8 @@ services:
       - backend
 
   images:
-    image: moleus/highload/images:dev
+    image: ghcr.io/moleus/highload/images:${LAB_TAG:?error}
     depends_on:
-      eureka-server:
-        condition: service_healthy
       minio:
         condition: service_healthy
       init-db:
@@ -256,10 +280,7 @@ services:
       - backend
 
   notification:
-    image: moleus/highload/notification:dev
-    depends_on:
-      eureka-server:
-        condition: service_healthy
+    image: ghcr.io/moleus/highload/notification:${LAB_TAG:?error}
     ports:
       - "8089:8080"
     env_file:
@@ -270,10 +291,24 @@ services:
     networks:
       - backend
 
+  hazelcast:
+    image: hazelcast/hazelcast:5-jdk21
+    ports:
+      - "5701:5701"
+  management-center:
+    image: hazelcast/management-center:5.6
+    ports:
+      - "8587:8080"
+    environment:
+      - MC_DEFAULT_CLUSTER=dev
+      - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast
+
 volumes:
   postgres-data:
   kafka-1-data-signle-node:
   minio-data:
+  postgres-balance-data:
+
 
 networks:
   backend:

@@ -38,3 +38,10 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+*.tfstate*
+.terraform
+*.tfvars
+
+node_modules/
+package-lock.json

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Lint & checks
 
 on:
   pull_request:
@@ -15,32 +15,6 @@ env:
   GRADLE_VERSION: 8.10.2
 
 jobs:
-  run-docker-compose:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: ${{ env.JDK_VERSION }}
-    - name: Set up Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        cache-read-only: false
-        gradle-version: ${{ env.GRADLE_VERSION }}
-        build-scan-publish: true
-        build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
-        build-scan-terms-of-use-agree: "yes"
-
-    - name: Build docker images
-      run: ./gradlew jibDockerBuild
-
-    - name: Start and run
-      run: |
-        docker compose --env-file env-ci -f docker-compose.yml up -d --wait
-
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -95,10 +69,11 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/services/adoption/build/reports/kover/report.xml
-            ${{ github.workspace }}/services/api-gateway/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/animal/build/reports/kover/report.xml
             ${{ github.workspace }}/services/authentication/build/reports/kover/report.xml
-            ${{ github.workspace }}/services/cloud-config/build/reports/kover/report.xml
-            ${{ github.workspace }}/services/eureka-server/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/balance/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/images/build/reports/kover/report.xml
+            ${{ github.workspace }}/services/notification/build/reports/kover/report.xml
             ${{ github.workspace }}/services/transaction/build/reports/kover/report.xml
           title: Code Coverage
           update-comment: true

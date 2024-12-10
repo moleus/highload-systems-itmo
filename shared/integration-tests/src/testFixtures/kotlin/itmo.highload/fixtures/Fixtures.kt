@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 object BalanceResponseFixture {
     fun of(
         purpose: PurposeResponse = PurposeResponse(-1, "Medicine"), moneyAmount: Int = 1000
-    ) = BalanceResponse(purpose, moneyAmount)
+    ) = BalanceResponse(-1, purpose, moneyAmount)
 }
 
 object PurposeResponseFixture {
@@ -44,7 +44,7 @@ object TransactionResponseFixture {
         userId: Int = -2,
         moneyAmount: Int = 100,
         isDonation: Boolean = true
-    ) = TransactionResponse(dateTime, purpose, userId, moneyAmount, isDonation)
+    ) = TransactionResponse(-1, dateTime, purpose, userId, moneyAmount, isDonation, "PENDING")
 }
 
 object AdoptionRequestResponseFixture {

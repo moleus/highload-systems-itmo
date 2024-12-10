@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script>
     // Подключение к серверу WebSocket через SockJS
-    const socket = new SockJS('http://localhost:8080/api/v1/notifications/ws');
+    const socket = new SockJS('http://highload.duckdns.org/api/v1/notifications/ws');
     const stompClient = Stomp.over(socket);
 
     // Функция для добавления сообщений на страницу
@@ -44,6 +44,11 @@
         // Подписка на топик /topic/adoption_requests/*
         stompClient.subscribe('/topic/adoption_requests/*', function (message) {
             showMessage("Request CHANGED TOPIC: " + message.body);
+        });
+
+        // Подписка на топик /topic/transactions
+        stompClient.subscribe('/topic/transactions', function (message) {
+            showMessage("Transaction TOPIC: " + message.body);
         });
     });
 

@@ -1,0 +1,27 @@
+nameOverride: "db"
+fullnameOverride: "db"
+
+service:
+  port: 5432
+
+envs:
+  - name: POSTGRES_DB
+    value: postgres
+  - name: POSTGRES_USER
+    valueFrom:
+      secretKeyRef:
+        name: db-secrets
+        key: username
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-secrets
+        key: password
+  - name: POSTGRES_PORT
+    value: "5432"
+  - name: POSTGRES_SHARED_BUFFERS
+    value: "4MB"
+  - name: POSTGRES_WAL_BUFFERS
+    value: "1MB"
+  - name: POSTGRES_WORK_MEM
+    value: "2MB"

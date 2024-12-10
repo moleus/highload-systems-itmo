@@ -1,0 +1,23 @@
+name: 'read version'
+description: 'Reads version from VERSION.txt'
+
+outputs:
+  version:
+    description: 'Version from VERSION.txt'
+    value: ${{ steps.read-version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Read version
+      id: read-version
+      shell: bash
+      run: |
+        version=$(cat VERSION.txt)
+        if [[ ${{ github.event_name }} == 'push' ]]; then
+          echo "version=$version" >> $GITHUB_OUTPUT
+        else 
+          branch_name=${{ env.BRANCH_NAME }}
+          tag=${branch_name//\//-}
+          echo "version=$tag" >> $GITHUB_OUTPUT
+        fi
