@@ -72,4 +72,5 @@ helm upgrade -i kafka-release -f kafka-values.yaml -n dev oci://registry-1.docke
 
 - [x] Lab1 complete
 - [x] Lab2 complete
-- [x] Lab3 in progress
+- [x] Lab3 complete
+- [x] Lab4 complete
